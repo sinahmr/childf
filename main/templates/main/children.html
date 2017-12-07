@@ -1,0 +1,27 @@
+<div class="container-fluid content">
+    <div class="row">
+        <div class="col-md-1 hidden-sm">
+        </div>
+        <div class="col-md-10 col-sm-12 bg-light">
+            <div class="row">
+                {% for i in "123456789" %}
+                    <div class="col-md-3 col-sm-12 child-card">
+                        <div class="card" style="width: auto;">
+                            <img class="card-img-top"
+                                 src="https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg"
+                                 alt="Card image cap">
+                            <div class="card-body">
+                                <h4 class="card-title">علی احمدی</h4>
+                                <h6 class="card-subtitle mb-2 text-muted">تهران</h6>
+                                <p class="card-text">به این کودک نیازمند کمک کنید. علی ۷ ساله از تهران</p>
+                                <a href="#" class="btn btn-primary">مشخصات نیازمند</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-1 hidden-sm">
+        </div>
+    </div>
+</div>

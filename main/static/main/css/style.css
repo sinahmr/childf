@@ -3,3 +3,14 @@ body {
     text-align: right;
     font-family: Helvetica, Arial, sans-serif;
 }
+.content{
+    margin-top: 10px;
+}
+.content .row{
+    padding-top: 20px;
+}
+
+.child-card{
+    height: auto;
+    padding: 10px;
+}
