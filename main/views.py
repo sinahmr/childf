@@ -6,7 +6,11 @@ def home(request):
 
 
 def volunteer(request):
-    return render(request, 'main/base-volunteer.html', {})
+    children = [{
+        'name': 'علی احمدی',
+        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
+    }] * 10
+    return render(request, 'main/base-volunteer.html', {'children': children, 'show_all': True})
 
 
 def child_information(request):

@@ -6,8 +6,13 @@ body {
 .content{
     margin-top: 10px;
 }
-.content .row{
-    padding-top: 20px;
+
+.main-content {
+    padding-top: 10px;
+}
+
+.navigation {
+    direction: ltr;
 }
 
 .child-card{
