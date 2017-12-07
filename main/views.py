@@ -14,7 +14,25 @@ def volunteer(request):
 
 
 def child_information(request):
-    return render(request, 'main/child-information.html', {})
+    child = {
+            'first_name': 'علی',
+            'last_name': 'احمدی',
+            'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
+            'province': 'تهران',
+            'accomplishments': 'کسب رتبه‌ی اول',
+            'need_set': [{'id': 1,
+                          'title': 'نیاز اول',
+                          'description': 'کمک هزینه‌ی تحصیلی',
+                          'cost': '۱۰۰',
+                          'urgent': 'True',
+                          'PurchaseForNeed_set': [{'id': 1,
+                                                   'payer': 'حسن بیاتی',
+                                                   'amount': '۲۰۰',
+                                                   'time': '۲۰ فروردین ۱۹۹۶'}]
+                          }]
+
+        }
+    return render(request, 'main/base-volunteer.html', {'child': child})
 
 
 def add_child(request):

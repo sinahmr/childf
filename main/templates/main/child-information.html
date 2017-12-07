@@ -1,31 +1,119 @@
-<div class="container-fluid content">
-    <div class="row">
-        <div class="col-md-1 hidden-sm">
-        </div>
-        <div class="col-md-10 col-sm-12 bg-light">
-            <div class="row">
-                <div class="d-block d-md-none col-sm-12">
-                    <img class="card-img-top"
-                         src="https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg"
-                         alt="Card image cap">
+{% block content %}
+    <div class="container-fluid content">
+        <div class="row">
+            <div class="col-md-1 hidden-sm">
+            </div>
+            <div class="col-md-10 col-sm-12 bg-light" style="padding-top: 10px; padding-bottom: 10px;">
+                <div class="row">
+                    <div class="d-block d-md-none col-sm-12">
+                        <img class="card-img-top"
+                             src="https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg"
+                             alt="Card image cap">
+                    </div>
+                    <div class="col-md-8 col-sm-12">
+                        <h4 class="card-title">{{ child.first_name }} {{ child.last_name }}</h4>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ child.province }}</h6>
+                        <br/>
+                        <h4>موفقیت‌ها:</h4>
+                        <p>{{ child.accomplishments }}</p>
+                    </div>
+                    <div class="d-none d-md-block col-md-4">
+                        <img class="card-img-top"
+                             src="https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg"
+                             alt="Card image cap">
+                    </div>
+                    <div class="col align-self-end">
+                        <a href="#" class="btn btn-primary" style="margin-top: 10px">تحت کفالت قرار دادن</a>
+                    </div>
                 </div>
-                <div class="col-md-8 col-sm-12">
-                    <h4 class="card-title">علی احمدی</h4>
-                    <h6 class="card-subtitle mb-2 text-muted">تهران</h6>
-                    <p class="card-text">علی ۷ ساله از تهران</p>
-                </div>
-                <div class="d-none d-md-block col-md-4">
-                    <img class="card-img-top"
-                     src="https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg"
-                     alt="Card image cap">
-                </div>
-                <div class="col align-self-end">
-                    <a href="#" class="btn btn-primary" style="margin-top: 10px">تحت کفالت قرار دادن</a>
+                <h2 style="margin: 10px">نیازها:</h2>
+                <div id="accordion" role="tablist">
+
+                    {% for need in child.need_set %}
+                        <div class="card">
+                            <div class="card-header" role="tab" id="heading{{ need.id }}">
+                                <h5 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" href="#collapse{{ need.id }}" aria-expanded="false" aria-controls="collapse{{ need.id }}">
+                                        {{ need.title }}
+                                    </a>
+                                    {% if need.urgent %}
+                                        <span class="badge badge-danger float-left">فوری</span>
+                                    {% endif %}
+                                </h5>
+                            </div>
+                            <div id="collapse{{ need.id }}" class="collapse" role="tabpanel" aria-labelledby="heading{{ need.id }}" data-parent="#accordion">
+                                <div class="card-body">
+                                    <p>{{ need.description }}</p>
+
+                                    <div class="float-left">{{ need.cost }} هزار تومان</div>
+                                    <a href="#" class="btn btn-primary" style="margin-top: 10px">پرداخت</a>
+                                    <a href="#" class="btn btn-secondary" style="margin-top: 10px" onclick="show_payments(this);">لیست پرداخت‌ها</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
-        </div>
-        <div class="col-md-1 hidden-sm">
+            <div class="col-md-1 hidden-sm">
+            </div>
         </div>
     </div>
 
-</div>
+    <div class="modal fade" id="payments" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">لیست پرداخت‌ها</h5>
+                </div>
+                <div class="modal-body">
+{#                    {% for purchase in "123" %}#}
+{#                        <h4 class="card-title">علی حقانی</h4>#}
+{#                        <span class="card-text">۲۰۰ هزار تومان</span>#}
+{#                        <span class="card-subtitle mb-2 text-muted float-left">۰۱/۰۲/۹۶</span>#}
+{#                        <hr/>#}
+{#                    {% endfor %}#}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+    <script type="text/javascript">
+        var data = {
+            {% for need in child.need_set %}
+                '{{ need.id }}': [
+                    {% for purchase in need.PurchaseForNeed_set %}
+                        {'payer': '{{purchase.payer}}', 'amount': '{{purchase.amount}}', 'time': '{{ purchase.time }}'}
+                        {% if not forloop.last %}
+                            ,
+                        {% endif %}
+                    {% endfor %}
+                ]
+            {% endfor %}
+        };
+
+        function show_payments(event) {
+            $('.modal-body').empty();
+            var id = $(event).parent().parent().attr('id');
+            id = parseInt($('#payments').data = id.substr(8));
+            $.each(data, function (index, value) {
+                if(id == index)
+                    var total = value.length;
+
+                   $.each(value, function (index, value) {
+                       $('.modal-body').append($('<h4/>').addClass('card-title').text(value['payer']));
+                       $('.modal-body').append($('<span/>').addClass('card-text').text(value['amount'] + ' هزار تومان'));
+                       $('.modal-body').append($('<span/>').addClass('card-subtitle').addClass('mb-2').addClass('text-muted').addClass('float-left').text(value['time']));
+                       if(index != total - 1)
+                           $('.modal-body').append($('<hr/>'));
+                    });
+            });
+            $('#payments').modal('show');
+        }
+    </script>
+{% endblock %}
