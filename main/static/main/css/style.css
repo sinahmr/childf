@@ -3,3 +3,19 @@ body {
     text-align: right;
     font-family: Helvetica, Arial, sans-serif;
 }
+.content{
+    margin-top: 10px;
+}
+
+.main-content {
+    padding-top: 10px;
+}
+
+.navigation {
+    direction: ltr;
+}
+
+.child-card{
+    height: auto;
+    padding: 10px;
+}

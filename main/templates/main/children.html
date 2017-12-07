@@ -1,0 +1,47 @@
+<div class="container-fluid content">
+    <div class="row">
+        <div class="col-md-1 d-none d-md-block">
+        </div>
+        <div class="col-md-10 col-sm-12 bg-light main-content">
+            {% if show_all %}
+                <button type="button" class="btn btn-outline-primary active" aria-pressed="true">نمایش کودکان تحت
+                    حمایت
+                </button>
+            {% else %}
+                <button type="button" class="btn btn-outline-primary">نمایش تمام کودکان</button>
+            {% endif %}
+            <div class="row">
+                {% for child in children %}
+                    <div class="col-md-3 col-sm-12 child-card">
+                        <div class="card" style="width: auto;">
+                            <img class="card-img-top"
+                                 src="{{ child.img_url }}"
+                                 alt="Card image cap">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ child.name }}</h4>
+                                <h6 class="card-subtitle mb-2 text-muted">تهران</h6>
+                                <p class="card-text">به این کودک نیازمند کمک کنید. علی ۷ ساله از تهران</p>
+                                <a href="#" class="btn btn-primary">مشخصات نیازمند</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <nav class="navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">بعدی</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">۳</a></li>
+                    <li class="page-item"><a class="page-link" href="#">۲</a></li>
+                    <li class="page-item"><a class="page-link" href="#">۱</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">قبلی</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="col-md-1 d-none d-md-block">
+        </div>
+    </div>
+</div>
