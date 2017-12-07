@@ -1,0 +1,139 @@
+{% extends 'main/base-volunteer.html' %}
+{% block content %}
+    <div class="container-fluid content">
+        <div class="row">
+            <div class="col-md-2 d-none d-md-block">
+            </div>
+            <div class="col-md-8 col-sm-12 bg-light main-content">
+                <form>
+
+                    <div class="row">
+                        <div class="col-md-8 col-sm-12">
+                            <div class="form-group">
+                                <label for="name">نام و نام خانوادگی</label>
+                                <input type="text" class="form-control" id="name"
+                                       placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="age">سن</label>
+                                <input type="number" class="form-control" id="age" placeholder="" min="1"
+                                       max="18">
+                            </div>
+                            <div class="form-group">
+                                <label for="province">استان</label>
+                                <input type="text" class="form-control" id="province"
+                                       placeholder="">
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <div>
+                                <img id="img-preview" src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
+                                     class="rounded img-fluid float-right">
+                                <label class="btn btn-outline-info btn-file btn-sm m-1">
+                                    آپلود <input type="file" style="display: none;" onchange="readURL(this);">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="province">نیاز‌ها</label>
+                        <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal"
+                                data-target="#exampleModal">اضافه کردن
+                        </button>
+                        <div id="accordion" role="tablist" class="mt-2">
+                            <div class="card d-none" id="template-card">
+                                <div class="card-header" role="tab">
+                                    <h5 class="mb-0">
+                                        <a class="collapsed" data-toggle="collapse" href="#collapseOne"
+                                           aria-expanded="false">
+                                            Collapsible Group Item #1
+                                        </a>
+                                    </h5>
+                                </div>
+
+                                <div id="collapseOne" class="collapse" role="tabpanel"
+                                     data-parent="#accordion">
+                                    <div class="card-body">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                             aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">اضافه کردن نیازمندی</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">عنوان</label>
+                                                <input type="text" class="form-control" id="requirement-title">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="message-text" class="col-form-label">شرح
+                                                    نیازمندی</label>
+                                                <textarea class="form-control" id="requirement-desc"></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">بی‌خیال
+                                        </button>
+                                        <button id='submit-requirement' type="button" class="btn btn-primary">
+                                            اضافه‌کردن
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="accomplishments">موفقیت‌ها</label>
+                            <textarea rows="4" class="form-control" id="accomplishments" placeholder=""></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">اضافه کردن کاربر</button>
+                </form>
+            </div>
+            <div class="col-md-2 d-none d-md-block">
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        var number = 1;
+        $('#exampleModal').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            modal.find('.modal-title').text('');
+            modal.find('.modal-body input').val('');
+        });
+        $('#submit-requirement').on('click', function (event) {
+            var card = $('#template-card').clone();
+            card.removeClass('d-none');
+            card.find('a').attr('href', '#collapse' + number);
+            card.find('#collapseOne').attr('id', 'collapse' + number);
+            card.find('a').html($('#requirement-title').val());
+            card.find('.card-body').html($('#requirement-desc').val());
+            card.appendTo('#accordion');
+            number += 1;
+            $('#exampleModal').modal('hide');
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#img-preview')
+                        .attr('src', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+{% endblock %}

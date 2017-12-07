@@ -15,3 +15,7 @@ def volunteer(request):
 
 def child_information(request):
     return render(request, 'main/child-information.html', {})
+
+
+def add_child(request):
+    return render(request, 'main/add-child.html', {})
