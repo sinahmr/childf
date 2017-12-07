@@ -115,7 +115,8 @@ class Sponsorship(models.Model):
 
 class Letter(models.Model):
     child = models.ForeignKey(Child, on_delete=models.CASCADE)
-    text = models.TextField(blank=False, null=False)
+    title = models.CharField(max_length=200, blank=False, null=False)
+    content = models.TextField(blank=False, null=False)
     receiver = models.CharField(max_length=1, choices=LETTER_RECEIVER, blank=False, null=False)
     verified = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
