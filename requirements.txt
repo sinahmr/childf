@@ -1,1 +1,2 @@
 django
+django_extensions==1.9.8
