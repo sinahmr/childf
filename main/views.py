@@ -7,3 +7,7 @@ def home(request):
 
 def volunteer(request):
     return render(request, 'main/base-volunteer.html', {})
+
+
+def child_information(request):
+    return render(request, 'main/child-information.html', {})
