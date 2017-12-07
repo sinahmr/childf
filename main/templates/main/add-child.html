@@ -48,6 +48,16 @@
                                            aria-expanded="false">
                                             Collapsible Group Item #1
                                         </a>
+                                        <span class="badge badge-danger d-none">فوری</span>
+                                        <button type="button" onclick="make_urgent(this);"
+                                                class="btn btn-danger btn-sm m-1 float-left urgent">فوری
+                                            کردن
+                                        </button>
+                                        <button type="button" onclick="remove_urgent(this);"
+                                                class="btn btn-outline-danger btn-sm m-1 float-left urgent-remove d-none">
+                                            حذف
+                                            فوری
+                                        </button>
                                     </h5>
                                 </div>
 
@@ -124,6 +134,21 @@
             number += 1;
             $('#exampleModal').modal('hide');
         });
+
+        function make_urgent(event) {
+            $('.badge').addClass('d-none');
+            $('.urgent-remove').addClass('d-none');
+            $('.urgent').removeClass('d-none');
+            $(event).parent().find('.badge').removeClass('d-none');
+            $(event).parent().find('.urgent-remove').removeClass('d-none');
+            $(event).parent().find('.urgent').addClass('d-none');
+        }
+
+        function remove_urgent(event) {
+            $(event).parent().find('.badge').addClass('d-none');
+            $(event).parent().find('.urgent-remove').addClass('d-none');
+            $(event).parent().find('.urgent').removeClass('d-none');
+        }
 
         function readURL(input) {
             if (input.files && input.files[0]) {
