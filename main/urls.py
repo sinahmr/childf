@@ -6,4 +6,5 @@ urlpatterns = [
     url(r'^volunteer/', views.volunteer),
     url(r'^child-information/', views.child_information),
     url(r'^add/', views.add_child),
+    url(r'^child/letter/', views.letter),
 ]

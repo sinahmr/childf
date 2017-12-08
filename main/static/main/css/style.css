@@ -19,3 +19,7 @@ body {
     height: auto;
     padding: 10px;
 }
+
+.letter .radio-item {
+    margin-right: 30px;
+}

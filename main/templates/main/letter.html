@@ -1,0 +1,56 @@
+{% extends 'main/base-child.html' %}
+{% block content %}
+<div class="container-fluid content">
+    <div class="row">
+        <div class="col-md-1 hidden-sm">
+        </div>
+        <div class="col-md-10 col-sm-12 bg-light letter">
+            <h3 class="card-title">ارسال نامه</h3>
+            <p class="card-text">فرستنده: {{ child.name }}</p>
+
+            <form>
+                <div class="form-group row">
+                    <label for="LetterTitle" class="col-sm-2 col-form-label">عنوان نامه</label>
+                    <div class="col-sm-10">
+                        <input type="text" maxlength="200" class="form-control" id="LetterTitle" placeholder="عنوان نامه را وارد کنید">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="LetterContent" class="col-sm-2 col-form-label">محتوای نامه</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="LetterContent" rows="3"></textarea>
+                    </div>
+                </div>
+                <fieldset class="form-group">
+                    <div class="row">
+                        <legend class="col-form-legend col-sm-2">گیرنده‌ی نامه</legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="LetterReceiverRadios"
+                                           value="volunteer" checked>
+                                    <span class="radio-item">مددکاران</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="LetterReceiverRadios"
+                                           value="donor">
+                                    <span class="radio-item">همیاران</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-group row">
+                    <div class="col-sm-10">
+                        <button type="submit" class="btn btn-primary">ارسال</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-1 hidden-sm">
+        </div>
+    </div>
+</div>
+{% endblock %}

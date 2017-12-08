@@ -37,3 +37,10 @@ def child_information(request):
 
 def add_child(request):
     return render(request, 'main/add-child.html', {})
+
+
+def letter(request):
+    child = {
+        'name': 'علی احمدی',
+    }
+    return render(request, 'main/letter.html', {'child': child})
