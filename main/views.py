@@ -48,3 +48,12 @@ def letter(request):
 
 def login(request):
     return render(request, 'main/login.html', {})
+
+
+def profile(request):
+    user = {'first_name': 'علی',
+            'last_name': 'علوی',
+            'email': 'info@support.com',
+            'province': 'تهران',
+            'accomplishments': 'کسب رتبه‌ی اول'}
+    return render(request, 'main/profile.html', {'user': user})
