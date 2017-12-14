@@ -44,3 +44,7 @@ def letter(request):
         'name': 'علی احمدی',
     }
     return render(request, 'main/letter.html', {'child': child})
+
+
+def login(request):
+    return render(request, 'main/login.html', {})

@@ -1,0 +1,32 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <div class="container-fluid content bg-light" style="height: 100vh;margin-top: 0; padding-top: 10px;">
+        <div class="row">
+            <div class="col-md-1 hidden-sm">
+            </div>
+            <div class="col-md-10 col-sm-12 bg-light">
+                <div class="card card-container" style="padding-left: 20px;padding-right: 20px;width: 300px; margin: 0 auto;">
+                    <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"/>
+                    <p id="profile-name" class="profile-name-card"></p>
+                    <form class="form-signin">
+                        <span id="reauth-email" class="reauth-email"></span>
+                        <input type="email" id="inputEmail" class="form-control" placeholder="آدرس ایمیل" style="margin-bottom: 10px;" required autofocus>
+                        <input type="password" id="inputPassword" class="form-control" placeholder="رمز عبور" style="margin-bottom: 10px;" required>
+                        <div id="remember" class="checkbox">
+                            <label>
+                                <input type="checkbox" value="remember-me" style="margin-bottom: 10px;"> مرا به خاطر بسپار
+                            </label>
+                        </div>
+                        <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" style="margin-bottom: 10px;">ورود</button>
+                    </form>
+                    <a href="#" class="forgot-password" style="margin-bottom: 10px;">
+  رمز عبور خود را فراموش کرده‌ام!
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-1 hidden-sm">
+            </div>
+        </div>
+    </div>
+{% endblock %}
