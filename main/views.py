@@ -54,6 +54,7 @@ def profile(request):
     user = {'first_name': 'علی',
             'last_name': 'علوی',
             'email': 'info@support.com',
+            'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
             'province': 'تهران',
             'accomplishments': 'کسب رتبه‌ی اول'}
     return render(request, 'main/profile.html', {'user': user})
