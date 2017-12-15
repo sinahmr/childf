@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     url(r'^home/', views.home),
-    url(r'^volunteer/$', views.volunteer, name='volunteer_children'),
+    url(r'^volunteer/children$', views.volunteer, name='volunteer_children'),
     url(r'^child-information/', views.child_information, name='child_information'),
     url(r'^(?P<user_class>\w+)/add/', views.add_user, name='add_user'),
     url(r'^(?P<user_class>\w+)/edit/', views.modify_user),
