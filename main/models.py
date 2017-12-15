@@ -106,7 +106,6 @@ class Support(models.Model):
 class Sponsorship(models.Model):
     child = models.ForeignKey(Child, on_delete=models.CASCADE)
     sponsor = models.ForeignKey(Donor, on_delete=models.CASCADE, blank=True, null=True)
-    institute_sponsored = models.BooleanField(default=False)  # TODO Fazli :/
 
     class Meta:
         verbose_name = 'کفالت'
@@ -130,7 +129,7 @@ class Need(models.Model):
     child = models.ForeignKey(Child, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField()
-    cost = models.IntegerField(blank=False, null=False)  # TODO
+    cost = models.IntegerField(blank=False, null=False)
     resolved = models.BooleanField(default=False)
     urgent = models.BooleanField(default=False)
 
