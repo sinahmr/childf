@@ -36,7 +36,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            {% if user_type == 'child' %}
+                            {% if user_class == 'child' %}
                                 <div class="form-group">
                                     <label for="province">استان</label>
                                     <select class="form-control" id="Province">
@@ -65,7 +65,7 @@
                             </div>
                         </div>
                     </div>
-                    {% if user_type == 'child' %}
+                    {% if user_class == 'child' %}
                         <div class="form-group">
                             <label for="accomplishments">موفقیت‌ها</label>
                             <textarea rows="4" class="form-control"

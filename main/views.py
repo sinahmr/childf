@@ -36,19 +36,20 @@ def child_information(request):
     return render(request, 'main/child-information.html', {'child': child, 'user_type': 'child'})
 
 
-def add_user(request, user_type):
-    if user_type not in ['admin', 'child', 'volunteer', 'donor']:
+def add_user(request, user_class):
+    if user_class not in ['admin', 'child', 'volunteer', 'donor']:
         raise Http404("User type is not valid!")
     return render(request, 'main/modify-user.html', {
         'user': None,
         'all_provinces': PROVINCES,
         'all_genders': GENDER,
-        'user_type': user_type
+        'user_class': user_class,
+        'user_type': 'admin'
     })
 
 
-def modify_user(request, user_type):
-    if user_type not in ['admin', 'child', 'volunteer', 'donor']:
+def modify_user(request, user_class):
+    if user_class not in ['admin', 'child', 'volunteer', 'donor']:
         raise Http404("User type is not valid!")
     user = {
         'first_name': 'علی',
@@ -77,7 +78,8 @@ def modify_user(request, user_type):
         'user': user,
         'all_provinces': PROVINCES,
         'all_genders': GENDER,
-        'user_type': user_type
+        'user_class': user_class,
+        'user_type': 'admin'
     })
 
 
