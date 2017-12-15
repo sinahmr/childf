@@ -7,4 +7,6 @@ urlpatterns = [
     url(r'^child-information/', views.child_information),
     url(r'^add/', views.add_child),
     url(r'^child/letter/', views.letter),
+    url(r'^child/request/', views.send_request),
+    url(r'^donor/purchase/', views.purchase),
 ]

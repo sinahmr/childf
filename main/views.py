@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from main.utils import get_int
 
 
 def home(request):
@@ -44,3 +45,28 @@ def letter(request):
         'name': 'علی احمدی',
     }
     return render(request, 'main/letter.html', {'child': child})
+
+
+def send_request(request):
+    child = {
+        'name': 'علی احمدی',
+    }
+    return render(request, 'main/send-request.html', {'child': child})
+
+
+def purchase(request):
+    need_id = get_int(request.GET.get('need_id'))
+    if need_id:
+        # need = Need.objects.get(pk=need_id)
+        need = {
+            'child': {
+                'name': 'علی احمدی'
+            },
+            'title': 'خرید فیفا ۲۰۱۸',
+            'description': 'خرید بازی فیفا ۲۰۱۸',
+            'cost': '۱۵۰۰۰۰'
+
+        }
+    else:
+        need = None
+    return render(request, 'main/purchase.html', {'need': need})
