@@ -17,7 +17,7 @@
                                     <h4 class="card-title">{{ child.name }}</h4>
                                     <h6 class="card-subtitle mb-2 text-muted">تهران</h6>
                                     <p class="card-text">به این کودک نیازمند کمک کنید. علی ۷ ساله از تهران</p>
-                                    <a href="#" class="btn btn-primary">مشخصات نیازمند</a>
+                                    <a href="{% url 'child_information' %}" class="btn btn-primary">مشخصات نیازمند</a>
                                     <br/><br/>
                                     <a href="javascript:removeChild({{ child.id }})" class="btn btn-success">تایید
                                         نیازمند</a>
