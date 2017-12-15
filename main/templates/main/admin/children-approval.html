@@ -1,4 +1,4 @@
-{% extends 'main/base-volunteer.html' %}
+{% extends 'main/admin/base-admin.html' %}
 
 {% block content %}
     <div class="container-fluid content">
@@ -6,6 +6,7 @@
             <div class="col-md-1 d-none d-md-block">
             </div>
             <div class="col-md-10 col-sm-12 bg-light main-content">
+                <h2>تایید نیازمندان</h2>
                 <div class="row">
                     {% for child in children %}
                         <div id="child-card-{{ child.id }}" class="col-md-3 col-sm-12 child-card">

@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^profile/', views.profile),
     url(r'^child/request/', views.send_request),
     url(r'^donor/purchase/', views.purchase),
-    url(r'^admin/activities/', views.activities),
-    url(r'^admin/approval/', views.approval),
-    url(r'^admin/purchase/', views.admin_purchases),
+    url(r'^admin/activities/', views.activities, name='admin_activities'),
+    url(r'^admin/approval/', views.approval, name='admin_approvals'),
+    url(r'^admin/purchase/', views.admin_purchases, name='admin_purchases'),
 ]

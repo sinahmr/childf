@@ -99,7 +99,7 @@ def activities(request):
                       {'date': '۲۳ آذر ۱۳۹۶', 'user': 'امین امینی (همیار)',
                        'description': 'تحت کفالت قرار دادن'}
                   ] * 2
-    return render(request, 'main/activities.html', {'activities': activities})
+    return render(request, 'main/admin/activities.html', {'activities': activities})
 
 
 def admin_purchases(request):
