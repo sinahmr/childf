@@ -22,7 +22,7 @@
                                 <div class="card-body">
                                     <p class="card-text">نام نیازمند: {{ need.child.name }}</p>
                                     <p class="card-text">عنوان نیاز: {{ need.title }}</p>
-                                    <p class="card-text">توضیحات نیاز: {{ need.description }}</p>
+                                    <p class="card-text">توضیحات نیاز: {{ need.description|linebreaks }}</p>
                                     <p class="card-text">هزینه‌ی نیاز: {{ need.cost }} تومان</p>
                                 </div>
                             </div>

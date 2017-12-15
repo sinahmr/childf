@@ -126,7 +126,7 @@
                                             <div id="old-need-collapse{{ forloop.counter }}" class="collapse"
                                                  role="tabpanel"
                                                  data-parent="#accordion">
-                                                <div class="card-body">{{ need.description }}</div>
+                                                <div class="card-body">{{ need.description|linebreaks }}</div>
                                             </div>
                                         </div>
                                     {% endfor %}
