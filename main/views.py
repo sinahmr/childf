@@ -102,10 +102,32 @@ def activities(request):
     return render(request, 'main/activities.html', {'activities': activities})
 
 
+def admin_purchases(request):
+    purchases = [
+                    {'date': '۲۴ آذر ۱۳۹۶', 'donor': 'علی حسینی',
+                     'need': 'هزینه ثبت نام', 'need_amount': 10000, 'child': 'رضا امین زاده'},
+                    {'date': '۲۴ آذر ۱۳۹۶', 'donor': 'حسن حسینی',
+                     'need': 'هزینه بیمارستان', 'need_amount': 30000, 'child': 'رضا امین زاده'},
+                ] * 3
+    purchases += [
+                     {'date': '۲۳ آذر ۱۳۹۶', 'donor': 'علی قلی زاده',
+                      'need': 'هزینه مسکن', 'need_amount': 122300, 'child': 'هادی فضلی'},
+                     {'date': '۲۳ آذر ۱۳۹۶', 'donor': 'سارا رضایی',
+                      'need': 'هزینه بیمه', 'need_amount': 1002000, 'child': 'سینا امینی'},
+                 ] * 3
+    purchases += [
+        {'date': '۲۲ آذر ۱۳۹۶', 'donor': 'علی قلی زاده',
+         'need': '', 'need_amount': 122300, 'child': 'موسسه'},
+        {'date': '۲۲ آذر ۱۳۹۶', 'donor': 'سارا رضایی',
+         'need': '', 'need_amount': 1002000, 'child': 'موسسه'},
+    ]
+    return render(request, 'main/admin/purchases.html', {'purchases': purchases})
+
+
 def approval(request):
     children = [{
         'id': child_id,
         'name': 'علی احمدی',
         'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
     } for child_id in range(1, 10)]
-    return render(request, 'main/children-approval.html', {'children': children})
+    return render(request, 'main/admin/children-approval.html', {'children': children})
