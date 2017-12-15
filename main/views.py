@@ -207,3 +207,23 @@ def admin_children(request):
         'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
     }] * 10
     return render(request, 'main/children.html', {'children': children, 'show_all': True, 'user_type': 'admin'})
+
+
+def admin_unresolveds(request):
+    needs = [
+        {
+            'title': 'خرید فیفا ۹۹',
+            'description': 'خرید بازی فیفا ۹۹',
+            'cost': '۱۰۰۰',
+            'urgent': True,
+            'child': 'علی احمدی',
+        },
+        {
+            'title': 'خرید فیفا ۲۰۱۸',
+            'description': 'خرید بازی فیفا ۲۰۱۸',
+            'cost': '۱۵۰۰۰۰',
+            'urgent': False,
+            'child': 'علی احمدی',
+        }
+    ] * 3
+    return render(request, 'main/admin/unresolveds.html', {'needs': needs, 'user_type': 'admin'})
