@@ -37,7 +37,10 @@
             </span>
                 <a href="{% url 'profile' %}" class="btn btn-outline-light mr-2">پروفایل</a>
             <button type="button" class="btn btn-outline-light mr-2">خروج</button>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-light mr-auto    ">ورود</a>
             {% endif %}
+
         </div>
 
 </nav>
