@@ -2,24 +2,21 @@
     <li class="nav-item active">
         <a class="nav-link" href="#">مددکار<span class="sr-only">(current)</span></a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">نیازمندان</a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownChilds" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            نیازمندان
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownChilds">
+            <a class="dropdown-item" href="{% url 'volunteer_children' %}">لیست نیازمندان</a>
+            <a class="dropdown-item" href="{% url 'add_child' %}">اضافه کردن نیازمند</a>
+            <a class="dropdown-item" href="#">نیازهای برطرف نشده</a>
+        </div>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="#">Pricing</a>
     </li>
     <li class="nav-item">
         <a class="nav-link disabled" href="#">Disabled</a>
-    </li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-           aria-haspopup="true" aria-expanded="false">
-            Dropdown link
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
-        </div>
     </li>
 </ul>
