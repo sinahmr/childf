@@ -49,6 +49,18 @@
                                         {% endfor %}
                                     </select>
                                 </div>
+                                {% if user_type == 'admin' %}
+                                    <div class="form-group">
+                                        <label for="volunteer">مددکار</label>
+                                        <select class="form-control autocomplete-select" id="volunteer">
+                                            <option value="1">علی احمدی</option>
+                                            <option value="1">علی قلی</option>
+                                            <option value="1">علی رضا</option>
+                                            <option value="1">علی صفا</option>
+                                            <option value="1">علی سینا</option>
+                                        </select>
+                                    </div>
+                                {% endif %}
                             {% endif %}
                         </div>
                         <div class="col-md-4 col-sm-12">
@@ -225,5 +237,9 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
+        $(document).ready(function () {
+            $('.autocomplete-select').select2();
+        });
     </script>
 {% endblock %}
