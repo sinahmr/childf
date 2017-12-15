@@ -100,3 +100,12 @@ def activities(request):
                        'description': 'تحت کفالت قرار دادن'}
                   ] * 2
     return render(request, 'main/activities.html', {'activities': activities})
+
+
+def approval(request):
+    children = [{
+        'id': child_id,
+        'name': 'علی احمدی',
+        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
+    } for child_id in range(1, 10)]
+    return render(request, 'main/children-approval.html', {'children': children})

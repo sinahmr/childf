@@ -1,0 +1,44 @@
+{% extends 'main/base-volunteer.html' %}
+
+{% block content %}
+    <div class="container-fluid content">
+        <div class="row">
+            <div class="col-md-1 d-none d-md-block">
+            </div>
+            <div class="col-md-10 col-sm-12 bg-light main-content">
+                <div class="row">
+                    {% for child in children %}
+                        <div id="child-card-{{ child.id }}" class="col-md-3 col-sm-12 child-card">
+                            <div class="card" style="width: auto;">
+                                <img class="card-img-top"
+                                     src="{{ child.img_url }}"
+                                     alt="Card image cap">
+                                <div class="card-body">
+                                    <h4 class="card-title">{{ child.name }}</h4>
+                                    <h6 class="card-subtitle mb-2 text-muted">تهران</h6>
+                                    <p class="card-text">به این کودک نیازمند کمک کنید. علی ۷ ساله از تهران</p>
+                                    <a href="#" class="btn btn-primary">مشخصات نیازمند</a>
+                                    <br/><br/>
+                                    <a href="javascript:removeChild({{ child.id }})" class="btn btn-success">تایید
+                                        نیازمند</a>
+
+                                    <a href="javascript:removeChild({{ child.id }})" class="btn btn-danger">رد
+                                        نیازمند</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-1 d-none d-md-block">
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript">
+        function removeChild(id) {
+            $('#child-card-' + id).fadeOut("slow");
+        }
+    </script>
+{% endblock %}
