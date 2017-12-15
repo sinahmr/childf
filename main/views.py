@@ -131,3 +131,11 @@ def approval(request):
         'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
     } for child_id in range(1, 10)]
     return render(request, 'main/admin/children-approval.html', {'children': children, 'user_type': 'admin'})
+
+
+def admin_children(request):
+    children = [{
+        'name': 'علی احمدی',
+        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
+    }] * 10
+    return render(request, 'main/children.html', {'children': children, 'show_all': True, 'user_type': 'admin'})

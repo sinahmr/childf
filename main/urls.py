@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^admin/activities/', views.activities, name='admin_activities'),
     url(r'^admin/approval/', views.approval, name='admin_approvals'),
     url(r'^admin/purchase/', views.admin_purchases, name='admin_purchases'),
+    url(r'^admin/children/', views.admin_children, name='admin_children'),
 ]
