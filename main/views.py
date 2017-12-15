@@ -136,6 +136,31 @@ def child_purchases(request):
     return render(request, 'main/child/purchases.html', {'purchases': purchases, 'user_type': 'child'})
 
 
+def volunteer_letter_verification(request):
+    letters = [
+        {
+            'id': letter_id,
+            'child': {
+                'first_name': 'انگولو',
+                'last_name': 'کانته'
+            },
+            'title': 'چطوری همیارم؟',
+            'content': 'همیار جان من فلانی هستم.\nحالت چطور است؟',
+            'date': '۲ آذر ۱۳۹۶'
+        } if letter_id % 2 == 1 else
+        {
+            'id': letter_id,
+            'child': {
+                'first_name': 'تیمو',
+                'last_name': 'باکایوکو'
+            },
+            'title': 'ناتاناییل؟',
+            'content': 'ناتانائیل،آرزو مکن که خدا را جز در همه جا بیابی.\nخب؟',
+            'date': '۲ آبان ۱۳۹۶'
+        } for letter_id in range(1, 10)]
+    return render(request, 'main/volunteer/letter-verification.html', {'letters': letters, 'user_type': 'volunteer'})
+
+
 def donor_purchases(request):
     purchases = [
                     {

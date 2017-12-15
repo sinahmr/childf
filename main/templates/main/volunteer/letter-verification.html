@@ -1,0 +1,48 @@
+{% extends 'main/base.html' %}
+{% block content %}
+    <div class="container-fluid content">
+        <div class="row">
+            <div class="col-md-1 d-none d-md-block">
+            </div>
+            <div class="col-md-10 col-sm-12 bg-light main-content">
+                <h2>تایید نامه‌های در دست تایید</h2>
+                <br/>
+                {% for letter in letters %}
+                    <div id="letter-{{ letter.id }}">
+                        <div class="row">
+                            <div class="col-md-1 hidden-sm">
+                            </div>
+                            <div class="col-md-10 col-sm-12 bg-light">
+                                <div class="card">
+                                    <div class="card-header text-center">فرستنده: {{ letter.child.first_name }} {{ letter.child.last_name }}</div>
+                                    <div class="card-body">
+                                        <h5 class="card-title text-center">{{ letter.title }}</h5>
+                                        <p class="card-text">{{ letter.content|linebreaks }}</p>
+                                        <p>تاریخ: {{ letter.date }}</p>
+                                        <div class="text-center">
+                                            <a href="javascript:removeLetter({{ letter.id }})" class="btn btn-success">تایید نامه</a>
+                                            <a href="javascript:removeLetter({{ letter.id }})" class="btn btn-danger">رد نامه</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-1 hidden-sm">
+                            </div>
+                        </div>
+                        <br/>
+                    </div>
+                {% endfor %}
+            </div>
+        <div class="col-md-1 d-none d-md-block">
+        </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript">
+        function removeLetter(id) {
+            $('#letter-' + id).fadeOut('slow');
+        }
+    </script>
+{% endblock %}
