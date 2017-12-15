@@ -10,25 +10,53 @@
                     <div class="row">
                         <div class="col-md-8 col-sm-12">
                             <div class="form-group">
-                                <label for="name">نام و نام خانوادگی</label>
-                                <input type="text" class="form-control" id="name"
-                                       placeholder="">
+                                <label for="first_name">نام</label>
+                                <input type="text" class="form-control" id="first_name"
+                                       {% if user %}value="{{ user.first_name }}" {% endif %}>
                             </div>
                             <div class="form-group">
-                                <label for="age">سن</label>
-                                <input type="number" class="form-control" id="age" placeholder="" min="1"
-                                       max="18">
+                                <label for="last_name">نام</label>
+                                <input type="text" class="form-control" id="last_name"
+                                       {% if user %}value="{{ user.last_name }}" {% endif %}>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">ایمیل</label>
+                                <input type="email" maxlength="200" class="form-control" id="email"
+                                       {% if user %}value="{{ user.email }}" {% endif %}>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">جنسیت</label>
+                                <select class="form-control" id="gender">
+                                    {% for code, gender in all_genders %}
+                                        {% if user and code == user.gender %}
+                                            <option value="{{ code }}" selected>{{ gender }}</option>
+                                        {% else %}
+                                            <option value="{{ code }}">{{ gender }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="province">استان</label>
-                                <input type="text" class="form-control" id="province"
-                                       placeholder="">
+                                <select class="form-control" id="Province">
+                                    {% for code, province in all_provinces %}
+                                        {% if user and code == user.province %}
+                                            <option value="{{ code }}" selected>{{ province }}</option>
+                                        {% else %}
+                                            <option value="{{ code }}">{{ province }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <div>
-                                <img id="img-preview" src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
-                                     class="rounded img-fluid float-right">
+                                <img id="img-preview" class="rounded img-fluid float-right"
+                                        {% if user and user.img_url %}
+                                     src="{{ user.img_url }}"
+                                        {% else %}
+                                     src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
+                                        {% endif %}>
                                 <label class="btn btn-outline-info btn-file btn-sm m-1">
                                     آپلود <input type="file" style="display: none;" onchange="readURL(this);">
                                 </label>
@@ -36,7 +64,13 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="province">نیاز‌ها</label>
+                        <label for="accomplishments">موفقیت‌ها</label>
+                        <textarea rows="4" class="form-control"
+                                  id="accomplishments">{% if user %}{{ user.accomplishments }}{% endif %}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="needs">نیاز‌ها&nbsp;&nbsp;</label>
                         <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal"
                                 data-target="#exampleModal">اضافه کردن
                         </button>
@@ -67,6 +101,34 @@
                                     </div>
                                 </div>
                             </div>
+                            {% if user and user.needs %}
+                                {% for need in user.needs %}
+                                    <div class="card" id="template-card">
+                                        <div class="card-header" role="tab">
+                                            <h5 class="mb-0">
+                                                <a class="collapsed" data-toggle="collapse"
+                                                   href="#old-need-collapse{{ forloop.counter }}"
+                                                   aria-expanded="false">{{ need.title }}</a>
+                                                <span class="badge badge-danger {% if not need.urgent %}d-none{% endif %}">فوری</span>
+                                                <button type="button" onclick="make_urgent(this);"
+                                                        class="btn btn-danger btn-sm m-1 float-left urgent {% if need.urgent %}d-none{% endif %}">
+                                                    فوری کردن
+                                                </button>
+                                                <button type="button" onclick="remove_urgent(this);"
+                                                        class="btn btn-outline-danger btn-sm m-1 float-left urgent-remove {% if not need.urgent %}d-none{% endif %}">
+                                                    حذف فوری
+                                                </button>
+                                            </h5>
+                                        </div>
+
+                                        <div id="old-need-collapse{{ forloop.counter }}" class="collapse"
+                                             role="tabpanel"
+                                             data-parent="#accordion">
+                                            <div class="card-body">{{ need.description }}</div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
                              aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -101,12 +163,12 @@
                             </div>
                         </div>
 
-
-                        <div class="form-group">
-                            <label for="accomplishments">موفقیت‌ها</label>
-                            <textarea rows="4" class="form-control" id="accomplishments" placeholder=""></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">اضافه کردن کاربر</button>
+                        <br/>
+                        {% if user %}
+                            <button type="submit" class="btn btn-primary">ثبت تغییرات</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary">اضافه کردن کاربر</button>
+                        {% endif %}
                 </form>
             </div>
             <div class="col-md-2 d-none d-md-block">

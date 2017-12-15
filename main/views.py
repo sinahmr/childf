@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from main.utils import get_int
+from main.constants import PROVINCES, GENDER
 
 
 def home(request):
@@ -37,7 +38,43 @@ def child_information(request):
 
 
 def add_child(request):
-    return render(request, 'main/add-child.html', {'user_type': 'volunteer'})
+    return render(request, 'main/modify-child.html', {
+        'user': None,
+        'all_provinces': PROVINCES,
+        'all_genders': GENDER,
+        'user_type': 'volunteer'
+    })
+
+
+def edit_child(request):
+    user = {
+        'first_name': 'علی',
+        'last_name': 'علوی',
+        'email': 'info@support.com',
+        'gender': 'M',
+        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
+        'province': 'TEH',
+        'accomplishments': 'کسب رتبه‌ی اول',
+        'needs': [
+            {
+                'title': 'خرید فیفا ۹۹',
+                'description': 'خرید بازی فیفا ۹۹',
+                'cost': '۱۰۰۰',
+                'urgent': True
+            },
+            {
+                'title': 'خرید فیفا ۲۰۱۸',
+                'description': 'خرید بازی فیفا ۲۰۱۸',
+                'cost': '۱۵۰۰۰۰',
+                'urgent': False
+            }
+        ]
+    }
+    return render(request, 'main/modify-child.html', {
+        'user': user,
+        'all_provinces': PROVINCES,
+        'all_genders': GENDER
+    })
 
 
 def letter(request):
