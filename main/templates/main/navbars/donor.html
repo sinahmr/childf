@@ -2,11 +2,13 @@
     <li class="nav-item active">
         <a class="nav-link" href="#">همیار<span class="sr-only">(current)</span></a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'donor_purchase' %}">پرداخت به موسسه</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'donor_purchases' %}">گزارش‌گیری وجوه پرداختی</a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownChilds" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">پرداخت</a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownChilds">
+            <a class="dropdown-item" href="{% url 'donor_purchase' %}">پرداخت به موسسه</a>
+            <a class="dropdown-item" href="{% url 'donor_purchases' %}">گزارش‌گیری وجوه پرداختی</a>
+        </div>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'sponsored_children' %}">گزارش کودکان تحت کفالت</a>
