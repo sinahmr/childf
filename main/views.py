@@ -105,6 +105,13 @@ def send_request(request):
     return render(request, 'main/send-request.html', {'child': child, 'user_type': 'child'})
 
 
+def change_volunteer(request):
+    return render(request, 'main/change-volunteer.html', {
+        'volunteer_name': 'کریم بنزما',
+        'user_type': 'child'
+    })
+
+
 def purchase(request):
     need_id = get_int(request.GET.get('need_id'))
     if need_id:
