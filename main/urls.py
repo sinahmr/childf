@@ -1,4 +1,6 @@
 from django.conf.urls import url
+from django.views.generic import TemplateView
+
 from . import views
 
 urlpatterns = [
@@ -16,4 +18,11 @@ urlpatterns = [
     url(r'^admin/approval/', views.approval, name='admin_approvals'),
     url(r'^admin/purchase/', views.admin_purchases, name='admin_purchases'),
     url(r'^admin/children/', views.admin_children, name='admin_children'),
+
+    url(r'^history/', TemplateView.as_view(template_name='main/static/history.html'), name='static_history'),
+    url(r'^vision/', TemplateView.as_view(template_name='main/static/vision.html'), name='static_vision'),
+    url(r'^chart/', TemplateView.as_view(template_name='main/static/chart.html'), name='static_chart'),
+    url(r'^sponsorship/', TemplateView.as_view(template_name='main/static/sponsorship.html'),
+        name='static_sponsorship'),
+    url(r'^faq/', TemplateView.as_view(template_name='main/static/faq.html'), name='static_faq'),
 ]

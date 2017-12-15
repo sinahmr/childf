@@ -30,6 +30,8 @@
                 {% include 'main/navbars/donor.html' %}
             {% elif user_type == 'volunteer' %}
                 {% include 'main/navbars/volunteer.html' %}
+            {% else %}
+                {% include 'main/navbars/anonymous.html' %}
             {% endif %}
             {% if user_type %}
             <span class="navbar-brand float-left">
@@ -38,7 +40,7 @@
                 <a href="{% url 'profile' %}" class="btn btn-outline-light mr-2">پروفایل</a>
             <button type="button" class="btn btn-outline-light mr-2">خروج</button>
             {% else %}
-                <a href="{% url 'login' %}" class="btn btn-outline-light mr-auto    ">ورود</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light mr-auto">ورود</a>
             {% endif %}
 
         </div>
