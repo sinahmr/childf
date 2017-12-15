@@ -5,10 +5,10 @@ from . import views
 
 urlpatterns = [
     url(r'^home/', views.home),
-    url(r'^volunteer/', views.volunteer, name='volunteer_children'),
+    url(r'^volunteer/$', views.volunteer, name='volunteer_children'),
     url(r'^child-information/', views.child_information, name='child_information'),
-    url(r'^child/add/', views.add_child, name='add_child'),
-    url(r'^child/edit/', views.edit_child),
+    url(r'^(?P<user_type>\w+)/add/', views.add_user, name='add_user'),
+    url(r'^(?P<user_type>\w+)/edit/', views.modify_user),
     url(r'^child/letter/', views.letter, name='child_letter'),
     url(r'^child/request/', views.send_request, name='child_request'),
     url(r'^child/change-volunteer/', views.change_volunteer, name='change_volunteer'),
