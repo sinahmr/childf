@@ -55,6 +55,7 @@ class AbstractUserInfo(models.Model):
     last_name = models.CharField(max_length=30, null=False)
     gender = models.CharField(max_length=1, choices=GENDER)
     date_of_birth = models.DateTimeField()
+    image = models.ImageField()
 
     class Meta:
         abstract = True
