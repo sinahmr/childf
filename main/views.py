@@ -11,7 +11,7 @@ def volunteer(request):
         'name': 'علی احمدی',
         'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
     }] * 10
-    return render(request, 'main/base-volunteer.html', {'children': children, 'show_all': True})
+    return render(request, 'main/children.html', {'children': children, 'show_all': True, 'user_type': 'donor'})
 
 
 def child_information(request):
@@ -33,18 +33,18 @@ def child_information(request):
                           }]
 
         }
-    return render(request, 'main/base-volunteer.html', {'child': child})
+    return render(request, 'main/child-information.html', {'child': child, 'user_type': 'child'})
 
 
 def add_child(request):
-    return render(request, 'main/add-child.html', {})
+    return render(request, 'main/add-child.html', {'user_type': 'volunteer'})
 
 
 def letter(request):
     child = {
         'name': 'علی احمدی',
     }
-    return render(request, 'main/letter.html', {'child': child})
+    return render(request, 'main/letter.html', {'child': child, 'user_type': 'child'})
 
 
 def login(request):
@@ -58,14 +58,14 @@ def profile(request):
             'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
             'province': 'تهران',
             'accomplishments': 'کسب رتبه‌ی اول'}
-    return render(request, 'main/profile.html', {'user': user})
+    return render(request, 'main/profile.html', {'user': user, 'user_type': 'child'})
 
 
 def send_request(request):
     child = {
         'name': 'علی احمدی',
     }
-    return render(request, 'main/send-request.html', {'child': child})
+    return render(request, 'main/send-request.html', {'child': child, 'user_type': 'child'})
 
 
 def purchase(request):
@@ -83,7 +83,7 @@ def purchase(request):
         }
     else:
         need = None
-    return render(request, 'main/purchase.html', {'need': need})
+    return render(request, 'main/purchase.html', {'need': need, 'user_type': 'donor'})
 
 
 def activities(request):
@@ -99,7 +99,7 @@ def activities(request):
                       {'date': '۲۳ آذر ۱۳۹۶', 'user': 'امین امینی (همیار)',
                        'description': 'تحت کفالت قرار دادن'}
                   ] * 2
-    return render(request, 'main/admin/activities.html', {'activities': activities})
+    return render(request, 'main/admin/activities.html', {'activities': activities, 'user_type': 'admin'})
 
 
 def admin_purchases(request):
@@ -121,7 +121,7 @@ def admin_purchases(request):
         {'date': '۲۲ آذر ۱۳۹۶', 'donor': 'سارا رضایی',
          'need': '', 'need_amount': 1002000, 'child': 'موسسه'},
     ]
-    return render(request, 'main/admin/purchases.html', {'purchases': purchases})
+    return render(request, 'main/admin/purchases.html', {'purchases': purchases, 'user_type': 'admin'})
 
 
 def approval(request):
@@ -130,4 +130,4 @@ def approval(request):
         'name': 'علی احمدی',
         'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
     } for child_id in range(1, 10)]
-    return render(request, 'main/admin/children-approval.html', {'children': children})
+    return render(request, 'main/admin/children-approval.html', {'children': children, 'user_type': 'admin'})
