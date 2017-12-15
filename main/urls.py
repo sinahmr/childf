@@ -10,11 +10,12 @@ urlpatterns = [
     url(r'^child/letter/', views.letter, name='child_letter'),
     url(r'^child/request/', views.send_request, name='child_request'),
     url(r'^child/change-volunteer/', views.change_volunteer, name='change_volunteer'),
+    url(r'^child/purchases/', views.child_purchases, name='child_purchases'),
     url(r'^login/', views.login, name='login'),
     url(r'^profile/', views.profile, name='profile'),
     url(r'^donor/purchase/', views.purchase, name='donor_purchase'),
     url(r'^admin/activities/', views.activities, name='admin_activities'),
     url(r'^admin/approval/', views.approval, name='admin_approvals'),
-    url(r'^admin/purchase/', views.admin_purchases, name='admin_purchases'),
+    url(r'^admin/purchases/', views.admin_purchases, name='admin_purchases'),
     url(r'^admin/children/', views.admin_children, name='admin_children'),
 ]

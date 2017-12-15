@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from main.utils import get_int
+
 from main.constants import PROVINCES, GENDER
+from main.utils import get_int
 
 
 def home(request):
@@ -17,23 +18,23 @@ def volunteer(request):
 
 def child_information(request):
     child = {
-            'first_name': 'علی',
-            'last_name': 'احمدی',
-            'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
-            'province': 'تهران',
-            'accomplishments': 'کسب رتبه‌ی اول',
-            'need_set': [{'id': 1,
-                          'title': 'نیاز اول',
-                          'description': 'کمک هزینه‌ی تحصیلی',
-                          'cost': '۱۰۰',
-                          'urgent': 'True',
-                          'PurchaseForNeed_set': [{'id': 1,
-                                                   'payer': 'حسن بیاتی',
-                                                   'amount': '۲۰۰',
-                                                   'time': '۲۰ فروردین ۱۹۹۶'}]
-                          }]
+        'first_name': 'علی',
+        'last_name': 'احمدی',
+        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
+        'province': 'تهران',
+        'accomplishments': 'کسب رتبه‌ی اول',
+        'need_set': [{'id': 1,
+                      'title': 'نیاز اول',
+                      'description': 'کمک هزینه‌ی تحصیلی',
+                      'cost': '۱۰۰',
+                      'urgent': 'True',
+                      'PurchaseForNeed_set': [{'id': 1,
+                                               'payer': 'حسن بیاتی',
+                                               'amount': '۲۰۰',
+                                               'time': '۲۰ فروردین ۱۹۹۶'}]
+                      }]
 
-        }
+    }
     return render(request, 'main/child-information.html', {'child': child, 'user_type': 'child'})
 
 
@@ -110,6 +111,26 @@ def change_volunteer(request):
         'volunteer_name': 'کریم بنزما',
         'user_type': 'child'
     })
+
+
+def child_purchases(request):
+    purchases = [
+                    {
+                        'time': '۲۴ آذر ۱۳۹۶',
+                        'amount': '۱۲۳۰۰۰',
+                        'need': {
+                            'title': 'خرید فیفا ۲۰۱۸'
+                        },
+                    },
+                    {
+                        'time': '۲۵ آذر ۱۳۹۶',
+                        'amount': '۱۲۰۰۰۰',
+                        'need': {
+                            'title': 'خرید PES ۲۰۱۸'
+                        },
+                    }
+                ] * 5
+    return render(request, 'main/child/purchases.html', {'purchases': purchases, 'user_type': 'child'})
 
 
 def purchase(request):
