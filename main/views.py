@@ -84,3 +84,19 @@ def purchase(request):
     else:
         need = None
     return render(request, 'main/purchase.html', {'need': need})
+
+
+def activities(request):
+    activities = [
+                     {'date': '۲۴ آذر ۱۳۹۶', 'user': 'علی حسینی (مددکار)',
+                      'description': 'اضافه کردن نیازمند: امین رضازاده'},
+                     {'date': '۲۴ آذر ۱۳۹۶', 'user': 'حسین علی زاده (مددکار)',
+                      'description': 'اضافه کردن نیازمند: رضا امین‌زاده'}
+                 ] * 3
+    activities += [
+                      {'date': '۲۳ آذر ۱۳۹۶', 'user': 'قلی قلی‌زاده (همیار)',
+                       'description': 'پراخت نیاز'},
+                      {'date': '۲۳ آذر ۱۳۹۶', 'user': 'امین امینی (همیار)',
+                       'description': 'تحت کفالت قرار دادن'}
+                  ] * 2
+    return render(request, 'main/activities.html', {'activities': activities})

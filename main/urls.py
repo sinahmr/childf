@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^profile/', views.profile),
     url(r'^child/request/', views.send_request),
     url(r'^donor/purchase/', views.purchase),
+    url(r'^admin/activities/', views.activities),
 ]
