@@ -304,3 +304,21 @@ def admin_unresolveds(request):
         }
     ] * 3
     return render(request, 'main/admin/unresolveds.html', {'needs': needs, 'user_type': 'admin'})
+
+def admin_volunteers(request):
+    volunteers = [
+        {
+            'name': 'علی رضایی',
+            'child_count': 4,
+        },
+        {
+            'name': 'محمد محمدی',
+            'child_count': 3,
+        },
+        {
+            'name': 'مهدی میرزایی',
+            'child_count': 2,
+        },
+    ]
+    return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers, 'user_type': 'admin'})
+

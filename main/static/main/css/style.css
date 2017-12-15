@@ -29,3 +29,7 @@ body {
 .letter .radio-item {
     margin-right: 30px;
 }
+
+.small-number-input {
+    width: 40px;
+}

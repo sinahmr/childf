@@ -1,0 +1,62 @@
+{% extends 'main/base.html' %}
+{% block content %}
+    <div class="container-fluid content">
+        <div class="row">
+            <div class="col-md-1 d-none d-md-block">
+            </div>
+            <div class="col-md-10 col-sm-12 bg-light main-content">
+                <h2>مددکاران</h2>
+                <h5> نمایش مددکاران با کمتر از       <input type="number" class="small-number-input" placeholder="2" min="0"> نیازمند</h5>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">مددکار</th>
+                        <th scope="col">نیازمندان</th>
+                        <th scope="col">کارها</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for volunteer in volunteers %}
+                        <tr>
+                            <td>{{ volunteer.name }}</td>
+                            <td>
+                                <button type="button" class="btn btn-info" data-toggle="modal"
+                                        data-target="#exampleModal">
+                                    نیازمندان <span class="badge badge-light">{{ volunteer.child_count }}</span>
+                                </button>
+                            </td>
+                            <td><a href="{% url 'edit_user' 'volunteer' %}" class="btn btn-sm btn-outline-info">ویرایش
+                                مددکار</a></td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">نیازمندان تحت کفالت</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <a href="{% url 'child_information' %}">رضا رضایی</a> <br/>
+                                <a href="{% url 'child_information' %}">امین امینی</a> <br/>
+                                <a href="{% url 'child_information' %}">هادی سینایی</a> <br/>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1 d-none d-md-block">
+        </div>
+    </div>
+    </div>
+{% endblock %}
