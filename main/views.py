@@ -1,6 +1,6 @@
 from django.shortcuts import render, Http404
-from main.utils import get_int
 from main.constants import PROVINCES, GENDER
+from main.utils import get_int
 
 
 def home(request):
@@ -17,39 +17,39 @@ def volunteer(request):
 
 def child_information(request):
     child = {
-            'first_name': 'علی',
-            'last_name': 'احمدی',
-            'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
-            'province': 'تهران',
-            'accomplishments': 'کسب رتبه‌ی اول',
-            'need_set': [{'id': 1,
-                          'title': 'نیاز اول',
-                          'description': 'کمک هزینه‌ی تحصیلی',
-                          'cost': '۱۰۰',
-                          'urgent': 'True',
-                          'PurchaseForNeed_set': [{'id': 1,
-                                                   'payer': 'حسن بیاتی',
-                                                   'amount': '۲۰۰',
-                                                   'time': '۲۰ فروردین ۱۹۹۶'}]
-                          }]
-
-        }
+        'first_name': 'علی',
+        'last_name': 'احمدی',
+        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
+        'province': 'تهران',
+        'accomplishments': 'کسب رتبه‌ی اول',
+        'need_set': [{'id': 1,
+                      'title': 'نیاز اول',
+                      'description': 'کمک هزینه‌ی تحصیلی',
+                      'cost': '۱۰۰',
+                      'urgent': 'True',
+                      'PurchaseForNeed_set': [{'id': 1,
+                                               'payer': 'حسن بیاتی',
+                                               'amount': '۲۰۰',
+                                               'time': '۲۰ فروردین ۱۹۹۶'}]
+                      }]
+    }
     return render(request, 'main/child-information.html', {'child': child, 'user_type': 'child'})
 
 
-def add_user(request, user_type):
-    if user_type not in ['admin', 'child', 'volunteer', 'donor']:
+def add_user(request, user_class):
+    if user_class not in ['admin', 'child', 'volunteer', 'donor']:
         raise Http404("User type is not valid!")
     return render(request, 'main/modify-user.html', {
         'user': None,
         'all_provinces': PROVINCES,
         'all_genders': GENDER,
-        'user_type': user_type
+        'user_class': user_class,
+        'user_type': 'admin'
     })
 
 
-def modify_user(request, user_type):
-    if user_type not in ['admin', 'child', 'volunteer', 'donor']:
+def modify_user(request, user_class):
+    if user_class not in ['admin', 'child', 'volunteer', 'donor']:
         raise Http404("User type is not valid!")
     user = {
         'first_name': 'علی',
@@ -78,7 +78,8 @@ def modify_user(request, user_type):
         'user': user,
         'all_provinces': PROVINCES,
         'all_genders': GENDER,
-        'user_type': user_type
+        'user_class': user_class,
+        'user_type': 'admin'
     })
 
 
@@ -115,6 +116,54 @@ def change_volunteer(request):
         'volunteer_name': 'کریم بنزما',
         'user_type': 'child'
     })
+
+
+def child_purchases(request):
+    purchases = [
+                    {
+                        'time': '۲۴ آذر ۱۳۹۶',
+                        'amount': '۱۲۳۰۰۰',
+                        'need': {
+                            'title': 'خرید فیفا ۲۰۱۸'
+                        },
+                    },
+                    {
+                        'time': '۲۵ آذر ۱۳۹۶',
+                        'amount': '۱۲۰۰۰۰',
+                        'need': {
+                            'title': 'خرید PES ۲۰۱۸'
+                        },
+                    }
+                ] * 5
+    return render(request, 'main/child/purchases.html', {'purchases': purchases, 'user_type': 'child'})
+
+
+def donor_purchases(request):
+    purchases = [
+                    {
+                        'time': '۲۴ آذر ۱۳۹۶',
+                        'amount': '۱۲۳۰۰۰',
+                        'need': {
+                            'title': 'خرید فیفا ۲۰۱۸',
+                            'child': {
+                                'first_name': 'تیمو',
+                                'last_name': 'باکایوکو'
+                            }
+                        },
+                    },
+                    {
+                        'time': '۲۵ آذر ۱۳۹۶',
+                        'amount': '۱۲۰۰۰۰',
+                        'need': {
+                            'title': 'خرید PES ۲۰۱۸',
+                            'child': {
+                                'first_name': 'انگولو',
+                                'last_name': 'کانته'
+                            }
+                        },
+                    }
+                ]
+    return render(request, 'main/donor/purchases.html', {'purchases': purchases, 'user_type': 'donor'})
 
 
 def purchase(request):
@@ -210,3 +259,23 @@ def sponsored_children(request):
 
         }] * 5
     return render(request, 'main/sponsored-children.html', {'children': children, 'user_type': 'child'})
+
+
+def admin_unresolveds(request):
+    needs = [
+        {
+            'title': 'خرید فیفا ۹۹',
+            'description': 'خرید بازی فیفا ۹۹',
+            'cost': '۱۰۰۰',
+            'urgent': True,
+            'child': 'علی احمدی',
+        },
+        {
+            'title': 'خرید فیفا ۲۰۱۸',
+            'description': 'خرید بازی فیفا ۲۰۱۸',
+            'cost': '۱۵۰۰۰۰',
+            'urgent': False,
+            'child': 'علی احمدی',
+        }
+    ] * 3
+    return render(request, 'main/admin/unresolveds.html', {'needs': needs, 'user_type': 'admin'})
