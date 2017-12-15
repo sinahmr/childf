@@ -44,7 +44,7 @@
                             </div>
                             <div id="collapse{{ need.id }}" class="collapse" role="tabpanel" aria-labelledby="heading{{ need.id }}" data-parent="#accordion">
                                 <div class="card-body">
-                                    <p>{{ need.description }}</p>
+                                    <p>{{ need.description|linebreaks }}</p>
 
                                     <div class="float-left">{{ need.cost }} هزار تومان</div>
                                     <a href="{% url 'donor_purchase' %}?need_id=2" class="btn btn-primary" style="margin-top: 10px">پرداخت</a>

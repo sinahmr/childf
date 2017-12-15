@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^child/purchases/', views.child_purchases, name='child_purchases'),
     url(r'^login/', views.login, name='login'),
     url(r'^profile/', views.profile, name='profile'),
+    url(r'^volunteer/letter-verification/', views.volunteer_letter_verification, name='volunteer_letter_verification'),
     url(r'^donor/purchase/', views.purchase, name='donor_purchase'),
     url(r'^donor/purchases/', views.donor_purchases, name='donor_purchases'),
     url(r'^admin/activities/', views.activities, name='admin_activities'),
