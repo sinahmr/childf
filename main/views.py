@@ -1,5 +1,4 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, Http404
 from main.constants import PROVINCES, GENDER
 from main.utils import get_int
 
@@ -33,21 +32,24 @@ def child_information(request):
                                                'amount': '۲۰۰',
                                                'time': '۲۰ فروردین ۱۹۹۶'}]
                       }]
-
     }
     return render(request, 'main/child-information.html', {'child': child, 'user_type': 'child'})
 
 
-def add_child(request):
-    return render(request, 'main/modify-child.html', {
+def add_user(request, user_type):
+    if user_type not in ['admin', 'child', 'volunteer', 'donor']:
+        raise Http404("User type is not valid!")
+    return render(request, 'main/modify-user.html', {
         'user': None,
         'all_provinces': PROVINCES,
         'all_genders': GENDER,
-        'user_type': 'volunteer'
+        'user_type': user_type
     })
 
 
-def edit_child(request):
+def modify_user(request, user_type):
+    if user_type not in ['admin', 'child', 'volunteer', 'donor']:
+        raise Http404("User type is not valid!")
     user = {
         'first_name': 'علی',
         'last_name': 'علوی',
@@ -71,10 +73,11 @@ def edit_child(request):
             }
         ]
     }
-    return render(request, 'main/modify-child.html', {
+    return render(request, 'main/modify-user.html', {
         'user': user,
         'all_provinces': PROVINCES,
-        'all_genders': GENDER
+        'all_genders': GENDER,
+        'user_type': user_type
     })
 
 

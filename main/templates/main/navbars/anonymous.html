@@ -1,0 +1,23 @@
+<ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInfo" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            آشنایی با بنیاد کودک
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownInfo">
+            <a class="dropdown-item" href="{% url 'static_history' %}">تاریخچه</a>
+            <a class="dropdown-item" href="{% url 'static_vision' %}">اهداف و دیدگاه</a>
+            <a class="dropdown-item" href="{% url 'static_chart' %}">چارت سازمانی</a>
+        </div>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInfo" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            راه‌های کمک به کودکان
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownInfo">
+            <a class="dropdown-item" href="{% url 'static_sponsorship' %}">حمایت از یک کودک</a>
+            <a class="dropdown-item" href="{% url 'static_faq' %}">سوالات متداول</a>
+        </div>
+    </li>
+</ul>
