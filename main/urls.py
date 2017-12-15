@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^admin/approval/', views.approval, name='admin_approvals'),
     url(r'^admin/purchase/', views.admin_purchases, name='admin_purchases'),
     url(r'^admin/children/', views.admin_children, name='admin_children'),
-
+    url(r'^donor/sponsored-children/', views.sponsored_children, name='sponsored_children'),
     url(r'^history/', TemplateView.as_view(template_name='main/static/history.html'), name='static_history'),
     url(r'^vision/', TemplateView.as_view(template_name='main/static/vision.html'), name='static_vision'),
     url(r'^chart/', TemplateView.as_view(template_name='main/static/chart.html'), name='static_chart'),

@@ -188,3 +188,25 @@ def admin_children(request):
         'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
     }] * 10
     return render(request, 'main/children.html', {'children': children, 'show_all': True, 'user_type': 'admin'})
+
+
+def sponsored_children(request):
+    children = [{
+            'first_name': 'علی',
+            'last_name': 'احمدی',
+            'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
+            'province': 'تهران',
+            'accomplishments': 'کسب رتبه‌ی اول',
+            'need_set': [{'id': 1,
+                          'title': 'نیاز اول',
+                          'description': 'کمک هزینه‌ی تحصیلی',
+                          'cost': '۱۰۰',
+                          'urgent': 'True',
+                          'PurchaseForNeed_set': [{'id': 1,
+                                                   'payer': 'حسن بیاتی',
+                                                   'amount': '۲۰۰',
+                                                   'time': '۲۰ فروردین ۱۹۹۶'}]
+                          }]
+
+        }] * 5
+    return render(request, 'main/sponsored-children.html', {'children': children, 'user_type': 'child'})
