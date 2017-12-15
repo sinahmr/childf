@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^login/', views.login, name='login'),
     url(r'^profile/', views.profile, name='profile'),
     url(r'^donor/purchase/', views.purchase, name='donor_purchase'),
+    url(r'^donor/purchases/', views.donor_purchases, name='donor_purchases'),
     url(r'^admin/activities/', views.activities, name='admin_activities'),
     url(r'^admin/approval/', views.approval, name='admin_approvals'),
     url(r'^admin/purchases/', views.admin_purchases, name='admin_purchases'),

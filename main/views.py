@@ -136,6 +136,34 @@ def child_purchases(request):
     return render(request, 'main/child/purchases.html', {'purchases': purchases, 'user_type': 'child'})
 
 
+def donor_purchases(request):
+    purchases = [
+                    {
+                        'time': '۲۴ آذر ۱۳۹۶',
+                        'amount': '۱۲۳۰۰۰',
+                        'need': {
+                            'title': 'خرید فیفا ۲۰۱۸',
+                            'child': {
+                                'first_name': 'تیمو',
+                                'last_name': 'باکایوکو'
+                            }
+                        },
+                    },
+                    {
+                        'time': '۲۵ آذر ۱۳۹۶',
+                        'amount': '۱۲۰۰۰۰',
+                        'need': {
+                            'title': 'خرید PES ۲۰۱۸',
+                            'child': {
+                                'first_name': 'انگولو',
+                                'last_name': 'کانته'
+                            }
+                        },
+                    }
+                ]
+    return render(request, 'main/donor/purchases.html', {'purchases': purchases, 'user_type': 'donor'})
+
+
 def purchase(request):
     need_id = get_int(request.GET.get('need_id'))
     if need_id:
