@@ -1,0 +1,39 @@
+{% extends 'main/base.html' %}
+{% block content %}
+    <div class="container-fluid content">
+        <div class="row">
+            <div class="col-md-1 d-none d-md-block">
+            </div>
+            <div class="col-md-10 col-sm-12 bg-light main-content">
+                <h2>نیازهای برطرف نشده</h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">نیاز</th>
+                        <th scope="col">نیازمند</th>
+                        <th scope="col">مبلغ</th>
+                        <th scope="col">پرداخت</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for need in needs %}
+                        <tr>
+                            <td>{{ need.title }}
+                                {% if need.urgent %}
+                                    <span class="badge badge-danger">فوری</span>
+                                {% endif %}
+                            </td>
+                            <td><a href="{% url 'child_information' %}">{{ need.child }}</a></td>
+                            <td>{{ need.cost }} ریال</td>
+                            <td><a href="{% url 'donor_purchase' %}?need_id=4" class="btn btn-outline-info">پرداخت</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-1 d-none d-md-block">
+            </div>
+        </div>
+    </div>
+{% endblock %}
