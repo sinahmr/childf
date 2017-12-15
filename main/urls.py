@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^child/add/', views.add_child, name='add_child'),
     url(r'^child/edit/', views.edit_child),
     url(r'^child/letter/', views.letter, name='child_letter'),
-    url(r'^login/', views.login),
+    url(r'^login/', views.login, name='login'),
     url(r'^profile/', views.profile, name='profile'),
     url(r'^child/request/', views.send_request, name='child_request'),
     url(r'^donor/purchase/', views.purchase, name='donor_purchase'),
