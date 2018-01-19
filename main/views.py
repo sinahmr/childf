@@ -3,7 +3,6 @@ from django.shortcuts import render, Http404, get_object_or_404, HttpResponseRed
 
 from main import forms, models
 from main.constants import PROVINCES, GENDER
-from main.utils import get_int
 
 
 def home(request):
@@ -207,18 +206,9 @@ def donor_purchases(request):
 
 
 def purchase(request):
-    need_id = get_int(request.GET.get('need_id'))
+    need_id = request.GET.get('need_id')
     if need_id:
-        # need = Need.objects.get(pk=need_id)
-        need = {
-            'child': {
-                'name': 'علی احمدی'
-            },
-            'title': 'خرید فیفا ۲۰۱۸',
-            'description': 'خرید بازی فیفا ۲۰۱۸',
-            'cost': '۱۵۰۰۰۰'
-
-        }
+        need = get_object_or_404(models.Need, pk=need_id)
     else:
         need = None
     return render(request, 'main/purchase.html', {'need': need, 'user_type': 'donor'})
