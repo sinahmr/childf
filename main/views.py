@@ -1,10 +1,9 @@
 from django.contrib.auth.decorators import user_passes_test
+from django.http import HttpResponse
 from django.shortcuts import render, Http404, get_object_or_404, HttpResponseRedirect
 
 from main import forms, models
 from main.constants import PROVINCES, GENDER
-from main import models
-
 
 def home(request):
     return render(request, 'main/base.html', {})
@@ -254,12 +253,19 @@ def admin_purchases(request):
 
 
 def approval(request):
-    children = [{
-        'id': child_id,
-        'name': 'علی احمدی',
-        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
-    } for child_id in range(1, 10)]
-    return render(request, 'main/admin/children-approval.html', {'children': children, 'user_type': 'admin'})
+    if request.method == 'POST':
+        verdict = request.POST.get('verdict')
+        child_id = request.POST.get('child_id')
+        child = get_object_or_404(models.Child, pk=child_id)
+        if child.verified is None:
+            child.verified = True if verdict == 'accept' else False
+            child.save()
+            return HttpResponse('OK')
+        else:
+            return HttpResponse('Already Done', status='400')
+    else:
+        return render(request, 'main/admin/children-approval.html',
+                      {'children': models.Child.objects.filter(verified=None), 'user_type': 'admin'})
 
 
 def admin_children(request):
