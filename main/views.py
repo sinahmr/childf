@@ -30,7 +30,7 @@ def child_information(request, child_id):
         'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
         'province': 'تهران',
         'accomplishments': 'کسب رتبه‌ی اول',
-        'need_set': [{'id': 1,
+        'need_set': {'all': [{'id': 1,
                       'title': 'نیاز اول',
                       'description': 'کمک هزینه‌ی تحصیلی',
                       'cost': '۱۰۰',
@@ -356,11 +356,8 @@ def approval(request):
 
 
 def admin_children(request):
-    children = [{
-        'name': 'علی احمدی',
-        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
-    }] * 10
-    return render(request, 'main/children.html', {'children': children, 'show_all': True, 'user_type': 'admin'})
+    return render(request, 'main/children.html',
+                  {'children': models.Child.objects.all(), 'show_all': True, 'user_type': 'admin'})
 
 
 def sponsored_children(request):

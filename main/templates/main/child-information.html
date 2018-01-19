@@ -8,7 +8,7 @@
                 <div class="row">
                     <div class="d-block d-md-none col-sm-12">
                         <img class="card-img-top"
-                             src="https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg"
+                             src="{{ child.img_url }}"
                              alt="Card image cap">
                     </div>
                     <div class="col-md-8 col-sm-12">
@@ -94,7 +94,7 @@
                             ,
                         {% endif %}
                     {% endfor %}
-                ]
+                ],
             {% endfor %}
         };
 
