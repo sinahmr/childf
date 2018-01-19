@@ -1,6 +1,8 @@
-from django.shortcuts import render, Http404, get_object_or_404
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render, Http404, get_object_or_404, HttpResponseRedirect
+
+from main import forms, models
 from main.constants import PROVINCES, GENDER
-from main.models import Child
 from main import models
 
 
@@ -10,11 +12,11 @@ def home(request):
 
 def volunteer(request):
     return render(request, 'main/children.html',
-                  {'children': Child.objects.all(), 'show_all': True, 'user_type': 'donor'})
+                  {'children': models.Child.objects.all(), 'show_all': True, 'user_type': 'donor'})
 
 
 def child_information(request, child_id):
-    child = get_object_or_404(Child, pk=child_id)
+    child = get_object_or_404(models.Child, pk=child_id)
     child2 = {
         'first_name': 'علی',
         'last_name': 'احمدی',
@@ -82,11 +84,25 @@ def modify_user(request, user_class):
     })
 
 
+@user_passes_test(lambda u: hasattr(u, 'child'))
 def letter(request):
-    child = {
-        'name': 'علی احمدی',
-    }
-    return render(request, 'main/letter.html', {'child': child, 'user_type': 'child'})
+    if request.method == 'POST':
+        form = forms.LetterForm(request.POST)
+        if form.is_valid():
+            models.Letter.objects.create(**{
+                'title': form.cleaned_data['LetterTitle'],
+                'content': form.cleaned_data['LetterContent'],
+                'receiver': form.cleaned_data['LetterReceiverRadios'],
+                'child': request.user.child
+            })
+            return HttpResponseRedirect(request.path + '?success=1')
+        else:
+            return HttpResponseRedirect(request.path + '?success=0')
+    else:
+        child = {
+            'name': 'علی احمدی',
+        }
+        return render(request, 'main/letter.html', {'child': child, 'user_type': 'child'})
 
 
 def login(request):
@@ -238,12 +254,20 @@ def admin_purchases(request):
 
 
 def approval(request):
-    return render(request, 'main/admin/children-approval.html', {'children': Child.objects.all(), 'user_type': 'admin'})
+    children = [{
+        'id': child_id,
+        'name': 'علی احمدی',
+        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
+    } for child_id in range(1, 10)]
+    return render(request, 'main/admin/children-approval.html', {'children': children, 'user_type': 'admin'})
 
 
 def admin_children(request):
-    return render(request, 'main/children.html',
-                  {'children': Child.objects.all(), 'show_all': True, 'user_type': 'admin'})
+    children = [{
+        'name': 'علی احمدی',
+        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
+    }] * 10
+    return render(request, 'main/children.html', {'children': children, 'show_all': True, 'user_type': 'admin'})
 
 
 def sponsored_children(request):
