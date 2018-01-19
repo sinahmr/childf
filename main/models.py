@@ -118,6 +118,7 @@ class Child(User):
 
 class Volunteer(User):
     objects = UserManager()
+
     class Meta:
         verbose_name = 'مددکار'
         verbose_name_plural = 'مددکاران'
@@ -125,6 +126,7 @@ class Volunteer(User):
 
 class Donor(User):
     objects = UserManager()
+
     class Meta:
         verbose_name = 'همیار'
         verbose_name_plural = 'همیاران'

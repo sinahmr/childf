@@ -19,8 +19,13 @@
                     {% for purchase in purchases %}
                         <tr>
                             <td>{{ purchase.time }}</td>
-                            <td><a href="#{{ purchase.child_link }}">{{ purchase.need.child.first_name }} {{ purchase.need.child.last_name }}</a></td>
-                            <td>{{ purchase.need.title }}</td>
+                            {% if purchase.need %}
+                                <td><a href="{{ purchase.child_link }}">{{ purchase.need.child.name }}</a></td>
+                                <td>{{ purchase.need.title }}</td>
+                            {% else %}
+                                <td>-</td>
+                                <td>-</td>
+                            {% endif %}
                             <td>{{ purchase.amount }}تومان </td>
                         </tr>
                     {% endfor %}
