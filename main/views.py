@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test
+from django.core import mail
 from django.shortcuts import render, Http404, get_object_or_404, HttpResponseRedirect
 
 from main import forms, models
@@ -89,12 +90,21 @@ def letter(request):
     if request.method == 'POST':
         form = forms.LetterForm(request.POST)
         if form.is_valid():
+            title = form.cleaned_data['LetterTitle']
+            content = form.cleaned_data['LetterContent']
+            receiver = form.cleaned_data['LetterReceiverRadios']
             models.Letter.objects.create(**{
-                'title': form.cleaned_data['LetterTitle'],
-                'content': form.cleaned_data['LetterContent'],
-                'receiver': form.cleaned_data['LetterReceiverRadios'],
+                'title': title,
+                'content': content,
+                'receiver': receiver,
+                'verified': True if receiver == 'V' else None,
                 'child': request.user.child
             })
+            if receiver == 'V':
+                emails = list()
+                for support in models.Support.objects.filter(child=request.user.child):
+                    emails.append(support.volunteer.email)
+                mail.send_mail('نامه', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)   # TODO email title
             return HttpResponseRedirect(request.path + '?success=1')
         else:
             return HttpResponseRedirect(request.path + '?success=0')
