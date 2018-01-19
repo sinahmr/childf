@@ -1,6 +1,7 @@
 from django.shortcuts import render, Http404, get_object_or_404
 from main.constants import PROVINCES, GENDER
 from main.models import Child
+from main import models
 from main.utils import get_int
 
 
@@ -191,18 +192,9 @@ def donor_purchases(request):
 
 
 def purchase(request):
-    need_id = get_int(request.GET.get('need_id'))
+    need_id = request.GET.get('need_id')
     if need_id:
-        # need = Need.objects.get(pk=need_id)
-        need = {
-            'child': {
-                'name': 'علی احمدی'
-            },
-            'title': 'خرید فیفا ۲۰۱۸',
-            'description': 'خرید بازی فیفا ۲۰۱۸',
-            'cost': '۱۵۰۰۰۰'
-
-        }
+        need = get_object_or_404(models.Need, pk=need_id)
     else:
         need = None
     return render(request, 'main/purchase.html', {'need': need, 'user_type': 'donor'})
@@ -247,20 +239,12 @@ def admin_purchases(request):
 
 
 def approval(request):
-    children = [{
-        'id': child_id,
-        'name': 'علی احمدی',
-        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
-    } for child_id in range(1, 10)]
-    return render(request, 'main/admin/children-approval.html', {'children': children, 'user_type': 'admin'})
+    return render(request, 'main/admin/children-approval.html', {'children': Child.objects.all(), 'user_type': 'admin'})
 
 
 def admin_children(request):
-    children = [{
-        'name': 'علی احمدی',
-        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
-    }] * 10
-    return render(request, 'main/children.html', {'children': children, 'show_all': True, 'user_type': 'admin'})
+    return render(request, 'main/children.html',
+                  {'children': Child.objects.all(), 'show_all': True, 'user_type': 'admin'})
 
 
 def sponsored_children(request):
