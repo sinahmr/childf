@@ -131,7 +131,7 @@ def modify_user(request, user_class):
     })
 
 
-@user_passes_test(lambda u: hasattr(u, 'child'))
+@user_passes_test(lambda user: user.user_type() == 'child')
 def letter(request):
     if request.method == 'POST':
         form = LetterForm(request.POST)
