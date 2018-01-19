@@ -12,15 +12,15 @@
                              alt="Card image cap">
                     </div>
                     <div class="col-md-8 col-sm-12">
-                        <h4 class="card-title">{{ child.first_name }} {{ child.last_name }}</h4>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ child.province }}</h6>
+                        <h4 class="card-title">{{ child.userinfo.first_name }} {{ child.userinfo.last_name }}</h4>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ child.get_province_display }}</h6>
                         <br/>
                         <h4>موفقیت‌ها:</h4>
                         <p>{{ child.accomplishments }}</p>
                     </div>
                     <div class="d-none d-md-block col-md-4">
                         <img class="card-img-top"
-                             src="https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg"
+                             src="{{ child.img_url }}"
                              alt="Card image cap">
                     </div>
                     <div class="col align-self-end">
@@ -30,7 +30,7 @@
                 <h2 style="margin: 10px">نیازها:</h2>
                 <div id="accordion" role="tablist">
 
-                    {% for need in child.need_set %}
+                    {% for need in child.need_set.all %}
                         <div class="card">
                             <div class="card-header" role="tab" id="heading{{ need.id }}">
                                 <h5 class="mb-0">
@@ -86,7 +86,7 @@
 {% block scripts %}
     <script type="text/javascript">
         var data = {
-            {% for need in child.need_set %}
+            {% for need in child.need_set.all %}
                 '{{ need.id }}': [
                     {% for purchase in need.PurchaseForNeed_set %}
                         {'payer': '{{purchase.payer}}', 'amount': '{{purchase.amount}}', 'time': '{{ purchase.time }}'}

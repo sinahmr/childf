@@ -45,6 +45,17 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    def name(self):
+        return self.userinfo.first_name + ' ' + self.userinfo.last_name
+
+    def img_url(self):
+        img_urls = ['https://articles.extension.org//sites/default/files/toddler%20girl%20crying.jpg',
+                    'http://affordablechildcare.ie/wp-content/uploads/2017/05/Thumbs_up_5.png',
+                    'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
+                    'http://www.savethechildren.org/atf/cf/%7B9def2ebe-10ae-432c-9bd0-df91d2eba74a%7D/SYRIA_FEB17.JPG',
+                    'http://imgs.mastphotos.com/wp-content/uploads/2012/12/Sweet-Child-In-Blue-Dress.jpg']
+        return img_urls[self.pk % len(img_urls)]
+
     class Meta:
         verbose_name = 'کاربر'
         verbose_name_plural = 'کاربران'

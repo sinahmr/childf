@@ -1,5 +1,6 @@
-from django.shortcuts import render, Http404
+from django.shortcuts import render, Http404, get_object_or_404
 from main.constants import PROVINCES, GENDER
+from main.models import Child
 from main.utils import get_int
 
 
@@ -8,15 +9,13 @@ def home(request):
 
 
 def volunteer(request):
-    children = [{
-        'name': 'علی احمدی',
-        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg'
-    }] * 10
-    return render(request, 'main/children.html', {'children': children, 'show_all': True, 'user_type': 'donor'})
+    return render(request, 'main/children.html',
+                  {'children': Child.objects.all(), 'show_all': True, 'user_type': 'donor'})
 
 
-def child_information(request):
-    child = {
+def child_information(request, child_id):
+    child = get_object_or_404(Child, pk=child_id)
+    child2 = {
         'first_name': 'علی',
         'last_name': 'احمدی',
         'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
@@ -305,6 +304,7 @@ def admin_unresolveds(request):
     ] * 3
     return render(request, 'main/admin/unresolveds.html', {'needs': needs, 'user_type': 'admin'})
 
+
 def admin_volunteers(request):
     volunteers = [
         {
@@ -321,4 +321,3 @@ def admin_volunteers(request):
         },
     ]
     return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers, 'user_type': 'admin'})
-
