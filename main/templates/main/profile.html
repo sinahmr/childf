@@ -13,26 +13,26 @@
                                     <tbody>
                                     <tr>
                                         <td>نام:</td>
-                                        <td>{{ user.first_name }}</td>
+                                        <td>{{ user.userinfo.first_name }}</td>
                                     </tr>
                                     <tr>
                                         <td>نام خانوادگی:</td>
-                                        <td>{{ user.last_name }}</td>
+                                        <td>{{ user.userinfo.last_name }}</td>
                                     </tr>
                                     <tr>
                                         <td>ایمیل:</td>
                                         <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
                                     </tr>
-                                    {% if user.province %}
+                                    {% if user.child.province %}
                                     <tr>
                                         <td>استان:</td>
-                                        <td>{{ user.province }}</td>
+                                        <td>{{ user.child.get_province_display }}</td>
                                     </tr>
                                     {% endif %}
-                                    {% if user.accomplishments %}
+                                    {% if user.child.accomplishments %}
                                     <tr>
                                         <td>موفقیت‌ها:</td>
-                                        <td>{{ user.accomplishments }}</td>
+                                        <td>{{ user.child.accomplishments }}</td>
                                     </tr>
                                     {% endif %}
 

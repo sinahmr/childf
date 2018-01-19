@@ -187,14 +187,14 @@ def login(request):
     return render(request, 'main/login.html', {})
 
 
-def profile(request, user_id):  # Show the user with id = user_id
-    user = {'first_name': 'علی',
-            'last_name': 'علوی',
-            'email': 'info@support.com',
-            'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
-            'province': 'تهران',
-            'accomplishments': 'کسب رتبه‌ی اول'}
-    return render(request, 'main/profile.html', {'user': user, 'user_type': 'child'})
+def profile(request, user_id):
+    if request.user.is_superuser:
+        user = get_object_or_404(models.User, pk=user_id)
+    else:
+        if request.user.id != user_id:
+            raise Http404
+        user = request.user
+    return render(request, 'main/profile.html', {'user': user})
 
 
 @user_passes_test(lambda u: hasattr(u, 'child'))
