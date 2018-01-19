@@ -86,7 +86,7 @@ class OngoingUserInfo(AbstractUserInfo):
 
 class Child(User):
     province = models.CharField(max_length=3, choices=PROVINCES)
-    verified = models.BooleanField(default=False)
+    verified = models.NullBooleanField(default=None)
     accomplishments = models.TextField(blank=True, null=True)
 
     objects = UserManager()
@@ -133,7 +133,7 @@ class Letter(models.Model):
     title = models.CharField(max_length=200, blank=False, null=False)
     content = models.TextField(blank=False, null=False)
     receiver = models.CharField(max_length=1, choices=LETTER_RECEIVER, blank=False, null=False)
-    verified = models.BooleanField(default=False)
+    verified = models.NullBooleanField(default=None)
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
