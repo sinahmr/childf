@@ -38,7 +38,7 @@
             <span class="navbar-brand float-left">
             محمد امین مقدم
             </span>
-                <a href="{% url 'profile' %}" class="btn btn-outline-light mr-2">پروفایل</a>
+                <a href="{% url 'profile' user_id=request.user.id %}" class="btn btn-outline-light mr-2">پروفایل</a>
             <button type="button" class="btn btn-outline-light mr-2">خروج</button>
             {% else %}
                 <a href="{% url 'add_user' 'donor' %}" class="btn btn-outline-light mr-auto">ثبت‌نام</a>

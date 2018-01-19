@@ -19,11 +19,11 @@
                     <tbody>
                     {% for purchase in purchases %}
                         <tr>
-                            <td>{{ purchase.date }}</td>
-                            <td><a href="#{{ purchase.donor_link }}">{{ purchase.donor }}</a></td>
-                            <td><a href="#{{ purchase.child_link }}">{{ purchase.child }}</a></td>
-                            <td>{{ purchase.need }}</td>
-                            <td>{{ purchase.need_amount }} ریال</td>
+                            <td>{{ purchase.time }}</td>
+                            <td><a href="{{ purchase.donor_link }}">{{ purchase.payer.name }}</a></td>
+                            <td><a href="{{ purchase.child_link }}">{{ purchase.need.child.name }}</a></td>
+                            <td>{{ purchase.need.title }}</td>
+                            <td>{{ purchase.amount }} تومان</td>
                         </tr>
                     {% endfor %}
                     </tbody>

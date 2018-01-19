@@ -162,7 +162,7 @@ def login(request):
     return render(request, 'main/login.html', {})
 
 
-def profile(request):
+def profile(request, user_id):  # Show the user with id = user_id
     user = {'first_name': 'علی',
             'last_name': 'علوی',
             'email': 'info@support.com',
@@ -197,23 +197,9 @@ def change_volunteer(request):
     })
 
 
+@user_passes_test(lambda u: hasattr(u, 'child'))
 def child_purchases(request):
-    purchases = [
-                    {
-                        'time': '۲۴ آذر ۱۳۹۶',
-                        'amount': '۱۲۳۰۰۰',
-                        'need': {
-                            'title': 'خرید فیفا ۲۰۱۸'
-                        },
-                    },
-                    {
-                        'time': '۲۵ آذر ۱۳۹۶',
-                        'amount': '۱۲۰۰۰۰',
-                        'need': {
-                            'title': 'خرید PES ۲۰۱۸'
-                        },
-                    }
-                ] * 5
+    purchases = models.PurchaseForNeed.objects.filter(need__child=request.user.child)
     return render(request, 'main/child/purchases.html', {'purchases': purchases, 'user_type': 'child'})
 
 
@@ -242,31 +228,13 @@ def volunteer_letter_verification(request):
     return render(request, 'main/volunteer/letter-verification.html', {'letters': letters, 'user_type': 'volunteer'})
 
 
+@user_passes_test(lambda u: hasattr(u, 'donor'))
 def donor_purchases(request):
-    purchases = [
-                    {
-                        'time': '۲۴ آذر ۱۳۹۶',
-                        'amount': '۱۲۳۰۰۰',
-                        'need': {
-                            'title': 'خرید فیفا ۲۰۱۸',
-                            'child': {
-                                'first_name': 'تیمو',
-                                'last_name': 'باکایوکو'
-                            }
-                        },
-                    },
-                    {
-                        'time': '۲۵ آذر ۱۳۹۶',
-                        'amount': '۱۲۰۰۰۰',
-                        'need': {
-                            'title': 'خرید PES ۲۰۱۸',
-                            'child': {
-                                'first_name': 'انگولو',
-                                'last_name': 'کانته'
-                            }
-                        },
-                    }
-                ]
+    institute_purchases = list(models.PurchaseForInstitute.objects.filter(payer=request.user.donor))
+    need_purchases = list(models.PurchaseForNeed.objects.filter(payer=request.user.donor).prefetch_related('need__child'))
+    for p in need_purchases:
+        p.child_link = reverse('child_information', kwargs={'child_id': p.need.child.id})
+    purchases = sorted(institute_purchases + need_purchases, key=lambda x: x.time, reverse=True)
     return render(request, 'main/donor/purchases.html', {'purchases': purchases, 'user_type': 'donor'})
 
 
@@ -317,25 +285,16 @@ def activities(request):
     return render(request, 'main/admin/activities.html', {'activities': activities, 'user_type': 'admin'})
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def admin_purchases(request):
-    purchases = [
-                    {'date': '۲۴ آذر ۱۳۹۶', 'donor': 'علی حسینی',
-                     'need': 'هزینه ثبت نام', 'need_amount': 10000, 'child': 'رضا امین زاده'},
-                    {'date': '۲۴ آذر ۱۳۹۶', 'donor': 'حسن حسینی',
-                     'need': 'هزینه بیمارستان', 'need_amount': 30000, 'child': 'رضا امین زاده'},
-                ] * 3
-    purchases += [
-                     {'date': '۲۳ آذر ۱۳۹۶', 'donor': 'علی قلی زاده',
-                      'need': 'هزینه مسکن', 'need_amount': 122300, 'child': 'هادی فضلی'},
-                     {'date': '۲۳ آذر ۱۳۹۶', 'donor': 'سارا رضایی',
-                      'need': 'هزینه بیمه', 'need_amount': 1002000, 'child': 'سینا امینی'},
-                 ] * 3
-    purchases += [
-        {'date': '۲۲ آذر ۱۳۹۶', 'donor': 'علی قلی زاده',
-         'need': '', 'need_amount': 122300, 'child': 'موسسه'},
-        {'date': '۲۲ آذر ۱۳۹۶', 'donor': 'سارا رضایی',
-         'need': '', 'need_amount': 1002000, 'child': 'موسسه'},
-    ]
+    institute_purchases = list(models.PurchaseForInstitute.objects.all())
+    need_purchases = list(models.PurchaseForNeed.objects.all().prefetch_related('need__child'))
+    for p in need_purchases:
+        p.child_link = reverse('child_information', kwargs={'child_id': p.need.child.id})
+    purchases = institute_purchases + need_purchases
+    for p in purchases:
+        p.donor_link = reverse('profile', kwargs={'user_id': p.payer.donor.id})
+    purchases = sorted(purchases, key=lambda x: x.time, reverse=True)
     return render(request, 'main/admin/purchases.html', {'purchases': purchases, 'user_type': 'admin'})
 
 
