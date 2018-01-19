@@ -1,5 +1,8 @@
 from django import forms
+from django.forms import ModelForm
+
 from main.constants import LETTER_RECEIVER
+from main.models import Child, Donor, Volunteer, User, UserInfo
 
 
 class LetterForm(forms.Form):
@@ -10,3 +13,27 @@ class LetterForm(forms.Form):
 
 class PurchaseForm(forms.Form):
     PurchaseAmount = forms.IntegerField(required=True)
+
+
+class ChildForm(ModelForm):
+    class Meta:
+        model = Child
+        exclude = ('date_joined', )
+
+
+class DonorForm(ModelForm):
+    class Meta:
+        model = Donor
+        exclude = ('date_joined', )
+
+
+class VolunteerForm(ModelForm):
+    class Meta:
+        model = Volunteer
+        exclude = ('date_joined', )
+
+
+class UserInfoForm(ModelForm):
+    class Meta:
+        model = UserInfo
+        exclude = ('user', )

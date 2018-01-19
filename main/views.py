@@ -1,10 +1,17 @@
+import json
+
 from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponse
 from django.core import mail
 from django.shortcuts import render, Http404, get_object_or_404, HttpResponseRedirect
 
 from main import forms, models
+from django.contrib.auth import authenticate, login as django_login
+from django.shortcuts import render, Http404, redirect
 from main.constants import PROVINCES, GENDER
+from main import models
+from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm
+
 
 def home(request):
     return render(request, 'main/base.html', {})
@@ -40,13 +47,53 @@ def child_information(request, child_id):
 def add_user(request, user_class):
     if user_class not in ['admin', 'child', 'volunteer', 'donor']:
         raise Http404("User type is not valid!")
-    return render(request, 'main/modify-user.html', {
-        'user': None,
-        'all_provinces': PROVINCES,
-        'all_genders': GENDER,
-        'user_class': user_class,
-        'user_type': 'admin'
-    })
+    if request.method == 'POST':
+        user_form = None
+        if user_class == 'admin' or user_class == 'donor':
+            user_form = DonorForm(request.POST)
+        if user_class == 'child':
+            user_form = ChildForm(request.POST)
+        if user_class == 'volunteer':
+            user_form = VolunteerForm(request.POST)
+        user_info_form = UserInfoForm(request.POST)
+        if user_form.is_valid() and user_info_form.is_valid():
+            user = user_form.save()
+            user_info = user_info_form.save(commit=False)
+            if request.FILES and request.FILES['image']:
+                user_info.image = request.FILES['image']
+            user_info.user = user
+            user_info.save()
+            needs_json = json.loads(request.POST['needs'])
+            for need in needs_json['needs']:
+                new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'])
+                new_need.child = user
+                new_need.save()
+            print(needs_json)
+            username = user_form.cleaned_data.get('email')
+            raw_password = user_form.cleaned_data.get('password')
+            user = authenticate(username=username, password=raw_password)
+            django_login(request, user)
+            return redirect('login')
+        else:
+            return render(request, 'main/modify-user.html', {
+                'user': None,
+                'all_provinces': PROVINCES,
+                'all_genders': GENDER,
+                'user_class': user_class,
+                'user_type': '',
+                'errors': [error for error in user_form.errors.values()] + [error for error in user_info_form.errors.values()],
+            })
+    # else:
+    #     form = UserCreationForm()
+    # return render(request, 'signup.html', {'form': form})
+    else:
+        return render(request, 'main/modify-user.html', {
+            'user': None,
+            'all_provinces': PROVINCES,
+            'all_genders': GENDER,
+            'user_class': user_class,
+            'user_type': ''
+        })
 
 
 def modify_user(request, user_class):
