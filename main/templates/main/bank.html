@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <title>بانک</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="refresh" content="7;url={{ redirect_url }}" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/style.css' %}"/>
+</head>
+<body>
+<div style="align-content: center; text-align: center;">
+    <br/>
+    <h2>اینجا بانک است.</h2>
+    <br/>
+    <div >انتقال مبلغ {{ amount }} ریال به سامانه‌ی یکپارچه‌ی مدیریت بنگاه کمک به کودکان</div>
+    {% if success %}
+        <h4 style="color: darkgreen;">پرداخت با موفقیت انجام شد.</h4>
+    {% else %}
+        <h4 style="color: darkred;">پرداخت انجام نشد. رمز ورود اشتباه است.</h4>
+    {% endif %}
+    <br/>
+    <hr/>
+    <div>به صفحه‌ی پذیرنده منتقل می‌شوید...</div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+        integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+{% block scripts %}
+{% endblock %}
+</body>
+</html>

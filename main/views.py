@@ -1,10 +1,12 @@
+import urllib
+
 from django.contrib.auth.decorators import user_passes_test
 from django.core import mail
 from django.shortcuts import render, Http404, get_object_or_404, HttpResponseRedirect
+from django.urls import reverse
 
 from main import forms, models
 from main.constants import PROVINCES, GENDER
-from main import models
 
 
 def home(request):
@@ -216,13 +218,35 @@ def donor_purchases(request):
     return render(request, 'main/donor/purchases.html', {'purchases': purchases, 'user_type': 'donor'})
 
 
+@user_passes_test(lambda u: hasattr(u, 'donor'))
 def purchase(request):
-    need_id = request.GET.get('need_id')
-    if need_id:
-        need = get_object_or_404(models.Need, pk=need_id)
+    if request.method == 'POST':
+        form = forms.PurchaseForm(request.POST)
+        params = request.GET.copy()
+        if form.is_valid():
+            need_id = form.cleaned_data['NeedID']
+            amount = form.cleaned_data['PurchaseAmount']
+            kwargs = {
+                'payer': request.user.donor,
+                'amount': amount
+            }
+            if need_id:
+                need = get_object_or_404(models.Need, pk=need_id)
+                models.PurchaseForNeed.objects.create(**kwargs, need=need)
+            else:
+                models.PurchaseForInstitute.objects.create(**kwargs)
+            return HttpResponseRedirect(reverse('bank') + '?redirect_url=%s' % urllib.parse.quote_plus(
+                reverse('donor_purchase') + '?%s' % ('need_id=' + str(need_id) if need_id else '')) + '&amount=%s' % amount)
+        else:
+            params.update({'success': '0'})
+            return HttpResponseRedirect(request.path + '?' + params.urlencode())
     else:
-        need = None
-    return render(request, 'main/purchase.html', {'need': need, 'user_type': 'donor'})
+        need_id = request.GET.get('need_id')
+        if need_id:
+            need = get_object_or_404(models.Need, pk=need_id)
+        else:
+            need = None
+        return render(request, 'main/purchase.html', {'need': need, 'user_type': 'donor'})
 
 
 def activities(request):
@@ -338,3 +362,13 @@ def admin_volunteers(request):
         },
     ]
     return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers, 'user_type': 'admin'})
+
+
+def bank(request):
+    redirect_url = urllib.parse.unquote(request.GET.get('redirect_url'))
+    amount = request.GET.get('amount') + '0'
+    if '?' not in redirect_url:
+        redirect_url += '?'
+    success = True
+    redirect_url += '&success=1'
+    return render(request, 'main/bank.html', {'success': success, 'redirect_url': redirect_url, 'amount': amount})

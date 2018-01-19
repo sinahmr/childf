@@ -10,3 +10,4 @@ class LetterForm(forms.Form):
 
 class PurchaseForm(forms.Form):
     PurchaseAmount = forms.IntegerField(required=True)
+    NeedID = forms.IntegerField(required=False)

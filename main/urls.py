@@ -31,4 +31,5 @@ urlpatterns = [
     url(r'^sponsorship/', TemplateView.as_view(template_name='main/static/sponsorship.html'),
         name='static_sponsorship'),
     url(r'^faq/', TemplateView.as_view(template_name='main/static/faq.html'), name='static_faq'),
+    url(r'^bank/', views.bank, name='bank'),
 ]
