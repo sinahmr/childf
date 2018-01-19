@@ -202,7 +202,7 @@ def profile(request, user_id):
     if request.user.is_superuser:
         user = get_object_or_404(models.User, pk=user_id)
     else:
-        if request.user.id != user_id:
+        if str(request.user.id) != user_id:
             raise Http404
         user = request.user
     return render(request, 'main/profile.html', {'user': user})
