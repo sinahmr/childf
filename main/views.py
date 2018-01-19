@@ -21,7 +21,7 @@ def home(request):
 
 
 def volunteer(request):
-    show_all = request.GET.get('show_all', '0') == '1'
+    show_all = request.GET.get('show_all', '1') == '1'
     children = models.Child.objects.all()
     if show_all == False:
         if isinstance(request.user.cast(), models.Donor):
@@ -51,11 +51,11 @@ def child_information(request, child_id):
                 has_sponsorship = False
         if request.POST['action'] == 'support':
             if not has_support:
-                support = models.Support(child=child, support=user)
+                support = models.Support(child=child, volunteer=user)
                 support.save()
                 has_support = True
             else:
-                models.Support.objects.get(child=child, support=user).delete()
+                models.Support.objects.get(child=child, volunteer=user).delete()
                 has_support = False
     child2 = {
         'first_name': 'علی',
