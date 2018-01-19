@@ -89,18 +89,22 @@ class Child(User):
     verified = models.BooleanField(default=False)
     accomplishments = models.TextField(blank=True, null=True)
 
+    objects = UserManager()
+
     class Meta:
         verbose_name = 'نیازمند'
         verbose_name_plural = 'نیازمندان'
 
 
 class Volunteer(User):
+    objects = UserManager()
     class Meta:
         verbose_name = 'مددکار'
         verbose_name_plural = 'مددکاران'
 
 
 class Donor(User):
+    objects = UserManager()
     class Meta:
         verbose_name = 'همیار'
         verbose_name_plural = 'همیاران'

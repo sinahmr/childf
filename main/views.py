@@ -2,7 +2,6 @@ from django.shortcuts import render, Http404, get_object_or_404
 from main.constants import PROVINCES, GENDER
 from main.models import Child
 from main import models
-from main.utils import get_int
 
 
 def home(request):
