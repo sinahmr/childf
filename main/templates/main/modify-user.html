@@ -5,28 +5,42 @@
             <div class="col-md-2 d-none d-md-block">
             </div>
             <div class="col-md-8 col-sm-12 bg-light main-content">
-                <form>
+                {% if errors%}
+                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                {% for error in errors %}
+                    {{ error }}
+                {%  endfor %}
+                </div>
+                {% endif %}
+                <form method="post" onsubmit="createNeedsJson()" enctype="multipart/form-data">
+                    {% csrf_token %}
 
                     <div class="row">
                         <div class="col-md-8 col-sm-12">
                             <div class="form-group">
                                 <label for="first_name">نام</label>
-                                <input type="text" class="form-control" id="first_name"
+                                <input type="text" class="form-control" id="first_name" name="first_name"
                                        {% if user %}value="{{ user.first_name }}" {% endif %}>
                             </div>
                             <div class="form-group">
-                                <label for="last_name">نام</label>
-                                <input type="text" class="form-control" id="last_name"
+                                <label for="last_name">نام خانوادگی</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name"
                                        {% if user %}value="{{ user.last_name }}" {% endif %}>
                             </div>
                             <div class="form-group">
                                 <label for="email">ایمیل</label>
-                                <input type="email" maxlength="200" class="form-control" id="email"
+                                <input type="email" maxlength="200" class="form-control" id="email" name="email"
                                        {% if user %}value="{{ user.email }}" {% endif %}>
                             </div>
+                            {% if not user %}
+                                 <div class="form-group">
+                                    <label for="password">گذرواژه</label>
+                                    <input type="password" maxlength="200" class="form-control" id="password" name="password">
+                                </div>
+                            {% endif %}
                             <div class="form-group">
                                 <label for="gender">جنسیت</label>
-                                <select class="form-control" id="gender">
+                                <select class="form-control" id="gender" name="gender">
                                     {% for code, gender in all_genders %}
                                         {% if user and code == user.gender %}
                                             <option value="{{ code }}" selected>{{ gender }}</option>
@@ -39,7 +53,7 @@
                             {% if user_class == 'child' %}
                                 <div class="form-group">
                                     <label for="province">استان</label>
-                                    <select class="form-control" id="Province">
+                                    <select class="form-control" id="Province" name="province">
                                         {% for code, province in all_provinces %}
                                             {% if user and code == user.province %}
                                                 <option value="{{ code }}" selected>{{ province }}</option>
@@ -49,6 +63,11 @@
                                         {% endfor %}
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                <label for="year_of_birth">سال تولد</label>
+                                <input type="text" maxlength="200" class="form-control" id="year_of_birth" name="year_of_birth"
+                                       {% if user %}value="{{ user.year_of_birth }}" {% endif %}>
+                            </div>
                                 {% if user_type == 'admin' %}
                                     <div class="form-group">
                                         <label for="volunteer">مددکار</label>
@@ -72,7 +91,7 @@
                                      src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
                                         {% endif %}>
                                 <label class="btn btn-outline-info btn-file btn-sm m-1">
-                                    آپلود <input type="file" style="display: none;" onchange="readURL(this);">
+                                    آپلود <input type="file" style="display: none;" onchange="readURL(this);" name="image">
                                 </label>
                             </div>
                         </div>
@@ -80,7 +99,7 @@
                     {% if user_class == 'child' %}
                         <div class="form-group">
                             <label for="accomplishments">موفقیت‌ها</label>
-                            <textarea rows="4" class="form-control"
+                            <textarea rows="4" class="form-control" name="accomplishments"
                                       id="accomplishments">{% if user %}{{ user.accomplishments }}{% endif %}</textarea>
                         </div>
                         <div class="form-group">
@@ -154,7 +173,6 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form>
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">عنوان</label>
                                                     <input type="text" class="form-control" id="requirement-title">
@@ -164,7 +182,10 @@
                                                         نیازمندی</label>
                                                     <textarea class="form-control" id="requirement-desc"></textarea>
                                                 </div>
-                                            </form>
+                                                <div class="form-group">
+                                                    <label for="message-text" class="col-form-label">هزینه</label>
+                                                    <textarea class="form-control" id="requirement-cost"></textarea>
+                                                </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">بی‌خیال
@@ -179,6 +200,7 @@
                         </div>
                     {% endif %}
                     <br/>
+                    <input type="hidden" maxlength="200" class="form-control" id="needs" name="needs" value="">
                     {% if user %}
                         <button type="submit" class="btn btn-primary">ثبت تغییرات</button>
                     {% else %}
@@ -195,6 +217,7 @@
 {% block scripts %}
     <script type="text/javascript">
         var number = 1;
+        var needs = {'needs':[]};
         $('#exampleModal').on('show.bs.modal', function (event) {
             var modal = $(this);
             modal.find('.modal-title').text('');
@@ -205,8 +228,12 @@
             card.removeClass('d-none');
             card.find('a').attr('href', '#collapse' + number);
             card.find('#collapseOne').attr('id', 'collapse' + number);
-            card.find('a').html($('#requirement-title').val());
-            card.find('.card-body').html($('#requirement-desc').val());
+            var title = $('#requirement-title').val();
+            card.find('a').html(title);
+            var desc = $('#requirement-desc').val();
+            var cost = $('#requirement-cost').val();
+            needs.needs.push({'title': title, 'description':desc, 'cost':cost, 'urgent':false})
+            card.find('.card-body').html('<div class="desc" style="display: inline-block;">' + desc + '</div>' + '<div class="float-left cost">' + cost + ' تومان' + '</div>');
             card.appendTo('#accordion');
             number += 1;
             $('#exampleModal').modal('hide');
@@ -236,6 +263,11 @@
                 };
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        function createNeedsJson() {
+            $('#needs').val(JSON.stringify(needs));
+            return true;
         }
 
         $(document).ready(function () {

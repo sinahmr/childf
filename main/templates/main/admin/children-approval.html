@@ -19,10 +19,10 @@
                                     <p class="card-text">به این کودک نیازمند کمک کنید. علی ۷ ساله از تهران</p>
                                     <a href="{% url 'child_information' child.id %}" class="btn btn-primary">مشخصات نیازمند</a>
                                     <br/><br/>
-                                    <a href="javascript:removeChild({{ child.id }})" class="btn btn-success">تایید
+                                    <a href="javascript:removeChild({{ child.id }}, 'accept')" class="btn btn-success">تایید
                                         نیازمند</a>
 
-                                    <a href="javascript:removeChild({{ child.id }})" class="btn btn-danger">رد
+                                    <a href="javascript:removeChild({{ child.id }}, 'reject')" class="btn btn-danger">رد
                                         نیازمند</a>
                                 </div>
                             </div>
@@ -37,8 +37,15 @@
 {% endblock %}
 {% block scripts %}
     <script type="text/javascript">
-        function removeChild(id) {
+        function removeChild(id, verdict) {
+            var data = {
+                'child_id': id,
+                'verdict': verdict,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            };
+            jQuery.post('admin/approval/', data, function () {
             $('#child-card-' + id).fadeOut("slow");
+            });
         }
     </script>
 {% endblock %}
