@@ -16,6 +16,7 @@
 
 </head>
 <body>
+{% with user_type=request.user.user_type %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">بنیاد کودک</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -64,5 +65,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 {% block scripts %}
 {% endblock %}
+{% endwith %}
 </body>
 </html>

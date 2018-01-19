@@ -48,6 +48,26 @@ class User(AbstractUser):
     def name(self):
         return self.userinfo.first_name + ' ' + self.userinfo.last_name
 
+    def user_type(self):
+        if self.is_superuser:
+            return 'admin'
+        if hasattr(self, 'child'):
+            return 'child'
+        if hasattr(self, 'donor'):
+            return 'donor'
+        if hasattr(self, 'volunteer'):
+            return 'volunteer'
+
+    def cast(self):
+        if self.user_type() == 'admin':
+            return self.donor
+        if self.user_type() == 'child':
+            return self.child
+        if self.user_type() == 'donor':
+            return self.donor
+        if self.user_type() == 'volunteer':
+            return self.volunteer
+
     def img_url(self):
         img_urls = ['https://articles.extension.org//sites/default/files/toddler%20girl%20crying.jpg',
                     'http://affordablechildcare.ie/wp-content/uploads/2017/05/Thumbs_up_5.png',
