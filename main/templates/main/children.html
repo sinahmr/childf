@@ -6,11 +6,19 @@
         </div>
         <div class="col-md-10 col-sm-12 bg-light main-content">
             {% if show_all %}
-                <button type="button" class="btn btn-outline-primary" aria-pressed="true">نمایش کودکان تحت
-                    حمایت
+                <a href="?show_all=0">
+                    <button type="button" class="btn btn-outline-primary" aria-pressed="true">
+                        {% if user_type == 'volunteer' %}
+                            نمایش کودکان تحت کفالت
+                        {% else %}
+                            نمایش کودکان تحت حمایت
+                        {% endif %}
                 </button>
+                </a>
             {% else %}
-                <button type="button" class="btn btn-outline-primary">نمایش تمام کودکان</button>
+                <a href="?show_all=1">
+                    <button type="button" class="btn btn-outline-primary">نمایش تمام کودکان</button>
+                </a>
             {% endif %}
             {% if user_type == 'admin' %}
                 <button type="button" class="btn btn-outline-primary mr-2" aria-pressed="true">نمایش کودکان بدون کفیل

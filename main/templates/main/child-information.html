@@ -87,8 +87,12 @@
                                     <p>{{ need.description|linebreaks }}</p>
 
                                     <div class="float-left">{{ need.cost }} هزار تومان</div>
+                                    {% if user_type == 'donor' and has_sponsorship %}
                                     <a href="{% url 'donor_purchase' %}?need_id={{ need.id }}" class="btn btn-primary" style="margin-top: 10px">پرداخت</a>
+                                    {% endif %}
+                                    {% if user_type == 'volunteer' and has_support %}
                                     <a href="javascript:;" class="btn btn-secondary" style="margin-top: 10px" onclick="show_payments(this);">لیست پرداخت‌ها</a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
