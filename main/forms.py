@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 
 from main.constants import LETTER_RECEIVER
-from main.models import Child, Donor, Volunteer, User, UserInfo
+from main.models import Child, Donor, Volunteer, UserInfo
 
 
 class LetterForm(forms.Form):

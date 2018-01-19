@@ -1,19 +1,16 @@
 import json
-
 import urllib
 
+from django.contrib.auth import authenticate, login as django_login
 from django.contrib.auth.decorators import user_passes_test
-from django.http import HttpResponse
 from django.core import mail
-from django.shortcuts import render, Http404, get_object_or_404, HttpResponseRedirect
+from django.http import HttpResponse
+from django.shortcuts import render, Http404, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse
 
-from main import forms, models
-from django.contrib.auth import authenticate, login as django_login
-from django.shortcuts import render, Http404, redirect
-from main.constants import PROVINCES, GENDER
 from main import models
-from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm
+from main.constants import PROVINCES, GENDER
+from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, PurchaseForm
 
 
 def home(request):
@@ -137,7 +134,7 @@ def modify_user(request, user_class):
 @user_passes_test(lambda u: hasattr(u, 'child'))
 def letter(request):
     if request.method == 'POST':
-        form = forms.LetterForm(request.POST)
+        form = LetterForm(request.POST)
         if form.is_valid():
             title = form.cleaned_data['LetterTitle']
             content = form.cleaned_data['LetterContent']
@@ -268,7 +265,7 @@ def donor_purchases(request):
 @user_passes_test(lambda u: hasattr(u, 'donor'))
 def purchase(request):
     if request.method == 'POST':
-        form = forms.PurchaseForm(request.POST)
+        form = PurchaseForm(request.POST)
         params = request.GET.copy()
         if form.is_valid():
             need_id = form.cleaned_data['NeedID']
