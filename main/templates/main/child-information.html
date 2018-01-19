@@ -5,6 +5,16 @@
             <div class="col-md-1 hidden-sm">
             </div>
             <div class="col-md-10 col-sm-12 bg-light" style="padding-top: 10px; padding-bottom: 10px;">
+                {% if has_sponsorship %}
+                    <div class="alert alert-info" role="alert" id="change-volunteer-alert">
+                        این کودک تحت کفالت شماست.
+                    </div>
+                {% endif %}
+                {% if has_support %}
+                    <div class="alert alert-info" role="alert" id="change-volunteer-alert">
+                        این کودک تحت حمایت شماست.
+                    </div>
+                {% endif %}
                 <div class="row">
                     <div class="d-block d-md-none col-sm-12">
                         <img class="card-img-top"
@@ -24,7 +34,37 @@
                              alt="Card image cap">
                     </div>
                     <div class="col align-self-end">
-                        <a href="#" class="btn btn-primary" style="margin-top: 10px">تحت کفالت قرار دادن</a>
+                        {% if user_type == 'donor' or user_type == 'admin' %}
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="sponsorship"/>
+                                {% if has_sponsorship %}
+                                    <button type="submit" class="btn btn-warning" style="margin-top: 10px">حذف کفالت
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-primary" style="margin-top: 10px">تحت کفالت
+                                        قرار
+                                        دادن
+                                    </button>
+                                {% endif %}
+                            </form>
+                        {% endif %}
+                        {% if user_type == 'volunteer' or user_type == 'admin' %}
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="support"/>
+                                {% if has_support %}
+                                    <button type="submit" class="btn btn-warning" style="margin-top: 10px">حذف حمایت
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-primary" style="margin-top: 10px">تحت حمایت
+                                        قرار
+                                        دادن
+                                    </button>
+                                {% endif %}
+                            </form>
+
+                        {% endif %}
                     </div>
                 </div>
                 <h2 style="margin: 10px">نیازها:</h2>

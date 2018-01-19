@@ -24,6 +24,28 @@ def volunteer(request):
 
 def child_information(request, child_id):
     child = get_object_or_404(models.Child, pk=child_id)
+    user = request.user.cast()
+    has_sponsorship = isinstance(user, models.Donor) and models.Sponsorship.objects.filter(child=child,
+                                                                                           sponsor=user).exists()
+    has_support = isinstance(user, models.Volunteer) and models.Support.objects.filter(child=child,
+                                                                                       volunteer=user).exists()
+    if request.method == 'POST':
+        if request.POST['action'] == 'sponsorship':
+            if not has_sponsorship:
+                sponsorship = models.Sponsorship(child=child, sponsor=user)
+                sponsorship.save()
+                has_sponsorship = True
+            else:
+                models.Sponsorship.objects.get(child=child, sponsor=user).delete()
+                has_sponsorship = False
+        if request.POST['action'] == 'support':
+            if not has_support:
+                support = models.Support(child=child, support=user)
+                support.save()
+                has_support = True
+            else:
+                models.Support.objects.get(child=child, support=user).delete()
+                has_support = False
     child2 = {
         'first_name': 'علی',
         'last_name': 'احمدی',
@@ -39,9 +61,12 @@ def child_information(request, child_id):
                                                'payer': 'حسن بیاتی',
                                                'amount': '۲۰۰',
                                                'time': '۲۰ فروردین ۱۹۹۶'}]
-                      }]
+                              }]}
     }
-    return render(request, 'main/child-information.html', {'child': child, 'user_type': 'child'})
+    return render(request, 'main/child-information.html',
+                  {'child': child, 'user_type': 'child',
+                   'has_sponsorship': has_sponsorship,
+                   'has_support': has_support})
 
 
 def add_user(request, user_class):
