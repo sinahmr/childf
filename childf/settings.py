@@ -123,3 +123,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'main.User'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'childf.sut@gmail.com'
+EMAIL_HOST_PASSWORD = 'u2*-^7$_%&&yz(7n@2ppxfazli'
+EMAIL_PORT = 587
