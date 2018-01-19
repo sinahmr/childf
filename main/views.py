@@ -13,13 +13,24 @@ from main.constants import PROVINCES, GENDER
 from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, RequestForm, PurchaseForm
 
 
+# create users for different roles
+# check different pages which need filters on children
+
 def home(request):
     return render(request, 'main/base.html', {})
 
 
 def volunteer(request):
+    show_all = request.GET.get('show_all', '1') == '1'
+    children = models.Child.objects.all()
+    if show_all == False:
+        if isinstance(request.user.cast(), models.Donor):
+            children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
+        if isinstance(request.user.cast(), models.Volunteer):
+            children = models.Child.objects.filter(support__volunteer=request.user.cast())
+
     return render(request, 'main/children.html',
-                  {'children': models.Child.objects.all(), 'show_all': True, 'user_type': 'donor'})
+                  {'children': children, 'show_all': show_all, 'user_type': 'donor'})
 
 
 def child_information(request, child_id):
@@ -40,11 +51,11 @@ def child_information(request, child_id):
                 has_sponsorship = False
         if request.POST['action'] == 'support':
             if not has_support:
-                support = models.Support(child=child, support=user)
+                support = models.Support(child=child, volunteer=user)
                 support.save()
                 has_support = True
             else:
-                models.Support.objects.get(child=child, support=user).delete()
+                models.Support.objects.get(child=child, volunteer=user).delete()
                 has_support = False
     child2 = {
         'first_name': 'علی',
@@ -342,28 +353,6 @@ def approval(request):
 def admin_children(request):
     return render(request, 'main/children.html',
                   {'children': models.Child.objects.all(), 'show_all': True, 'user_type': 'admin'})
-
-
-def sponsored_children(request):
-    children = [{
-            'first_name': 'علی',
-            'last_name': 'احمدی',
-            'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
-            'province': 'تهران',
-            'accomplishments': 'کسب رتبه‌ی اول',
-            'need_set': [{'id': 1,
-                          'title': 'نیاز اول',
-                          'description': 'کمک هزینه‌ی تحصیلی',
-                          'cost': '۱۰۰',
-                          'urgent': 'True',
-                          'PurchaseForNeed_set': [{'id': 1,
-                                                   'payer': 'حسن بیاتی',
-                                                   'amount': '۲۰۰',
-                                                   'time': '۲۰ فروردین ۱۹۹۶'}]
-                          }]
-
-        }] * 5
-    return render(request, 'main/sponsored-children.html', {'children': children, 'user_type': 'child'})
 
 
 def admin_unresolveds(request):
