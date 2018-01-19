@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from main import models
 from main.constants import PROVINCES, GENDER
-from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, PurchaseForm
+from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, RequestForm, PurchaseForm
 
 
 def home(request):
@@ -155,10 +155,7 @@ def letter(request):
         else:
             return HttpResponseRedirect(request.path + '?success=0')
     else:
-        child = {
-            'name': 'علی احمدی',
-        }
-        return render(request, 'main/letter.html', {'child': child, 'user_type': 'child'})
+        return render(request, 'main/letter.html', {'child': request.user.child, 'user_type': 'child'})
 
 
 def login(request):
@@ -175,11 +172,22 @@ def profile(request):
     return render(request, 'main/profile.html', {'user': user, 'user_type': 'child'})
 
 
+@user_passes_test(lambda u: hasattr(u, 'child'))
 def send_request(request):
-    child = {
-        'name': 'علی احمدی',
-    }
-    return render(request, 'main/send-request.html', {'child': child, 'user_type': 'child'})
+    if request.method == 'POST':
+        form = RequestForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['RequestTitle']
+            content = form.cleaned_data['RequestContent']
+            emails = list()
+            for support in models.Support.objects.filter(child=request.user.child):
+                emails.append(support.volunteer.email)
+            mail.send_mail('درخواست', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)   # TODO email title
+            return HttpResponseRedirect(request.path + '?success=1')
+        else:
+            return HttpResponseRedirect(request.path + '?success=0')
+    else:
+        return render(request, 'main/send-request.html', {'child': request.user.child, 'user_type': 'child'})
 
 
 def change_volunteer(request):

@@ -5,20 +5,26 @@
         <div class="col-md-1 hidden-sm">
         </div>
         <div class="col-md-10 col-sm-12 bg-light letter">
+            {% if request.GET.success == '0' %}
+                <div class="alert alert-danger text-center" role="alert" id="change-volunteer-alert">نامه ارسال نشد. لطفاً عنوان و متن را وارد کنید.</div>
+            {% elif request.GET.success == '1' %}
+                <div class="alert alert-success text-center" role="alert" id="change-volunteer-alert">نامه‌ی شما با موفقیت ارسال شد.</div>
+            {% endif %}
             <h3 class="card-title">ارسال درخواست</h3>
             <p class="card-text">فرستنده: {{ child.name }}</p>
 
-            <form>
+            <form method="post">
+                {% csrf_token %}
                 <div class="form-group row">
                     <label for="RequestTitle" class="col-sm-2 col-form-label">عنوان درخواست</label>
                     <div class="col-sm-10">
-                        <input type="text" maxlength="200" class="form-control" id="RequestTitle" placeholder="عنوان درخواست خود را وارد کنید">
+                        <input name="RequestTitle" type="text" maxlength="200" class="form-control" id="RequestTitle" placeholder="عنوان درخواست خود را وارد کنید">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="RequestContent" class="col-sm-2 col-form-label">متن درخواست</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="RequestContent" rows="3"></textarea>
+                        <textarea name="RequestContent" class="form-control" id="RequestContent" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="form-group row">

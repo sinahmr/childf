@@ -11,6 +11,11 @@ class LetterForm(forms.Form):
     LetterReceiverRadios = forms.ChoiceField(choices=LETTER_RECEIVER, required=True)
 
 
+class RequestForm(forms.Form):
+    RequestTitle = forms.CharField(required=True)
+    RequestContent = forms.CharField(required=True)
+
+
 class PurchaseForm(forms.Form):
     PurchaseAmount = forms.IntegerField(required=True)
     NeedID = forms.IntegerField(required=False)
