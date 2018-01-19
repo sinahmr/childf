@@ -1,6 +1,8 @@
-from django.shortcuts import render, Http404, get_object_or_404
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render, Http404, get_object_or_404, HttpResponseRedirect
+
+from main import forms, models
 from main.constants import PROVINCES, GENDER
-from main.models import Child
 from main.utils import get_int
 
 
@@ -10,11 +12,11 @@ def home(request):
 
 def volunteer(request):
     return render(request, 'main/children.html',
-                  {'children': Child.objects.all(), 'show_all': True, 'user_type': 'donor'})
+                  {'children': models.Child.objects.all(), 'show_all': True, 'user_type': 'donor'})
 
 
 def child_information(request, child_id):
-    child = get_object_or_404(Child, pk=child_id)
+    child = get_object_or_404(models.Child, pk=child_id)
     child2 = {
         'first_name': 'علی',
         'last_name': 'احمدی',
@@ -82,11 +84,25 @@ def modify_user(request, user_class):
     })
 
 
+@user_passes_test(lambda u: hasattr(u, 'child'))
 def letter(request):
-    child = {
-        'name': 'علی احمدی',
-    }
-    return render(request, 'main/letter.html', {'child': child, 'user_type': 'child'})
+    if request.method == 'POST':
+        form = forms.LetterForm(request.POST)
+        if form.is_valid():
+            models.Letter.objects.create(**{
+                'title': form.cleaned_data['LetterTitle'],
+                'content': form.cleaned_data['LetterContent'],
+                'receiver': form.cleaned_data['LetterReceiverRadios'],
+                'child': request.user.child
+            })
+            return HttpResponseRedirect(request.path + '?success=1')
+        else:
+            return HttpResponseRedirect(request.path + '?success=0')
+    else:
+        child = {
+            'name': 'علی احمدی',
+        }
+        return render(request, 'main/letter.html', {'child': child, 'user_type': 'child'})
 
 
 def login(request):

@@ -5,20 +5,26 @@
         <div class="col-md-1 hidden-sm">
         </div>
         <div class="col-md-10 col-sm-12 bg-light letter">
+            {% if request.GET.success == '0' %}
+                <div class="alert alert-danger text-center" role="alert" id="change-volunteer-alert">خطایی در ارسال نامه رخ داد.</div>
+            {% elif request.GET.success == '1' %}
+                <div class="alert alert-success text-center" role="alert" id="change-volunteer-alert">نامه‌ی شما با موفقیت ارسال شد.</div>
+            {% endif %}
             <h3 class="card-title">ارسال نامه</h3>
             <p class="card-text">فرستنده: {{ child.name }}</p>
 
-            <form>
+            <form method="post">
+                {% csrf_token %}
                 <div class="form-group row">
                     <label for="LetterTitle" class="col-sm-2 col-form-label">عنوان نامه</label>
                     <div class="col-sm-10">
-                        <input type="text" maxlength="200" class="form-control" id="LetterTitle" placeholder="عنوان نامه را وارد کنید">
+                        <input name="LetterTitle" type="text" maxlength="200" class="form-control" id="LetterTitle" placeholder="عنوان نامه را وارد کنید">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="LetterContent" class="col-sm-2 col-form-label">محتوای نامه</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="LetterContent" rows="3"></textarea>
+                        <textarea name="LetterContent" class="form-control" id="LetterContent" rows="3"></textarea>
                     </div>
                 </div>
                 <fieldset class="form-group">
@@ -28,14 +34,14 @@
                             <div class="form-check">
                                 <label class="form-check-label">
                                     <input class="form-check-input" type="radio" name="LetterReceiverRadios"
-                                           value="volunteer" checked>
+                                           value="V" checked>
                                     <span class="radio-item">مددکاران</span>
                                 </label>
                             </div>
                             <div class="form-check">
                                 <label class="form-check-label">
                                     <input class="form-check-input" type="radio" name="LetterReceiverRadios"
-                                           value="donor">
+                                           value="D">
                                     <span class="radio-item">همیاران</span>
                                 </label>
                             </div>
