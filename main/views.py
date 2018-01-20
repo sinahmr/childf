@@ -82,7 +82,7 @@ def child_information(request, child_id):
 
 
 def add_user(request, user_class):
-    if user_class not in ['admin', 'child', 'volunteer', 'donor']:
+    if user_class not in ['admin', 'child', 'volunteer', 'donor'] or not is_authorized_for_add_user(request.user, user_class):
         raise Http404("User type is not valid!")
     if request.method == 'POST':
         user_form = None
@@ -418,3 +418,15 @@ def bank(request):
     success = True
     redirect_url += '&success=1'
     return render(request, 'main/bank.html', {'success': success, 'redirect_url': redirect_url, 'amount': amount})
+
+
+def is_authorized_for_add_user(user, user_class):
+    if user_class == 'donor':
+        return True
+    if user_class == 'child':
+        if user.__class__ == 'Volunteer' or user.is_superuser:
+            return True
+    if user_class == 'volunteer':
+        if user.is_superuser:
+            return True
+    return False
