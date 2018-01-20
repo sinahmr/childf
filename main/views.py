@@ -17,6 +17,7 @@ from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, Letter
 # check different pages which need filters on children
 
 def home(request):
+    print(request.user)
     return render(request, 'main/base.html', {})
 
 
@@ -104,12 +105,14 @@ def add_user(request, user_class):
                 new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'])
                 new_need.child = user
                 new_need.save()
-            print(needs_json)
             username = user_form.cleaned_data.get('email')
-            raw_password = user_form.cleaned_data.get('password')
-            user = authenticate(username=username, password=raw_password)
-            django_login(request, user)
-            return redirect('login')
+            raw_password = request.POST.get('password')
+            user.set_password(raw_password)
+            user.is_active = True
+            user.save()
+            authenticate(username=username, password=raw_password)
+            print(django_login(request, user))
+            return redirect('home')
         else:
             return render(request, 'main/modify-user.html', {
                 'user': None,
@@ -119,9 +122,6 @@ def add_user(request, user_class):
                 'user_type': '',
                 'errors': [error for error in user_form.errors.values()] + [error for error in user_info_form.errors.values()],
             })
-    # else:
-    #     form = UserCreationForm()
-    # return render(request, 'signup.html', {'form': form})
     else:
         return render(request, 'main/modify-user.html', {
             'user': None,
@@ -200,7 +200,6 @@ def login(request):
         password = request.POST.get('password')
         try:
             user = models.User.objects.get(email=email)
-            print(user.check_password(password))
             if not user.check_password(password):
                 raise Exception
             django_login(request, user)

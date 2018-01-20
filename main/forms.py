@@ -24,19 +24,19 @@ class PurchaseForm(forms.Form):
 class ChildForm(ModelForm):
     class Meta:
         model = Child
-        exclude = ('date_joined', )
+        exclude = ('date_joined', 'password' )
 
 
 class DonorForm(ModelForm):
     class Meta:
         model = Donor
-        exclude = ('date_joined', )
+        exclude = ('date_joined', 'password')
 
 
 class VolunteerForm(ModelForm):
     class Meta:
         model = Volunteer
-        exclude = ('date_joined', )
+        exclude = ('date_joined', 'password')
 
 
 class UserInfoForm(ModelForm):

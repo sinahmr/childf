@@ -5,12 +5,12 @@
             <div class="col-md-2 d-none d-md-block">
             </div>
             <div class="col-md-8 col-sm-12 bg-light main-content">
-                {% if errors%}
-                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
-                {% for error in errors %}
-                    {{ error }}
-                {%  endfor %}
-                </div>
+                {% if errors %}
+                    <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                        {% for error in errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
                 {% endif %}
                 <form method="post" onsubmit="createNeedsJson()" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -33,7 +33,7 @@
                                        {% if user %}value="{{ user.email }}" {% endif %}>
                             </div>
                             {% if not user %}
-                                 <div class="form-group">
+                                <div class="form-group">
                                     <label for="password">گذرواژه</label>
                                     <input type="password" maxlength="200" class="form-control" id="password" name="password">
                                 </div>
@@ -63,11 +63,6 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                <label for="year_of_birth">سال تولد</label>
-                                <input type="text" maxlength="200" class="form-control" id="year_of_birth" name="year_of_birth"
-                                       {% if user %}value="{{ user.year_of_birth }}" {% endif %}>
-                            </div>
                                 {% if user_type == 'admin' %}
                                     <div class="form-group">
                                         <label for="volunteer">مددکار</label>
@@ -81,6 +76,11 @@
                                     </div>
                                 {% endif %}
                             {% endif %}
+                            <div class="form-group">
+                                <label for="year_of_birth">سال تولد</label>
+                                <input type="text" maxlength="200" class="form-control" id="year_of_birth" name="year_of_birth"
+                                       {% if user %}value="{{ user.year_of_birth }}" {% endif %}>
+                            </div>
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <div>
@@ -173,19 +173,19 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">عنوان</label>
-                                                    <input type="text" class="form-control" id="requirement-title">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="message-text" class="col-form-label">شرح
-                                                        نیازمندی</label>
-                                                    <textarea class="form-control" id="requirement-desc"></textarea>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="message-text" class="col-form-label">هزینه</label>
-                                                    <textarea class="form-control" id="requirement-cost"></textarea>
-                                                </div>
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">عنوان</label>
+                                                <input type="text" class="form-control" id="requirement-title">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="message-text" class="col-form-label">شرح
+                                                    نیازمندی</label>
+                                                <textarea class="form-control" id="requirement-desc"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="message-text" class="col-form-label">هزینه</label>
+                                                <textarea class="form-control" id="requirement-cost"></textarea>
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">بی‌خیال
@@ -217,7 +217,7 @@
 {% block scripts %}
     <script type="text/javascript">
         var number = 1;
-        var needs = {'needs':[]};
+        var needs = {'needs': []};
         $('#exampleModal').on('show.bs.modal', function (event) {
             var modal = $(this);
             modal.find('.modal-title').text('');
@@ -232,7 +232,7 @@
             card.find('a').html(title);
             var desc = $('#requirement-desc').val();
             var cost = $('#requirement-cost').val();
-            needs.needs.push({'title': title, 'description':desc, 'cost':cost, 'urgent':false})
+            needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false})
             card.find('.card-body').html('<div class="desc" style="display: inline-block;">' + desc + '</div>' + '<div class="float-left cost">' + cost + ' تومان' + '</div>');
             card.appendTo('#accordion');
             number += 1;
