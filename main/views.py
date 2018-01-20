@@ -102,7 +102,7 @@ def add_user(request, user_class):
             user_info.save()
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
-                new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'])
+                new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
                 new_need.child = user
                 new_need.save()
             username = user_form.cleaned_data.get('email')
@@ -114,13 +114,15 @@ def add_user(request, user_class):
             print(django_login(request, user))
             return redirect('home')
         else:
+            errors = json.loads(user_form.errors.as_json())
+            errors.update(json.loads(user_info_form.errors.as_json()))
             return render(request, 'main/modify-user.html', {
                 'user': None,
                 'all_provinces': PROVINCES,
                 'all_genders': GENDER,
                 'user_class': user_class,
                 'user_type': '',
-                'errors': [error for error in user_form.errors.values()] + [error for error in user_info_form.errors.values()],
+                'errors': errors,
             })
     else:
         return render(request, 'main/modify-user.html', {

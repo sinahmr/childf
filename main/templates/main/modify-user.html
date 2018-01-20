@@ -5,13 +5,11 @@
             <div class="col-md-2 d-none d-md-block">
             </div>
             <div class="col-md-8 col-sm-12 bg-light main-content">
-                {% if errors %}
-                    <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
-                        {% for error in errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+{#                {% if errors %}#}
+{#                    <div class="alert alert-danger" role="alert" id="change-volunteer-alert">#}
+{#                        {{ errors }}#}
+{#                    </div>#}
+{#                {% endif %}#}
                 <form method="post" onsubmit="createNeedsJson()" enctype="multipart/form-data">
                     {% csrf_token %}
 
@@ -20,22 +18,43 @@
                             <div class="form-group">
                                 <label for="first_name">نام</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name"
-                                       {% if user %}value="{{ user.first_name }}" {% endif %}>
+                                       {% if user %}value="{{ user.first_name }}" {% endif %} required>
                             </div>
+                            {% if errors and errors.first_name %}
+                                {% for error in errors.first_name %}
+                                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                                    {{ error.message }}
+                                </div>
+                                {% endfor %}
+                            {% endif %}
                             <div class="form-group">
                                 <label for="last_name">نام خانوادگی</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name"
-                                       {% if user %}value="{{ user.last_name }}" {% endif %}>
+                                       {% if user %}value="{{ user.last_name }}" {% endif %} required>
                             </div>
+                            {% if errors and errors.last_name %}
+                                {% for error in errors.last_name %}
+                                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                                    {{ error.message }}
+                                </div>
+                                {% endfor %}
+                            {% endif %}
                             <div class="form-group">
                                 <label for="email">ایمیل</label>
                                 <input type="email" maxlength="200" class="form-control" id="email" name="email"
-                                       {% if user %}value="{{ user.email }}" {% endif %}>
+                                       {% if user %}value="{{ user.email }}" {% endif %} required>
                             </div>
+                            {% if errors and errors.email %}
+                                {% for error in errors.email %}
+                                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                                    {{ error.message }}
+                                </div>
+                                {% endfor %}
+                            {% endif %}
                             {% if not user %}
                                 <div class="form-group">
                                     <label for="password">گذرواژه</label>
-                                    <input type="password" maxlength="200" class="form-control" id="password" name="password">
+                                    <input type="password" maxlength="200" class="form-control" id="password" name="password" required>
                                 </div>
                             {% endif %}
                             <div class="form-group">
@@ -79,8 +98,15 @@
                             <div class="form-group">
                                 <label for="year_of_birth">سال تولد</label>
                                 <input type="text" maxlength="200" class="form-control" id="year_of_birth" name="year_of_birth"
-                                       {% if user %}value="{{ user.year_of_birth }}" {% endif %}>
+                                       {% if user %}value="{{ user.year_of_birth }}" {% endif %} required>
                             </div>
+                            {% if errors and errors.year_of_birth %}
+                                {% for error in errors.year_of_birth %}
+                                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                                    {{ error.message }}
+                                </div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         <div class="col-md-4 col-sm-12">
                             <div>
@@ -266,6 +292,15 @@
         }
 
         function createNeedsJson() {
+            var tmp = 0;
+            $('#accordion #template-card').each(function (index) {
+                if(!$(this).hasClass('d-none'))
+                    if(!$(this).find('.badge-danger').hasClass('d-none')) {
+                        needs.needs[tmp].urgent = true;
+                        tmp = tmp + 1;
+                    }
+            });
+            console.log(needs)
             $('#needs').val(JSON.stringify(needs));
             return true;
         }
