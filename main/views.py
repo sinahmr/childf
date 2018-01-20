@@ -1,7 +1,7 @@
 import json
 import urllib
 
-from django.contrib.auth import authenticate, login as django_login
+from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import user_passes_test
 from django.core import mail
 from django.http import HttpResponse
@@ -195,7 +195,25 @@ def letter(request):
 
 
 def login(request):
-    return render(request, 'main/login.html', {})
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        try:
+            user = models.User.objects.get(email=email)
+            print(user.check_password(password))
+            if not user.check_password(password):
+                raise Exception
+            django_login(request, user)
+            return redirect('home')
+        except:
+            return render(request, 'main/login.html', {'error': 'نام کاربری یا رمز عبور نادرست است.'})
+    else:
+        return render(request, 'main/login.html', {})
+
+
+def logout(request):
+    django_logout(request)
+    return redirect('home')
 
 
 def profile(request, user_id):
