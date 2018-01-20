@@ -5,11 +5,6 @@
             <div class="col-md-2 d-none d-md-block">
             </div>
             <div class="col-md-8 col-sm-12 bg-light main-content">
-{#                {% if errors %}#}
-{#                    <div class="alert alert-danger" role="alert" id="change-volunteer-alert">#}
-{#                        {{ errors }}#}
-{#                    </div>#}
-{#                {% endif %}#}
                 <form method="post" onsubmit="createNeedsJson()" enctype="multipart/form-data">
                     {% csrf_token %}
 
@@ -300,7 +295,6 @@
                         tmp = tmp + 1;
                     }
             });
-            console.log(needs)
             $('#needs').val(JSON.stringify(needs));
             return true;
         }

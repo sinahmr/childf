@@ -17,7 +17,6 @@ from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, Letter
 # check different pages which need filters on children
 
 def home(request):
-    print(request.user)
     return render(request, 'main/base.html', {})
 
 
@@ -111,7 +110,6 @@ def add_user(request, user_class):
             user.is_active = True
             user.save()
             authenticate(username=username, password=raw_password)
-            print(django_login(request, user))
             return redirect('home')
         else:
             errors = json.loads(user_form.errors.as_json())
