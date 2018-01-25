@@ -1,7 +1,4 @@
 <ul class="navbar-nav ml-auto">
-    <li class="nav-item active">
-        <a class="nav-link" href="#">مددکار<span class="sr-only">(current)</span></a>
-    </li>
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownChilds" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">
@@ -9,8 +6,29 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownChilds">
             <a class="dropdown-item" href="{% url 'volunteer_children' %}">لیست نیازمندان</a>
-            <a class="dropdown-item" href="{% url 'add_user' 'child'%}">اضافه کردن نیازمند</a>
-            <a class="dropdown-item" href="{% url 'volunteer_letter_verification'%}">نامه‌های در دست تایید</a>
+            <a class="dropdown-item" href="{% url 'add_user' 'child' %}">اضافه کردن نیازمند</a>
+            <a class="dropdown-item" href="{% url 'volunteer_letter_verification' %}">نامه‌های در دست تایید</a>
+        </div>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInfo" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            آشنایی با بنیاد کودک
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownInfo">
+            <a class="dropdown-item" href="{% url 'static_history' %}">تاریخچه</a>
+            <a class="dropdown-item" href="{% url 'static_vision' %}">اهداف و دیدگاه</a>
+            <a class="dropdown-item" href="{% url 'static_chart' %}">چارت سازمانی</a>
+        </div>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInfo" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            راه‌های کمک به کودکان
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownInfo">
+            <a class="dropdown-item" href="{% url 'static_sponsorship' %}">حمایت از یک کودک</a>
+            <a class="dropdown-item" href="{% url 'static_faq' %}">سوالات متداول</a>
         </div>
     </li>
 </ul>

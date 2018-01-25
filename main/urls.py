@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
-    url(r'^home/', views.home),
+    url(r'^$', views.home),
     url(r'^volunteer/children$', views.volunteer, name='volunteer_children'),
     url(r'^child-information/(?P<child_id>\d+)/', views.child_information, name='child_information'),
     url(r'^(?P<user_class>\w+)/add/', views.add_user, name='add_user'),
