@@ -88,10 +88,10 @@
 
                                     <div class="float-left">{{ need.cost }} هزار تومان</div>
                                     {% if user_type == 'donor' and has_sponsorship %}
-                                    <a href="{% url 'donor_purchase' %}?need_id={{ need.id }}" class="btn btn-primary" style="margin-top: 10px">پرداخت</a>
+                                        <a href="{% url 'donor_purchase' %}?need_id={{ need.id }}" class="btn btn-primary" style="margin-top: 10px">پرداخت</a>
                                     {% endif %}
                                     {% if user_type == 'volunteer' and has_support %}
-                                    <a href="javascript:;" class="btn btn-secondary" style="margin-top: 10px" onclick="show_payments(this);">لیست پرداخت‌ها</a>
+                                        <a href="javascript:;" class="btn btn-secondary" style="margin-top: 10px" onclick="show_payments(this);">لیست پرداخت‌ها</a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -111,12 +111,12 @@
                     <h5 class="modal-title" id="exampleModalLabel">لیست پرداخت‌ها</h5>
                 </div>
                 <div class="modal-body">
-{#                    {% for purchase in "123" %}#}
-{#                        <h4 class="card-title">علی حقانی</h4>#}
-{#                        <span class="card-text">۲۰۰ هزار تومان</span>#}
-{#                        <span class="card-subtitle mb-2 text-muted float-left">۰۱/۰۲/۹۶</span>#}
-{#                        <hr/>#}
-{#                    {% endfor %}#}
+                    {#                    {% for purchase in "123" %}#}
+                    {#                        <h4 class="card-title">علی حقانی</h4>#}
+                    {#                        <span class="card-text">۲۰۰ هزار تومان</span>#}
+                    {#                        <span class="card-subtitle mb-2 text-muted float-left">۰۱/۰۲/۹۶</span>#}
+                    {#                        <hr/>#}
+                    {#                    {% endfor %}#}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">بستن</button>
@@ -132,7 +132,7 @@
         var data = {
             {% for need in child.need_set.all %}
                 '{{ need.id }}': [
-                    {% for purchase in need.PurchaseForNeed_set %}
+                    {% for purchase in need.purchaseforneed_set.all %}
                         {'payer': '{{purchase.payer}}', 'amount': '{{purchase.amount}}', 'time': '{{ purchase.time }}'}
                         {% if not forloop.last %}
                             ,
@@ -145,18 +145,14 @@
         function show_payments(event) {
             $('.modal-body').empty();
             var id = $(event).parent().parent().attr('id');
-            id = parseInt($('#payments').data = id.substr(8));
-            $.each(data, function (index, value) {
-                if(id == index)
-                    var total = value.length;
-
-                   $.each(value, function (index, value) {
-                       $('.modal-body').append($('<h4/>').addClass('card-title').text(value['payer']));
-                       $('.modal-body').append($('<span/>').addClass('card-text').text(value['amount'] + ' هزار تومان'));
-                       $('.modal-body').append($('<span/>').addClass('card-subtitle').addClass('mb-2').addClass('text-muted').addClass('float-left').text(value['time']));
-                       if(index != total - 1)
-                           $('.modal-body').append($('<hr/>'));
-                    });
+            id = parseInt(id.substr(8));
+            var total = data[id].length;
+            $.each(data[id], function (index, value) {
+                $('.modal-body').append($('<h4/>').addClass('card-title').text(value['payer']));
+                $('.modal-body').append($('<span/>').addClass('card-text').text(value['amount'] + ' هزار تومان'));
+                $('.modal-body').append($('<span/>').addClass('card-subtitle').addClass('mb-2').addClass('text-muted').addClass('float-left').text(value['time']));
+                if (index != total - 1)
+                    $('.modal-body').append($('<hr/>'));
             });
             $('#payments').modal('show');
         }

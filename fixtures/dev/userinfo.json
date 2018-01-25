@@ -6,7 +6,7 @@
     "first_name": "\u0639\u0644\u06cc",
     "last_name": "\u0645\u0642\u062f\u0645",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.443Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 88
   }
@@ -18,7 +18,7 @@
     "first_name": "\u0645\u0647\u0633\u0627",
     "last_name": "\u0627\u0645\u06cc\u0646\u06cc\u200c",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.450Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 89
   }
@@ -30,7 +30,7 @@
     "first_name": "\u0645\u0647\u0633\u0627",
     "last_name": "\u0645\u0642\u062f\u0645",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.458Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 90
   }
@@ -42,7 +42,7 @@
     "first_name": "\u0633\u0627\u0631\u0627\u0631",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.463Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 91
   }
@@ -54,7 +54,7 @@
     "first_name": "\u0639\u0644\u06cc",
     "last_name": "\u0647\u0627\u062f\u06cc\u0627\u0646",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.468Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 92
   }
@@ -66,7 +66,7 @@
     "first_name": "\u0631\u0636\u0627",
     "last_name": "\u0645\u0648\u0633\u0648\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.475Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 93
   }
@@ -78,7 +78,7 @@
     "first_name": "\u062d\u0633\u06cc\u0646",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.480Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 94
   }
@@ -90,7 +90,7 @@
     "first_name": "\u0631\u0636\u0627",
     "last_name": "\u0627\u0645\u06cc\u0646\u06cc\u200c",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.485Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 95
   }
@@ -102,7 +102,7 @@
     "first_name": "\u0645\u0647\u0633\u0627",
     "last_name": "\u0645\u0648\u0633\u0648\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.490Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 96
   }
@@ -114,7 +114,7 @@
     "first_name": "\u0645\u0647\u0633\u0627",
     "last_name": "\u0645\u0648\u0633\u0648\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.495Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 97
   }
@@ -126,7 +126,7 @@
     "first_name": "\u0633\u0627\u0631\u0627\u0631",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.500Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 98
   }
@@ -138,7 +138,7 @@
     "first_name": "\u0631\u0636\u0627",
     "last_name": "\u0645\u0642\u062f\u0645",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.506Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 99
   }
@@ -150,7 +150,7 @@
     "first_name": "\u0639\u0644\u06cc",
     "last_name": "\u0645\u0648\u0633\u0648\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.512Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 100
   }
@@ -162,7 +162,7 @@
     "first_name": "\u0633\u06cc\u0646\u0627",
     "last_name": "\u0641\u0631\u062f\u0648\u0633\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.516Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 101
   }
@@ -174,7 +174,7 @@
     "first_name": "\u0631\u0636\u0627",
     "last_name": "\u0645\u0642\u062f\u0645",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.521Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 102
   }
@@ -186,7 +186,7 @@
     "first_name": "\u0639\u0644\u06cc",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.526Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 103
   }
@@ -198,7 +198,7 @@
     "first_name": "\u062d\u0633\u06cc\u0646",
     "last_name": "\u0645\u0642\u062f\u0645",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.532Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 104
   }
@@ -210,7 +210,7 @@
     "first_name": "\u062d\u0633\u06cc\u0646",
     "last_name": "\u0627\u0645\u06cc\u0646\u06cc\u200c",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.537Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 105
   }
@@ -222,7 +222,7 @@
     "first_name": "\u0633\u0627\u0631\u0627\u0631",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.542Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 106
   }
@@ -234,7 +234,7 @@
     "first_name": "\u0631\u0636\u0627",
     "last_name": "\u0647\u0627\u062f\u06cc\u0627\u0646",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.549Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 107
   }
@@ -246,7 +246,7 @@
     "first_name": "\u062d\u0633\u06cc\u0646",
     "last_name": "\u0641\u0631\u062f\u0648\u0633\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.555Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 108
   }
@@ -258,7 +258,7 @@
     "first_name": "\u0633\u0627\u0631\u0627\u0631",
     "last_name": "\u0645\u0642\u062f\u0645",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.560Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 109
   }
@@ -270,7 +270,7 @@
     "first_name": "\u0639\u0644\u06cc",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.566Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 110
   }
@@ -282,7 +282,7 @@
     "first_name": "\u0633\u0627\u0631\u0627\u0631",
     "last_name": "\u0647\u0627\u062f\u06cc\u0627\u0646",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.571Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 111
   }
@@ -294,7 +294,7 @@
     "first_name": "\u0645\u0647\u0633\u0627",
     "last_name": "\u0645\u0648\u0633\u0648\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.576Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 112
   }
@@ -306,7 +306,7 @@
     "first_name": "\u0645\u0647\u0633\u0627",
     "last_name": "\u0645\u0642\u062f\u0645",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.581Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 113
   }
@@ -318,7 +318,7 @@
     "first_name": "\u0641\u0627\u0637\u0645\u0647",
     "last_name": "\u0641\u0631\u062f\u0648\u0633\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.587Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 114
   }
@@ -330,7 +330,7 @@
     "first_name": "\u0633\u06cc\u0646\u0627",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.592Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 115
   }
@@ -342,7 +342,7 @@
     "first_name": "\u0641\u0627\u0637\u0645\u0647",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.596Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 116
   }
@@ -354,7 +354,7 @@
     "first_name": "\u0633\u0627\u0631\u0627\u0631",
     "last_name": "\u0645\u0648\u0633\u0648\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.602Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 117
   }
@@ -366,7 +366,7 @@
     "first_name": "\u0645\u0647\u0633\u0627",
     "last_name": "\u0647\u0627\u062f\u06cc\u0627\u0646",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.606Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 118
   }
@@ -378,7 +378,7 @@
     "first_name": "\u0641\u0627\u0637\u0645\u0647",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.612Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 119
   }
@@ -390,7 +390,7 @@
     "first_name": "\u0633\u06cc\u0646\u0627",
     "last_name": "\u0645\u0648\u0633\u0648\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.617Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 120
   }
@@ -402,7 +402,7 @@
     "first_name": "\u0631\u0636\u0627",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.622Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 121
   }
@@ -414,7 +414,7 @@
     "first_name": "\u0639\u0644\u06cc",
     "last_name": "\u0645\u0648\u0633\u0648\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.626Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 122
   }
@@ -426,7 +426,7 @@
     "first_name": "\u0633\u0627\u0631\u0627\u0631",
     "last_name": "\u0641\u0631\u062f\u0648\u0633\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.631Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 123
   }
@@ -438,7 +438,7 @@
     "first_name": "\u0631\u0636\u0627",
     "last_name": "\u0641\u0631\u062f\u0648\u0633\u06cc",
     "gender": "M",
-    "date_of_birth": "2018-01-19T08:30:20.637Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 124
   }
@@ -450,7 +450,7 @@
     "first_name": "\u0639\u0644\u06cc",
     "last_name": "\u0645\u0648\u0633\u0648\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.642Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 125
   }
@@ -462,7 +462,7 @@
     "first_name": "\u0633\u0627\u0631\u0627\u0631",
     "last_name": "\u0641\u0636\u0644\u06cc",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.647Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 126
   }
@@ -474,7 +474,7 @@
     "first_name": "\u0633\u0627\u0631\u0627\u0631",
     "last_name": "\u0647\u0627\u062f\u06cc\u0627\u0646",
     "gender": "F",
-    "date_of_birth": "2018-01-19T08:30:20.652Z",
+    "year_of_birth": 1380,
     "image": "",
     "user": 127
   }

@@ -1,9 +1,10 @@
 import json
 import urllib
 
-from django.contrib.auth import authenticate, login as django_login
+from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import user_passes_test
 from django.core import mail
+from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, Http404, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse
@@ -81,7 +82,7 @@ def child_information(request, child_id):
 
 
 def add_user(request, user_class):
-    if user_class not in ['admin', 'child', 'volunteer', 'donor']:
+    if user_class not in ['admin', 'child', 'volunteer', 'donor'] or not is_authorized_for_add_user(request.user, user_class):
         raise Http404("User type is not valid!")
     if request.method == 'POST':
         user_form = None
@@ -101,27 +102,33 @@ def add_user(request, user_class):
             user_info.save()
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
-                new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'])
+                new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
                 new_need.child = user
                 new_need.save()
-            print(needs_json)
             username = user_form.cleaned_data.get('email')
-            raw_password = user_form.cleaned_data.get('password')
-            user = authenticate(username=username, password=raw_password)
-            django_login(request, user)
-            return redirect('login')
+            raw_password = request.POST.get('password')
+            user.set_password(raw_password)
+            user.is_active = True
+            user.save()
+            authenticate(username=username, password=raw_password)
+            return render(request, 'main/modify-user.html', {
+                'user': None,
+                'all_provinces': PROVINCES,
+                'all_genders': GENDER,
+                'user_class': user_class,
+                'success': True,
+            })
         else:
+            errors = json.loads(user_form.errors.as_json())
+            errors.update(json.loads(user_info_form.errors.as_json()))
             return render(request, 'main/modify-user.html', {
                 'user': None,
                 'all_provinces': PROVINCES,
                 'all_genders': GENDER,
                 'user_class': user_class,
                 'user_type': '',
-                'errors': [error for error in user_form.errors.values()] + [error for error in user_info_form.errors.values()],
+                'errors': errors,
             })
-    # else:
-    #     form = UserCreationForm()
-    # return render(request, 'signup.html', {'form': form})
     else:
         return render(request, 'main/modify-user.html', {
             'user': None,
@@ -195,14 +202,31 @@ def letter(request):
 
 
 def login(request):
-    return render(request, 'main/login.html', {})
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        try:
+            user = models.User.objects.get(email=email)
+            if not user.check_password(password):
+                raise Exception
+            django_login(request, user)
+            return redirect('home')
+        except:
+            return render(request, 'main/login.html', {'error': 'نام کاربری یا رمز عبور نادرست است.'})
+    else:
+        return render(request, 'main/login.html', {})
+
+
+def logout(request):
+    django_logout(request)
+    return redirect('home')
 
 
 def profile(request, user_id):
     if request.user.is_superuser:
         user = get_object_or_404(models.User, pk=user_id)
     else:
-        if request.user.id != user_id:
+        if str(request.user.id) != user_id:
             raise Http404
         user = request.user
     return render(request, 'main/profile.html', {'user': user})
@@ -376,21 +400,8 @@ def admin_unresolveds(request):
 
 
 def admin_volunteers(request):
-    volunteers = [
-        {
-            'name': 'علی رضایی',
-            'child_count': 4,
-        },
-        {
-            'name': 'محمد محمدی',
-            'child_count': 3,
-        },
-        {
-            'name': 'مهدی میرزایی',
-            'child_count': 2,
-        },
-    ]
-    return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers, 'user_type': 'admin'})
+    volunteers = models.Volunteer.objects.all().annotate(child_count=Count('support'))
+    return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers})
 
 
 def bank(request):
@@ -401,3 +412,15 @@ def bank(request):
     success = True
     redirect_url += '&success=1'
     return render(request, 'main/bank.html', {'success': success, 'redirect_url': redirect_url, 'amount': amount})
+
+
+def is_authorized_for_add_user(user, user_class):
+    if user_class == 'donor':
+        return True
+    if user_class == 'child':
+        if user.__class__ == 'Volunteer' or user.is_superuser:
+            return True
+    if user_class == 'volunteer':
+        if user.is_superuser:
+            return True
+    return False
