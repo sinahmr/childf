@@ -39,7 +39,7 @@
                                     نیازمندان <span class="badge badge-light">{{ volunteer.child_count }}</span>
                                 </button>
                             </td>
-                            <td><a href="{% url 'edit_user' 'volunteer' %}" class="btn btn-sm btn-outline-info">ویرایش
+                            <td><a href="{% url 'edit_user' volunteer.id %}" class="btn btn-sm btn-outline-info">ویرایش
                                 مددکار</a></td>
                         </tr>
                     {% endfor %}
