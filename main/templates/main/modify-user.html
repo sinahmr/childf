@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 {% block content %}
     <div class="container-fluid content">
-        <div class="row">
+        <div class="row mb-5">
             <div class="col-md-2 d-none d-md-block">
             </div>
             <div class="col-md-8 col-sm-12 bg-light main-content">
@@ -139,7 +139,7 @@
                         <div class="form-group">
                             <label for="needs">نیاز‌ها&nbsp;&nbsp;</label>
                             <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal"
-                                    data-target="#exampleModal">اضافه کردن
+                                    data-target="#exampleModal" onclick="empty_form()">اضافه کردن
                             </button>
                             <div id="accordion" role="tablist" class="mt-2">
                                 <div class="card d-none" id="template-card">
@@ -222,7 +222,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="message-text" class="col-form-label">هزینه</label>
-                                                <textarea class="form-control" id="requirement-cost"></textarea>
+                                                <input type="number" class="form-control" id="requirement-cost">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -276,6 +276,12 @@
             number += 1;
             $('#exampleModal').modal('hide');
         });
+
+        function empty_form() {
+            $('#requirement-title').val('');
+            $('#requirement-desc').val('');
+            $('#requirement-cost').val('');
+        }
 
         function make_urgent(event) {
             $('.badge').addClass('d-none');

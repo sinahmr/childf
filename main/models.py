@@ -131,7 +131,7 @@ class Donor(User):
 
 
 class Support(models.Model):
-    child = models.ForeignKey(Child, on_delete=models.CASCADE)
+    child = models.ForeignKey(Child, on_delete=models.CASCADE, unique=True)
     volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE)  # TODO many-to-many?
 
     class Meta:
