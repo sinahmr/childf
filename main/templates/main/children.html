@@ -15,14 +15,17 @@
                         {% endif %}
                 </button>
                 </a>
+                {% if user_type == 'admin' %}
+                    <a href="?without_donor=1">
+                        <button type="button" class="btn btn-outline-primary mr-2" aria-pressed="true">نمایش کودکان بدون
+                            کفیل
+                        </button>
+                    </a>
+                {% endif %}
             {% else %}
                 <a href="?show_all=1">
                     <button type="button" class="btn btn-outline-primary">نمایش تمام کودکان</button>
                 </a>
-            {% endif %}
-            {% if user_type == 'admin' %}
-                <button type="button" class="btn btn-outline-primary mr-2" aria-pressed="true">نمایش کودکان بدون کفیل
-                </button>
             {% endif %}
             <div class="row">
                 {% for child in children %}

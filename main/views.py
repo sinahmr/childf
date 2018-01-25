@@ -29,7 +29,9 @@ def volunteer(request):
             children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
         if isinstance(request.user.cast(), models.Volunteer):
             children = models.Child.objects.filter(support__volunteer=request.user.cast())
-
+    if request.user.user_type() == 'admin' and request.GET.get('without_donor', '0') == '1':
+        show_all = False
+        children = models.Child.objects.filter(sponsorship=None)
     return render(request, 'main/children.html',
                   {'children': children, 'show_all': show_all})
 
@@ -371,8 +373,7 @@ def approval(request):
 
 
 def admin_children(request):
-    return render(request, 'main/children.html',
-                  {'children': models.Child.objects.all(), 'show_all': True})
+    return volunteer(request)
 
 
 @user_passes_test(lambda user: user.is_superuser)
