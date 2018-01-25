@@ -101,6 +101,10 @@ class OngoingUserInfo(AbstractUserInfo):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     submit_date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = 'مشخصات در دست تأیید'
+        verbose_name_plural = 'مشخصات در دست تأیید'
+
 
 class Child(User):
     province = models.CharField(max_length=3, choices=PROVINCES)
@@ -112,6 +116,12 @@ class Child(User):
     class Meta:
         verbose_name = 'نیازمند'
         verbose_name_plural = 'نیازمندان'
+
+    def find_volunteer(self):
+        try:
+            return Support.objects.filter(child=self)[0].volunteer
+        except:
+            return Need
 
 
 class Volunteer(User):

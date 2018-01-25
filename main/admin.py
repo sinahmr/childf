@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
 
 from main.models import UserInfo, User, Child, Volunteer, Donor, Letter, Need, PurchaseForInstitute, PurchaseForNeed, \
-    Activity
+    Activity, OngoingUserInfo
 
 
 @admin.register(User)
@@ -40,3 +40,4 @@ admin.site.register(Need)
 admin.site.register(PurchaseForInstitute)
 admin.site.register(PurchaseForNeed)
 admin.site.register(Activity)
+admin.site.register(OngoingUserInfo)

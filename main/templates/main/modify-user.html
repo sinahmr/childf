@@ -15,18 +15,29 @@
                             {% elif success == '2' %}
                                 <div class="alert alert-success text-center" role="alert">تغییرات با موفقیت انجام شد.</div>
                             {% endif %}
-                            <h2>ثبت نام
-                            {% if user_class == 'child' %}
-                                نیازمند
-                            {% elif user_class == 'volunteer' %}
-                                مددکار
-                            {% elif user_class == 'donor' %}
-                                همیار
-                            {% endif %}</h2>
+
+                            <h2>
+                                {% if not user %}
+                                    ثبت نام
+                                {% else %}
+                                    ویرایش
+                                {% endif %}
+                                {% if user_class == 'child' %}
+                                    نیازمند
+                                {% elif user_class == 'volunteer' %}
+                                    مددکار
+                                {% elif user_class == 'donor' %}
+                                    همیار
+                                {% endif %}</h2>
                             <div class="form-group">
                                 <label for="first_name">نام</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name"
-                                       {% if user %}value="{{ user.userinfo.first_name }}" {% endif %} required>
+                                       {% if user %}value="{{ user.userinfo.first_name }}" {% endif %} required
+                                        {% if user %}
+                                            {% if user_requested == ' volunteer' %}
+                                       disabled
+                                            {% endif %}
+                                        {% endif %}>
                             </div>
                             {% if errors and errors.first_name %}
                                 {% for error in errors.first_name %}
@@ -38,7 +49,13 @@
                             <div class="form-group">
                                 <label for="last_name">نام خانوادگی</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name"
-                                       {% if user %}value="{{ user.userinfo.last_name }}" {% endif %} required>
+                                       {% if user %}value="{{ user.userinfo.last_name }}" {% endif %} required
+                                        {% if user %}
+                                            {% if user_requested == ' volunteer' %}
+                                       disabled
+                                            {% endif %}
+                                        {% endif %}
+                                >
                             </div>
                             {% if errors and errors.last_name %}
                                 {% for error in errors.last_name %}
@@ -50,7 +67,12 @@
                             <div class="form-group">
                                 <label for="email">ایمیل</label>
                                 <input type="email" maxlength="200" class="form-control" id="email" name="email"
-                                       {% if user %}value="{{ user.email }}" {% endif %} required>
+                                       {% if user %}value="{{ user.email }}" {% endif %} required
+                                        {% if user %}
+                                            {% if user_requested == 'child' or user_requested == ' volunteer' %}
+                                       disabled
+                                            {% endif %}
+                                        {% endif %}>
                             </div>
                             {% if errors and errors.email %}
                                 {% for error in errors.email %}
@@ -67,7 +89,12 @@
                             {% endif %}
                             <div class="form-group">
                                 <label for="gender">جنسیت</label>
-                                <select class="form-control" id="gender" name="gender">
+                                <select class="form-control" id="gender" name="gender"
+                                        {% if user %}
+                                            {% if user_requested == ' volunteer' %}
+                                        disabled
+                                            {% endif %}
+                                        {% endif %}>
                                     {% for code, gender in all_genders %}
                                         {% if user and code == user.userinfo.gender %}
                                             <option value="{{ code }}" selected>{{ gender }}</option>
@@ -80,7 +107,12 @@
                             {% if user_class == 'child' %}
                                 <div class="form-group">
                                     <label for="province">استان</label>
-                                    <select class="form-control" id="Province" name="province">
+                                    <select class="form-control" id="Province" name="province"
+                                            {% if user %}
+                                                {% if user_requested == 'child' or user_requested == ' volunteer' %}
+                                            disabled
+                                                {% endif %}
+                                            {% endif %}>
                                         {% for code, province in all_provinces %}
                                             {% if user and code == user.province %}
                                                 <option value="{{ code }}" selected>{{ province }}</option>
@@ -93,12 +125,13 @@
                                 {% if user_type == 'admin' %}
                                     <div class="form-group">
                                         <label for="volunteer">مددکار</label>
-                                        <select class="form-control autocomplete-select" id="volunteer">
-                                            <option value="1">علی احمدی</option>
-                                            <option value="1">علی قلی</option>
-                                            <option value="1">علی رضا</option>
-                                            <option value="1">علی صفا</option>
-                                            <option value="1">علی سینا</option>
+                                        <select class="form-control autocomplete-select" id="volunteer" name="volunteer">
+                                            <option value="-1">بدون مددکار</option>
+                                            {% for vol in all_volunteers %}
+                                                <option value="{{ vol.id }}"
+                                                {% if user.find_volunteer.id == vol.id %}selected{% endif %}>
+                                                    {{ vol.first_name }} {{ vol.last_name }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                 {% endif %}
@@ -106,7 +139,12 @@
                             <div class="form-group">
                                 <label for="year_of_birth">سال تولد</label>
                                 <input type="number" maxlength="200" class="form-control" id="year_of_birth" name="year_of_birth"
-                                       {% if user %}value="{{ user.userinfo.year_of_birth }}" {% endif %} required>
+                                       {% if user %}value="{{ user.userinfo.year_of_birth }}" {% endif %} required
+                                        {% if user %}
+                                            {% if user_requested == ' volunteer' %}
+                                       disabled
+                                            {% endif %}
+                                        {% endif %}>
                             </div>
                             {% if errors and errors.year_of_birth %}
                                 {% for error in errors.year_of_birth %}
@@ -125,7 +163,12 @@
                                      src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
                                         {% endif %}>
                                 <label class="btn btn-outline-info btn-file btn-sm m-1">
-                                    آپلود <input type="file" style="display: none;" onchange="readURL(this);" name="image">
+                                    آپلود <input type="file" style="display: none;" onchange="readURL(this);" name="image"
+                                        {% if user %}
+                                            {% if user_requested == ' volunteer' %}
+                                                 disabled
+                                            {% endif %}
+                                        {% endif %}>
                                 </label>
                             </div>
                         </div>
@@ -134,67 +177,73 @@
                         <div class="form-group">
                             <label for="accomplishments">موفقیت‌ها</label>
                             <textarea rows="4" class="form-control" name="accomplishments"
-                                      id="accomplishments">{% if user %}{{ user.accomplishments }}{% endif %}</textarea>
+                                      id="accomplishments"
+                                    {% if user %}
+                                        {% if user_requested == 'child' or user_requested == ' volunteer' %}
+                                      disabled
+                                        {% endif %}
+                                    {% endif %}> {% if user %}{{ user.accomplishments }}{% endif %}</textarea>
                         </div>
-                        <div class="form-group">
-                            <label for="needs">نیاز‌ها&nbsp;&nbsp;</label>
-                            <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal"
-                                    data-target="#exampleModal" onclick="empty_form()">اضافه کردن
-                            </button>
-                            <div id="accordion" role="tablist" class="mt-2">
-                                <div class="card d-none" id="template-card">
-                                    <div class="card-header" role="tab">
-                                        <h5 class="mb-0">
-                                            <a class="collapsed" data-toggle="collapse" href="#collapseOne"
-                                               aria-expanded="false">
-                                                Collapsible Group Item #1
-                                            </a>
-                                            <span class="badge badge-danger d-none">فوری</span>
-                                            <button type="button" onclick="make_urgent(this);"
-                                                    class="btn btn-danger btn-sm m-1 float-left urgent">فوری
-                                                کردن
-                                            </button>
-                                            <button type="button" onclick="remove_urgent(this);"
-                                                    class="btn btn-outline-danger btn-sm m-1 float-left urgent-remove d-none">
-                                                حذف
-                                                فوری
-                                            </button>
-                                        </h5>
-                                    </div>
+                        {% if user_requested != 'child' %}
+                            <div class="form-group">
+                                <label for="needs">نیاز‌ها&nbsp;&nbsp;</label>
+                                <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal"
+                                        data-target="#exampleModal" onclick="empty_form()">اضافه کردن
+                                </button>
+                                <div id="accordion" role="tablist" class="mt-2">
+                                    <div class="card d-none" id="template-card">
+                                        <div class="card-header" role="tab">
+                                            <h5 class="mb-0">
+                                                <a class="collapsed" data-toggle="collapse" href="#collapseOne"
+                                                   aria-expanded="false">
+                                                    Collapsible Group Item #1
+                                                </a>
+                                                <span class="badge badge-danger d-none">فوری</span>
+                                                <button type="button" onclick="make_urgent(this);"
+                                                        class="btn btn-danger btn-sm m-1 float-left urgent">فوری
+                                                    کردن
+                                                </button>
+                                                <button type="button" onclick="remove_urgent(this);"
+                                                        class="btn btn-outline-danger btn-sm m-1 float-left urgent-remove d-none">
+                                                    حذف
+                                                    فوری
+                                                </button>
+                                            </h5>
+                                        </div>
 
-                                    <div id="collapseOne" class="collapse" role="tabpanel"
-                                         data-parent="#accordion">
-                                        <div class="card-body">
+                                        <div id="collapseOne" class="collapse" role="tabpanel"
+                                             data-parent="#accordion">
+                                            <div class="card-body">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                {% if user and user.need_set %}
-                                    {% for need in user.need_set.all %}
-                                        <div class="card" id="template-card" data-need-id="{{ need.id }}">
-                                            <div class="card-header" role="tab">
-                                                <h5 class="mb-0">
-                                                    <a class="collapsed" data-toggle="collapse"
-                                                       href="#old-need-collapse{{ forloop.counter }}"
-                                                       aria-expanded="false">{{ need.title }}</a>
-                                                    <span class="badge badge-danger {% if not need.urgent %}d-none{% endif %}">فوری</span>
-                                                    <button type="button" onclick="make_urgent(this);"
-                                                            class="btn btn-danger btn-sm m-1 float-left urgent {% if need.urgent %}d-none{% endif %}">
-                                                        فوری کردن
-                                                    </button>
-                                                    <button type="button" onclick="remove_urgent(this);"
-                                                            class="btn btn-outline-danger btn-sm m-1 float-left urgent-remove {% if not need.urgent %}d-none{% endif %}">
-                                                        حذف فوری
-                                                    </button>
-                                                </h5>
-                                            </div>
-
-                                            <div id="old-need-collapse{{ forloop.counter }}" class="collapse"
-                                                 role="tabpanel"
-                                                 data-parent="#accordion">
-                                                <div class="card-body">
-                                                    <p>{{ need.description|linebreaks }}</p>
-                                                    <div class="float-left cost" data-need-cost = "{{ need.cost }}">{{ need.cost }} تومان</div>
+                                    {% if user and user.need_set %}
+                                        {% for need in user.need_set.all %}
+                                            <div class="card" id="template-card" data-need-id="{{ need.id }}">
+                                                <div class="card-header" role="tab">
+                                                    <h5 class="mb-0">
+                                                        <a class="collapsed" data-toggle="collapse"
+                                                           href="#old-need-collapse{{ forloop.counter }}"
+                                                           aria-expanded="false">{{ need.title }}</a>
+                                                        <span class="badge badge-danger {% if not need.urgent %}d-none{% endif %}">فوری</span>
+                                                        <button type="button" onclick="make_urgent(this);"
+                                                                class="btn btn-danger btn-sm m-1 float-left urgent {% if need.urgent %}d-none{% endif %}">
+                                                            فوری کردن
+                                                        </button>
+                                                        <button type="button" onclick="remove_urgent(this);"
+                                                                class="btn btn-outline-danger btn-sm m-1 float-left urgent-remove {% if not need.urgent %}d-none{% endif %}">
+                                                            حذف فوری
+                                                        </button>
+                                                    </h5>
                                                 </div>
+
+                                                <div id="old-need-collapse{{ forloop.counter }}" class="collapse"
+                                                     role="tabpanel"
+                                                     data-parent="#accordion">
+                                                    <div class="card-body">
+                                                        <p>{{ need.description|linebreaks }}</p>
+                                                        <div class="float-left cost" data-need-cost="{{ need.cost }}">{{ need.cost }} تومان</div>
+                                                    </div>
 
                                             </div>
                                         </div>
@@ -270,7 +319,7 @@
             card.find('a').html(title);
             var desc = $('#requirement-desc').val();
             var cost = $('#requirement-cost').val();
-            needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id':-1});
+            needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id': -1});
             card.find('.card-body').html('<div class="desc" style="display: inline-block;">' + desc + '</div>' + '<div class="float-left cost">' + cost + ' تومان' + '</div>');
             card.appendTo('#accordion');
             number += 1;
@@ -318,7 +367,7 @@
                         var title = $(this).find('a').text();
                         var desc = $(this).find('.card-body').find('p').text();
                         var cost = $(this).find('.card-body').find('div').attr('data-need-cost');
-                        needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id':attr});
+                        needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id': attr});
                         var index2 = needs.needs.length - 1;
                         if (!$(this).find('.badge-danger').hasClass('d-none')) {
                             needs.needs[index2].urgent = true;

@@ -11,7 +11,7 @@ from django.urls import reverse
 
 from main import models
 from main.constants import PROVINCES, GENDER
-from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, RequestForm, PurchaseForm
+from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, RequestForm, PurchaseForm, OngoingUserInfoForm
 
 
 # create users for different roles
@@ -74,14 +74,14 @@ def child_information(request, child_id):
         'province': 'تهران',
         'accomplishments': 'کسب رتبه‌ی اول',
         'need_set': {'all': [{'id': 1,
-                      'title': 'نیاز اول',
-                      'description': 'کمک هزینه‌ی تحصیلی',
-                      'cost': '۱۰۰',
-                      'urgent': 'True',
-                      'PurchaseForNeed_set': [{'id': 1,
-                                               'payer': 'حسن بیاتی',
-                                               'amount': '۲۰۰',
-                                               'time': '۲۰ فروردین ۱۹۹۶'}]
+                              'title': 'نیاز اول',
+                              'description': 'کمک هزینه‌ی تحصیلی',
+                              'cost': '۱۰۰',
+                              'urgent': 'True',
+                              'PurchaseForNeed_set': [{'id': 1,
+                                                       'payer': 'حسن بیاتی',
+                                                       'amount': '۲۰۰',
+                                                       'time': '۲۰ فروردین ۱۹۹۶'}]
                               }]}
     }
     return render(request, 'main/child-information.html',
@@ -150,27 +150,96 @@ def edit_user(request, user_id):
     if request.user.is_superuser:
         user = get_object_or_404(models.User, pk=user_id)
     else:
-        if str(request.user.id) != user_id:
+        if str(request.user.id) != user_id and (request.user.user_type() != 'volunteer' or not models.Child.objects.exist(support__volunteer=request.user.cast(), id=user_id)):
             raise Http404
         user = request.user
     user = user.cast()
+    all_volunteers = []
+    for vol in models.Volunteer.objects.all():
+        all_volunteers.append({'id':vol.id, 'first_name':vol.userinfo.first_name, 'last_name':vol.userinfo.last_name})
     if request.method == 'POST':
-        user_form = None
-        user_class = user.user_type()
-        if user_class == 'admin' or user_class == 'donor':
-            user_form = DonorForm(request.POST, instance=user)
-        if user_class == 'child':
-            user_form = ChildForm(request.POST, instance=user)
-        if user_class == 'volunteer':
-            user_form = VolunteerForm(request.POST, instance=user)
-        user_info_form = UserInfoForm(request.POST, instance=user.userinfo)
-        if user_form.is_valid() and user_info_form.is_valid():
-            new_user = user_form.save(commit=False)
-            new_user.is_active = True
-            new_user.save()
-            new_user_info = user_info_form.save(commit=False)
-            if request.FILES and request.FILES['image']:
-                new_user_info.image = request.FILES['image']
+        if request.user.user_type() == 'admin':
+            user_form = None
+            user_class = user.user_type()
+            if user_class == 'admin' or user_class == 'donor':
+                user_form = DonorForm(request.POST, instance=user)
+            if user_class == 'child':
+                user_form = ChildForm(request.POST, instance=user)
+            if user_class == 'volunteer':
+                user_form = VolunteerForm(request.POST, instance=user)
+            user_info_form = UserInfoForm(request.POST, instance=user.userinfo)
+            if user_form.is_valid() and user_info_form.is_valid():
+                new_user = user_form.save(commit=False)
+                new_user.is_active = True
+                new_user.save()
+                new_user_info = user_info_form.save(commit=False)
+                if request.FILES and request.FILES['image']:
+                    new_user_info.image = request.FILES['image']
+                needs_json = json.loads(request.POST['needs'])
+                for need in needs_json['needs']:
+                    if need['id'] == -1:
+                        new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
+                        new_need.child = user
+                    else:
+                        new_need = models.Need.objects.get(id=int(need['id']))
+                        new_need.urgent = need['urgent']
+                    new_need.save()
+                new_user_info.save()
+                if user_class == 'child':
+                    if request.POST['volunteer'] == '-1':
+                        models.Support.objects.filter(child=new_user).delete()
+                    else:
+                        models.Support.objects.create(child=new_user, volunteer=models.Volunteer.objects.get(id=request.POST['volunteer']))
+                return render(request, 'main/modify-user.html', {
+                    'user': user,
+                    'all_provinces': PROVINCES,
+                    'all_genders': GENDER,
+                    'user_class': user.user_type(),
+                    'success': '2',
+                    'user_requested': request.user.user_type(),
+                    'all_volunteers': all_volunteers,
+                })
+            else:
+                errors = json.loads(user_form.errors.as_json())
+                errors.update(json.loads(user_info_form.errors.as_json()))
+                return render(request, 'main/modify-user.html', {
+                    'user': user,
+                    'all_provinces': PROVINCES,
+                    'all_genders': GENDER,
+                    'user_class': user_class,
+                    'errors': errors,
+                    'user_requested': request.user.user_type(),
+                    'all_volunteers': all_volunteers,
+                })
+        elif request.user.user_type() == 'child':
+            user_info_form = OngoingUserInfoForm(request.POST)
+            if user_info_form.is_valid():
+                new_user_info = user_info_form.save(commit=False)
+                new_user_info.user = user
+                if request.FILES and request.FILES['image']:
+                    new_user_info.image = request.FILES['image']
+                new_user_info.save()
+                return render(request, 'main/modify-user.html', {
+                    'user': user,
+                    'all_provinces': PROVINCES,
+                    'all_genders': GENDER,
+                    'user_class': user.user_type(),
+                    'success': '2',
+                    'user_requested': request.user.user_type(),
+                    'all_volunteers': all_volunteers,
+                })
+            else:
+                errors = json.loads(user_info_form.errors.as_json())
+                return render(request, 'main/modify-user.html', {
+                    'user': user,
+                    'all_provinces': PROVINCES,
+                    'all_genders': GENDER,
+                    'user_class': user.user_type(),
+                    'errors': errors,
+                    'user_requested': request.user.user_type(),
+                    'all_volunteers': all_volunteers,
+                })
+        elif request.user.user_type() == 'volunteer':
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
                 if need['id'] == -1:
@@ -180,23 +249,14 @@ def edit_user(request, user_id):
                     new_need = models.Need.objects.get(id=int(need['id']))
                     new_need.urgent = need['urgent']
                 new_need.save()
-            new_user_info.save()
             return render(request, 'main/modify-user.html', {
                 'user': user,
                 'all_provinces': PROVINCES,
                 'all_genders': GENDER,
                 'user_class': user.user_type(),
                 'success': '2',
-            })
-        else:
-            errors = json.loads(user_form.errors.as_json())
-            errors.update(json.loads(user_info_form.errors.as_json()))
-            return render(request, 'main/modify-user.html', {
-                'user': user,
-                'all_provinces': PROVINCES,
-                'all_genders': GENDER,
-                'user_class': user_class,
-                'errors': errors,
+                'user_requested': request.user.user_type(),
+                'all_volunteers': all_volunteers,
             })
     else:
         return render(request, 'main/modify-user.html', {
@@ -204,6 +264,8 @@ def edit_user(request, user_id):
             'all_provinces': PROVINCES,
             'all_genders': GENDER,
             'user_class': user.user_type(),
+            'user_requested': request.user.user_type(),
+            'all_volunteers': all_volunteers,
         })
 
 
@@ -226,7 +288,7 @@ def letter(request):
                 emails = list()
                 for support in models.Support.objects.filter(child=request.user.child):
                     emails.append(support.volunteer.email)
-                mail.send_mail('نامه', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)   # TODO email title
+                mail.send_mail('نامه', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)  # TODO email title
             return HttpResponseRedirect(request.path + '?success=1')
         else:
             return HttpResponseRedirect(request.path + '?success=0')
@@ -275,7 +337,7 @@ def send_request(request):
             emails = list()
             for support in models.Support.objects.filter(child=request.user.child):
                 emails.append(support.volunteer.email)
-            mail.send_mail('درخواست', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)   # TODO email title
+            mail.send_mail('درخواست', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)  # TODO email title
             return HttpResponseRedirect(request.path + '?success=1')
         else:
             return HttpResponseRedirect(request.path + '?success=0')
