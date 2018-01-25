@@ -95,7 +95,7 @@ def child_information(request, child_id):
 
 
 def add_user(request, user_class):
-    if user_class not in ['admin', 'child', 'volunteer', 'donor'] or not is_authorized_for_add_user(request.user.user_type(), user_class):
+    if user_class not in ['admin', 'child', 'volunteer', 'donor'] or not is_authorized_for_add_user(request.user, user_class):
         raise Http404("User type is not valid!")
     if request.method == 'POST':
         user_form = None
@@ -160,9 +160,6 @@ def edit_user(request, user_id):
             raise Http404
         user = get_object_or_404(models.User, pk=user_id)
     user = user.cast()
-    all_volunteers = []
-    for vol in models.Volunteer.objects.all():
-        all_volunteers.append({'id':vol.id, 'first_name':vol.userinfo.first_name, 'last_name':vol.userinfo.last_name})
     if request.method == 'POST':
         if request.user.user_type() == 'admin':
             user_form = None
@@ -194,30 +191,34 @@ def edit_user(request, user_id):
                 if user_class == 'child':
                     if request.POST['volunteer'] == '-1':
                         models.Support.objects.filter(child=new_user).delete()
-                    else:
-                        models.Support.objects.create(child=new_user, volunteer=models.Volunteer.objects.get(id=request.POST['volunteer']))
-                return render(request, 'main/modify-user.html', {
-                    'user': user,
-                    'all_provinces': PROVINCES,
-                    'all_genders': GENDER,
-                    'user_class': user.user_type(),
-                    'success': '2',
-                    'user_requested': request.user.user_type(),
-                    'all_volunteers': all_volunteers,
-                })
+                    elif models.Support.objects.filter(child=new_user).exists() and models.Support.objects.filter(child=new_user)[0].id != request.POST['volunteer']:
+                        models.Support.objects.filter(child=new_user).delete()
+                        if not models.Support.objects.filter(child=new_user).exists():
+                            models.Support.objects.create(child=new_user, volunteer=models.Volunteer.objects.get(id=request.POST['volunteer']))
+                return render_modify_user_template(request, user, '2', None)
+                #     render(request, 'main/modify-user.html', {
+                #     'user': user,
+                #     'all_provinces': PROVINCES,
+                #     'all_genders': GENDER,
+                #     'user_class': user.user_type(),
+                #     'success': '2',
+                #     'user_requested': request.user.user_type(),
+                #     'all_volunteers': all_volunteers,
+                # })
             else:
                 errors = json.loads(user_form.errors.as_json())
                 errors.update(json.loads(user_info_form.errors.as_json()))
-                return render(request, 'main/modify-user.html', {
-                    'user': user,
-                    'all_provinces': PROVINCES,
-                    'all_genders': GENDER,
-                    'user_class': user_class,
-                    'errors': errors,
-                    'user_requested': request.user.user_type(),
-                    'all_volunteers': all_volunteers,
-                })
-        elif request.user.user_type() == 'child':
+                return render_modify_user_template(request, user, None, errors)
+                #     render(request, 'main/modify-user.html', {
+                #     'user': user,
+                #     'all_provinces': PROVINCES,
+                #     'all_genders': GENDER,
+                #     'user_class': user_class,
+                #     'errors': errors,
+                #     'user_requested': request.user.user_type(),
+                #     'all_volunteers': all_volunteers,
+                # })
+        elif request.user.user_type() == 'child' or request.user.user_type() == 'volunteer' and user.user_type() == 'volunteer':
             user_info_form = OngoingUserInfoForm(request.POST)
             if user_info_form.is_valid():
                 new_user_info = user_info_form.save(commit=False)
@@ -225,26 +226,28 @@ def edit_user(request, user_id):
                 if request.FILES and request.FILES['image']:
                     new_user_info.image = request.FILES['image']
                 new_user_info.save()
-                return render(request, 'main/modify-user.html', {
-                    'user': user,
-                    'all_provinces': PROVINCES,
-                    'all_genders': GENDER,
-                    'user_class': user.user_type(),
-                    'success': '2',
-                    'user_requested': request.user.user_type(),
-                    'all_volunteers': all_volunteers,
-                })
+                return render_modify_user_template(request, user, '2', None)
+                #     render(request, 'main/modify-user.html', {
+                #     'user': user,
+                #     'all_provinces': PROVINCES,
+                #     'all_genders': GENDER,
+                #     'user_class': user.user_type(),
+                #     'success': '2',
+                #     'user_requested': request.user.user_type(),
+                #     'all_volunteers': all_volunteers,
+                # })
             else:
                 errors = json.loads(user_info_form.errors.as_json())
-                return render(request, 'main/modify-user.html', {
-                    'user': user,
-                    'all_provinces': PROVINCES,
-                    'all_genders': GENDER,
-                    'user_class': user.user_type(),
-                    'errors': errors,
-                    'user_requested': request.user.user_type(),
-                    'all_volunteers': all_volunteers,
-                })
+                return render_modify_user_template(request, user, None, errors)
+                #     render(request, 'main/modify-user.html', {
+                #     'user': user,
+                #     'all_provinces': PROVINCES,
+                #     'all_genders': GENDER,
+                #     'user_class': user.user_type(),
+                #     'errors': errors,
+                #     'user_requested': request.user.user_type(),
+                #     'all_volunteers': all_volunteers,
+                # })
         elif request.user.user_type() == 'volunteer':
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
@@ -255,24 +258,26 @@ def edit_user(request, user_id):
                     new_need = models.Need.objects.get(id=int(need['id']))
                     new_need.urgent = need['urgent']
                 new_need.save()
-            return render(request, 'main/modify-user.html', {
-                'user': user,
-                'all_provinces': PROVINCES,
-                'all_genders': GENDER,
-                'user_class': user.user_type(),
-                'success': '2',
-                'user_requested': request.user.user_type(),
-                'all_volunteers': all_volunteers,
-            })
+            return render_modify_user_template(request, user, '2', None)
+            #     render(request, 'main/modify-user.html', {
+            #     'user': user,
+            #     'all_provinces': PROVINCES,
+            #     'all_genders': GENDER,
+            #     'user_class': user.user_type(),
+            #     'success': '2',
+            #     'user_requested': request.user.user_type(),
+            #     'all_volunteers': all_volunteers,
+            # })
     else:
-        return render(request, 'main/modify-user.html', {
-            'user': user,
-            'all_provinces': PROVINCES,
-            'all_genders': GENDER,
-            'user_class': user.user_type(),
-            'user_requested': request.user.user_type(),
-            'all_volunteers': all_volunteers,
-        })
+        return render_modify_user_template(request, user, None, None)
+        #     render(request, 'main/modify-user.html', {
+        #     'user': user,
+        #     'all_provinces': PROVINCES,
+        #     'all_genders': GENDER,
+        #     'user_class': user.user_type(),
+        #     'user_requested': request.user.user_type(),
+        #     'all_volunteers': all_volunteers,
+        # })
 
 
 @user_passes_test(lambda user: user.user_type() == 'child')
@@ -503,7 +508,11 @@ def bank(request):
     return render(request, 'main/bank.html', {'success': success, 'redirect_url': redirect_url, 'amount': amount})
 
 
-def is_authorized_for_add_user(user_type, user_class):
+def is_authorized_for_add_user(user, user_class):
+    if not user.is_authenticated():
+        user_type = 'donor'
+    else:
+        user_type = user.user_type()
     if user_class == 'donor':
         return True
     if user_class == 'child':
@@ -513,3 +522,19 @@ def is_authorized_for_add_user(user_type, user_class):
         if user_type == 'admin':
             return True
     return False
+
+
+def render_modify_user_template(request, user, success, errors, ):
+    all_volunteers = []
+    for vol in models.Volunteer.objects.all():
+        all_volunteers.append({'id':vol.id, 'first_name':vol.userinfo.first_name, 'last_name':vol.userinfo.last_name})
+    return render(request, 'main/modify-user.html', {
+        'user': user,
+        'all_provinces': PROVINCES,
+        'all_genders': GENDER,
+        'user_class': user.user_type(),
+        'user_requested': request.user.user_type(),
+        'all_volunteers': all_volunteers,
+        'success': success,
+        'errors': errors,
+    })
