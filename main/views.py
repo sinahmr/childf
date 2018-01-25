@@ -91,7 +91,7 @@ def child_information(request, child_id):
 
 
 def add_user(request, user_class):
-    if user_class not in ['admin', 'child', 'volunteer', 'donor'] or not is_authorized_for_add_user(request.user, user_class):
+    if user_class not in ['admin', 'child', 'volunteer', 'donor'] or not is_authorized_for_add_user(request.user.user_type(), user_class):
         raise Http404("User type is not valid!")
     if request.method == 'POST':
         user_form = None
@@ -125,7 +125,7 @@ def add_user(request, user_class):
                 'all_provinces': PROVINCES,
                 'all_genders': GENDER,
                 'user_class': user_class,
-                'success': True,
+                'success': '1',
             })
         else:
             errors = json.loads(user_form.errors.as_json())
@@ -146,38 +146,65 @@ def add_user(request, user_class):
         })
 
 
-def modify_user(request, user_class):
-    if user_class not in ['admin', 'child', 'volunteer', 'donor']:
-        raise Http404("User type is not valid!")
-    user = {
-        'first_name': 'علی',
-        'last_name': 'علوی',
-        'email': 'info@support.com',
-        'gender': 'M',
-        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
-        'province': 'TEH',
-        'accomplishments': 'کسب رتبه‌ی اول',
-        'needs': [
-            {
-                'title': 'خرید فیفا ۹۹',
-                'description': 'خرید بازی فیفا ۹۹',
-                'cost': '۱۰۰۰',
-                'urgent': True
-            },
-            {
-                'title': 'خرید فیفا ۲۰۱۸',
-                'description': 'خرید بازی فیفا ۲۰۱۸',
-                'cost': '۱۵۰۰۰۰',
-                'urgent': False
-            }
-        ]
-    }
-    return render(request, 'main/modify-user.html', {
-        'user': user,
-        'all_provinces': PROVINCES,
-        'all_genders': GENDER,
-        'user_class': user_class
-    })
+def edit_user(request, user_id):
+    if request.user.is_superuser:
+        user = get_object_or_404(models.User, pk=user_id)
+    else:
+        if str(request.user.id) != user_id:
+            raise Http404
+        user = request.user
+    user = user.cast()
+    if request.method == 'POST':
+        user_form = None
+        user_class = user.user_type()
+        if user_class == 'admin' or user_class == 'donor':
+            user_form = DonorForm(request.POST, instance=user)
+        if user_class == 'child':
+            user_form = ChildForm(request.POST, instance=user)
+        if user_class == 'volunteer':
+            user_form = VolunteerForm(request.POST, instance=user)
+        user_info_form = UserInfoForm(request.POST, instance=user.userinfo)
+        if user_form.is_valid() and user_info_form.is_valid():
+            new_user = user_form.save(commit=False)
+            new_user.is_active = True
+            new_user.save()
+            new_user_info = user_info_form.save(commit=False)
+            if request.FILES and request.FILES['image']:
+                new_user_info.image = request.FILES['image']
+            needs_json = json.loads(request.POST['needs'])
+            for need in needs_json['needs']:
+                if need['id'] == -1:
+                    new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
+                    new_need.child = user
+                else:
+                    new_need = models.Need.objects.get(id=int(need['id']))
+                    new_need.urgent = need['urgent']
+                new_need.save()
+            new_user_info.save()
+            return render(request, 'main/modify-user.html', {
+                'user': user,
+                'all_provinces': PROVINCES,
+                'all_genders': GENDER,
+                'user_class': user.user_type(),
+                'success': '2',
+            })
+        else:
+            errors = json.loads(user_form.errors.as_json())
+            errors.update(json.loads(user_info_form.errors.as_json()))
+            return render(request, 'main/modify-user.html', {
+                'user': user,
+                'all_provinces': PROVINCES,
+                'all_genders': GENDER,
+                'user_class': user_class,
+                'errors': errors,
+            })
+    else:
+        return render(request, 'main/modify-user.html', {
+            'user': user,
+            'all_provinces': PROVINCES,
+            'all_genders': GENDER,
+            'user_class': user.user_type(),
+        })
 
 
 @user_passes_test(lambda user: user.user_type() == 'child')
@@ -400,13 +427,13 @@ def bank(request):
     return render(request, 'main/bank.html', {'success': success, 'redirect_url': redirect_url, 'amount': amount})
 
 
-def is_authorized_for_add_user(user, user_class):
+def is_authorized_for_add_user(user_type, user_class):
     if user_class == 'donor':
         return True
     if user_class == 'child':
-        if user.__class__ == 'Volunteer' or user.is_superuser:
+        if user_type == 'volunteer' or user_type == 'admin':
             return True
     if user_class == 'volunteer':
-        if user.is_superuser:
+        if user_type == 'admin':
             return True
     return False
