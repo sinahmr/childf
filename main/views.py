@@ -18,7 +18,11 @@ from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, Letter
 # check different pages which need filters on children
 
 def home(request):
-    return render(request, 'main/home.html', {})
+    show_buttons = False
+    if request.user.is_authenticated():
+        show_buttons = True
+    return render(request, 'main/home.html', {'show_buttons': show_buttons})
+
 
 
 def show_children(request):
@@ -298,7 +302,7 @@ def child_purchases(request):
 @user_passes_test(lambda user: user.user_type() == 'volunteer')
 def volunteer_letter_verification(request):
     letters = models.Letter.objects.filter(child__support__volunteer=request.user.volunteer, verified__isnull=True)
-    return render(request, 'main/volunteer/letter-verification.html', {'letters': letters, 'user_type': 'volunteer'})
+    return render(request, 'main/volunteer/letter-verification.html', {'letters': letters})
 
 
 @user_passes_test(lambda user: user.user_type() == 'volunteer')

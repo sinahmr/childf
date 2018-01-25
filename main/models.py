@@ -58,6 +58,7 @@ class User(AbstractUser):
             return 'donor'
         if hasattr(self, 'volunteer'):
             return 'volunteer'
+        return 'anonymous'
 
     def cast(self):
         if self.user_type() == 'admin':
