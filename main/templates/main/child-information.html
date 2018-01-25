@@ -22,7 +22,7 @@
                              alt="Card image cap">
                     </div>
                     <div class="col-md-8 col-sm-12">
-                        <h4 class="card-title">{{ child.userinfo.first_name }} {{ child.userinfo.last_name }}</h4>
+                        <h4 class="card-title">{{ child.name }}</h4>
                         <h6 class="card-subtitle mb-2 text-muted">{{ child.get_province_display }}</h6>
                         <br/>
                         <h4>موفقیت‌ها:</h4>
@@ -54,8 +54,7 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="action" value="support"/>
                                 {% if has_support %}
-                                    <button type="submit" class="btn btn-warning" style="margin-top: 10px">حذف حمایت
-                                    </button>
+                                    <button type="submit" class="btn btn-warning" style="margin-top: 10px">حذف حمایت</button>
                                 {% else %}
                                     <button type="submit" class="btn btn-primary" style="margin-top: 10px">تحت حمایت
                                         قرار
@@ -67,7 +66,12 @@
                         {% endif %}
                     </div>
                 </div>
-                <h2 style="margin: 10px">نیازها:</h2>
+                <h4 style="margin: 10px">
+                    نیازها:
+                    {% if user_type == 'volunteer' and has_support %}
+                        <a href="{% url 'edit_user' child.id %}" style="font-size: 10pt;">(ویرایش)</a>
+                    {% endif %}
+                </h4>
                 <div id="accordion" role="tablist">
 
                     {% for need in child.need_set.all %}
@@ -146,7 +150,7 @@
             var total = data[id].length;
             $.each(data[id], function (index, value) {
                 $('.modal-body').append($('<h4/>').addClass('card-title').text(value['payer']));
-                $('.modal-body').append($('<span/>').addClass('card-text').text(value['amount'] + ' هزار تومان'));
+                $('.modal-body').append($('<span/>').addClass('card-text').text(value['amount'] + ' تومان'));
                 $('.modal-body').append($('<span/>').addClass('card-subtitle').addClass('mb-2').addClass('text-muted').addClass('float-left').text(value['time']));
                 if (index != total - 1)
                     $('.modal-body').append($('<hr/>'));

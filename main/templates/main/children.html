@@ -27,6 +27,9 @@
                     <button type="button" class="btn btn-outline-primary">نمایش تمام کودکان</button>
                 </a>
             {% endif %}
+        {% if not children %}
+            <div class="alert alert-primary mt-2" role="alert">نیازمندی برای نمایش وجود ندارد.</div>
+        {% endif %}
             <div class="row">
                 {% for child in children %}
                     <div class="col-md-3 col-sm-12 child-card">

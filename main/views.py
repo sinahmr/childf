@@ -21,7 +21,7 @@ def home(request):
     return render(request, 'main/home.html', {})
 
 
-def volunteer(request):
+def show_children(request):
     show_all = request.GET.get('show_all', '1') == '1'
     children = models.Child.objects.all()
     sponsored_children = []
@@ -346,8 +346,16 @@ def send_request(request):
 
 
 def change_volunteer(request):
+    if request.method == 'POST':
+        # TODO: Send email!
+        return HttpResponse('OK')
+    volunteer = request.user.cast().support_set.all()
+    if len(volunteer):
+        volunteer = volunteer[0].volunteer
+    else:
+        volunteer = None
     return render(request, 'main/change-volunteer.html', {
-        'volunteer_name': 'کریم بنزما'
+        'volunteer': volunteer
     })
 
 
@@ -466,10 +474,6 @@ def approval(request):
     else:
         return render(request, 'main/admin/children-approval.html',
                       {'children': models.Child.objects.filter(verified=None)})
-
-
-def admin_children(request):
-    return volunteer(request)
 
 
 @user_passes_test(lambda user: user.is_superuser)

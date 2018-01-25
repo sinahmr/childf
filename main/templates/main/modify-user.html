@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 {% block content %}
     <div class="container-fluid content">
-        <div class="row">
+        <div class="row mb-5">
             <div class="col-md-2 d-none d-md-block">
             </div>
             <div class="col-md-8 col-sm-12 bg-light main-content">
@@ -188,7 +188,7 @@
                             <div class="form-group">
                                 <label for="needs">نیاز‌ها&nbsp;&nbsp;</label>
                                 <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal"
-                                        data-target="#exampleModal">اضافه کردن
+                                        data-target="#exampleModal" onclick="empty_form()">اضافه کردن
                                 </button>
                                 <div id="accordion" role="tablist" class="mt-2">
                                     <div class="card d-none" id="template-card">
@@ -245,47 +245,46 @@
                                                         <div class="float-left cost" data-need-cost="{{ need.cost }}">{{ need.cost }} تومان</div>
                                                     </div>
 
-                                                </div>
                                             </div>
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
-                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">اضافه کردن نیازمندی</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                </button>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">اضافه کردن نیازمندی</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">عنوان</label>
+                                                <input type="text" class="form-control" id="requirement-title">
                                             </div>
-                                            <div class="modal-body">
-                                                <div class="form-group">
-                                                    <label for="recipient-name" class="col-form-label">عنوان</label>
-                                                    <input type="text" class="form-control" id="requirement-title">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="message-text" class="col-form-label">شرح
-                                                        نیازمندی</label>
-                                                    <textarea class="form-control" id="requirement-desc"></textarea>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="message-text" class="col-form-label">هزینه</label>
-                                                    <textarea class="form-control" id="requirement-cost"></textarea>
-                                                </div>
+                                            <div class="form-group">
+                                                <label for="message-text" class="col-form-label">شرح
+                                                    نیازمندی</label>
+                                                <textarea class="form-control" id="requirement-desc"></textarea>
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">بی‌خیال
-                                                </button>
-                                                <button id='submit-requirement' type="button" class="btn btn-primary">
-                                                    اضافه‌کردن
-                                                </button>
+                                            <div class="form-group">
+                                                <label for="message-text" class="col-form-label">هزینه</label>
+                                                <input type="number" class="form-control" id="requirement-cost">
                                             </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">بی‌خیال
+                                            </button>
+                                            <button id='submit-requirement' type="button" class="btn btn-primary">
+                                                اضافه‌کردن
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        {% endif %}
+                        </div>
                     {% endif %}
                     <br/>
                     <input type="hidden" maxlength="200" class="form-control" id="needs" name="needs" value="">
@@ -326,6 +325,12 @@
             number += 1;
             $('#exampleModal').modal('hide');
         });
+
+        function empty_form() {
+            $('#requirement-title').val('');
+            $('#requirement-desc').val('');
+            $('#requirement-cost').val('');
+        }
 
         function make_urgent(event) {
             $('.badge').addClass('d-none');
