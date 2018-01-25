@@ -21,7 +21,7 @@
                             <td>{{ volunteer.name }}</td>
                             <td>
                                 <button type="button" class="btn btn-info" data-toggle="modal"
-                                        data-target="#exampleModal">
+                                        data-target="#support_modal" onclick="show_supports({{ volunteer.id }})">
                                     نیازمندان <span class="badge badge-light">{{ volunteer.child_count }}</span>
                                 </button>
                             </td>
@@ -32,7 +32,7 @@
 
                     </tbody>
                 </table>
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                <div class="modal fade" id="support_modal" tabindex="-1" role="dialog"
                      aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -42,9 +42,6 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <a href="{% url 'child_information' 2%}">رضا رضایی</a> <br/>
-                                <a href="{% url 'child_information' 3%}">امین امینی</a> <br/>
-                                <a href="{% url 'child_information' 4%}">هادی سینایی</a> <br/>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن
@@ -59,4 +56,33 @@
         </div>
     </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        var supports = {
+            {% for volunteer in volunteers %}
+                '{{ volunteer.id }}': [
+                    {% for support in volunteer.support_set.all %}
+                        {
+                            'name': '{{ support.child.name }}',
+                            'id': '{{ support.child.id }}'
+                        },
+                    {% endfor %}
+                ],
+            {% endfor %}
+        };
+
+        function show_supports(volunteer_id) {
+            $('.modal-body').empty();
+            if (supports[volunteer_id].length == 0) {
+                $('.modal-body').append('<span />').text('این مددکار نیازمندی را تحت کفالت ندارد.');
+            }
+            $.each(supports[volunteer_id], function (index, value) {
+                var url = '{% url 'child_information' '1111' %}'.replace(/1111/, value['id']);
+                $('.modal-body').append($('<a href="' + url + '" />').text(value['name']));
+                $('.modal-body').append($('<br />'));
+            });
+        }
+    </script>
 {% endblock %}

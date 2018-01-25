@@ -4,6 +4,7 @@ import urllib
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import user_passes_test
 from django.core import mail
+from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, Http404, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse
@@ -393,21 +394,8 @@ def admin_unresolveds(request):
 
 
 def admin_volunteers(request):
-    volunteers = [
-        {
-            'name': 'علی رضایی',
-            'child_count': 4,
-        },
-        {
-            'name': 'محمد محمدی',
-            'child_count': 3,
-        },
-        {
-            'name': 'مهدی میرزایی',
-            'child_count': 2,
-        },
-    ]
-    return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers, 'user_type': 'admin'})
+    volunteers = models.Volunteer.objects.all().annotate(child_count=Count('support'))
+    return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers})
 
 
 def bank(request):
