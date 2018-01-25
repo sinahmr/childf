@@ -49,7 +49,7 @@
                                 {% endif %}
                             </form>
                         {% endif %}
-                        {% if user_type == 'volunteer' or user_type == 'admin' %}
+                        {% if user_type == 'volunteer' %}
                             <form method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="action" value="support"/>
@@ -86,11 +86,14 @@
                                 <div class="card-body">
                                     <p>{{ need.description|linebreaks }}</p>
 
-                                    <div class="float-left">{{ need.cost }} هزار تومان</div>
-                                    {% if user_type == 'donor' and has_sponsorship %}
-                                        <a href="{% url 'donor_purchase' %}?need_id={{ need.id }}" class="btn btn-primary" style="margin-top: 10px">پرداخت</a>
+                                    <div class="float-left">{{ need.cost }} تومان</div>
+                                    {% if user_type == 'donor' or user_type == 'admin' %}
+                                        {% if has_sponsorship %}
+                                            <a href="{% url 'donor_purchase' %}?need_id={{ need.id }}"
+                                               class="btn btn-primary" style="margin-top: 10px">پرداخت</a>
+                                        {% endif %}
                                     {% endif %}
-                                    {% if user_type == 'volunteer' and has_support %}
+                                    {% if user_type == 'volunteer' and has_support or user_type == 'admin' %}
                                         <a href="javascript:;" class="btn btn-secondary" style="margin-top: 10px" onclick="show_payments(this);">لیست پرداخت‌ها</a>
                                     {% endif %}
                                 </div>
@@ -111,12 +114,6 @@
                     <h5 class="modal-title" id="exampleModalLabel">لیست پرداخت‌ها</h5>
                 </div>
                 <div class="modal-body">
-                    {#                    {% for purchase in "123" %}#}
-                    {#                        <h4 class="card-title">علی حقانی</h4>#}
-                    {#                        <span class="card-text">۲۰۰ هزار تومان</span>#}
-                    {#                        <span class="card-subtitle mb-2 text-muted float-left">۰۱/۰۲/۹۶</span>#}
-                    {#                        <hr/>#}
-                    {#                    {% endfor %}#}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">بستن</button>
@@ -133,7 +130,7 @@
             {% for need in child.need_set.all %}
                 '{{ need.id }}': [
                     {% for purchase in need.purchaseforneed_set.all %}
-                        {'payer': '{{purchase.payer}}', 'amount': '{{purchase.amount}}', 'time': '{{ purchase.time }}'}
+                        {'payer': '{{purchase.payer.name}}', 'amount': '{{purchase.amount}}', 'time': '{{ purchase.time }}'}
                         {% if not forloop.last %}
                             ,
                         {% endif %}
