@@ -18,11 +18,10 @@ from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, Letter
 # check different pages which need filters on children
 
 def home(request):
-    show_buttons = False
+    show_buttons = True
     if request.user.is_authenticated():
-        show_buttons = True
+        show_buttons = False
     return render(request, 'main/home.html', {'show_buttons': show_buttons})
-
 
 
 def show_children(request):
