@@ -24,6 +24,12 @@ def home(request):
 def volunteer(request):
     show_all = request.GET.get('show_all', '1') == '1'
     children = models.Child.objects.all()
+    sponsored_children = []
+    supported_children = []
+    if isinstance(request.user.cast(), models.Donor):
+        sponsored_children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
+    if isinstance(request.user.cast(), models.Volunteer):
+        supported_children = models.Child.objects.filter(support__volunteer=request.user.cast())
     if show_all == False:
         if isinstance(request.user.cast(), models.Donor):
             children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
@@ -33,7 +39,8 @@ def volunteer(request):
         show_all = False
         children = models.Child.objects.filter(sponsorship=None)
     return render(request, 'main/children.html',
-                  {'children': children, 'show_all': show_all})
+                  {'children': children, 'sponsored_children': sponsored_children,
+                   'supported_children': supported_children, 'show_all': show_all})
 
 
 def child_information(request, child_id):

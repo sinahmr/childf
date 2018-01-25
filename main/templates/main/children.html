@@ -35,7 +35,15 @@
                                  src="{{ child.img_url }}"
                                  alt="Card image cap">
                             <div class="card-body">
-                                <h4 class="card-title">{{ child.name }}</h4>
+                                <h4 class="card-title">{{ child.name }}
+                                {% if child in sponsored_children %}
+                                    <span class="badge badge-success float-left">تحت کفالت</span>
+                                {% endif %}
+                                {% if child in supported_children %}
+                                    <span class="badge badge-success float-left">تحت حمایت</span>
+                                {% endif %}
+                                </h4>
+
                                 <h6 class="card-subtitle mb-2 text-muted">{{ child.get_province_display }}</h6>
                                 <p class="card-text">متولد {{ child.userinfo.year_of_birth }}</p>
                                 <a href="{% url 'child_information' child.pk %}" class="btn btn-primary">مشخصات
