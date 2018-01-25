@@ -284,8 +284,16 @@ def send_request(request):
 
 
 def change_volunteer(request):
+    if request.method == 'POST':
+        # TODO: Send email!
+        return HttpResponse('OK')
+    volunteer = request.user.cast().support_set.all()
+    if len(volunteer):
+        volunteer = volunteer[0].volunteer
+    else:
+        volunteer = None
     return render(request, 'main/change-volunteer.html', {
-        'volunteer_name': 'کریم بنزما'
+        'volunteer': volunteer
     })
 
 
