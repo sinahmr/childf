@@ -4,6 +4,7 @@ import urllib
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import user_passes_test
 from django.core import mail
+from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, Http404, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse
@@ -17,20 +18,29 @@ from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, Letter
 # check different pages which need filters on children
 
 def home(request):
-    return render(request, 'main/base.html', {})
+    return render(request, 'main/home.html', {})
 
 
 def volunteer(request):
     show_all = request.GET.get('show_all', '1') == '1'
     children = models.Child.objects.all()
+    sponsored_children = []
+    supported_children = []
+    if isinstance(request.user.cast(), models.Donor):
+        sponsored_children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
+    if isinstance(request.user.cast(), models.Volunteer):
+        supported_children = models.Child.objects.filter(support__volunteer=request.user.cast())
     if show_all == False:
         if isinstance(request.user.cast(), models.Donor):
             children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
         if isinstance(request.user.cast(), models.Volunteer):
             children = models.Child.objects.filter(support__volunteer=request.user.cast())
-
+    if request.user.user_type() == 'admin' and request.GET.get('without_donor', '0') == '1':
+        show_all = False
+        children = models.Child.objects.filter(sponsorship=None)
     return render(request, 'main/children.html',
-                  {'children': children, 'show_all': show_all, 'user_type': 'donor'})
+                  {'children': children, 'sponsored_children': sponsored_children,
+                   'supported_children': supported_children, 'show_all': show_all})
 
 
 def child_information(request, child_id):
@@ -75,7 +85,7 @@ def child_information(request, child_id):
                               }]}
     }
     return render(request, 'main/child-information.html',
-                  {'child': child, 'user_type': 'child',
+                  {'child': child,
                    'has_sponsorship': has_sponsorship,
                    'has_support': has_support})
 
@@ -125,7 +135,6 @@ def add_user(request, user_class):
                 'all_provinces': PROVINCES,
                 'all_genders': GENDER,
                 'user_class': user_class,
-                'user_type': '',
                 'errors': errors,
             })
     else:
@@ -133,8 +142,7 @@ def add_user(request, user_class):
             'user': None,
             'all_provinces': PROVINCES,
             'all_genders': GENDER,
-            'user_class': user_class,
-            'user_type': ''
+            'user_class': user_class
         })
 
 
@@ -223,7 +231,7 @@ def letter(request):
         else:
             return HttpResponseRedirect(request.path + '?success=0')
     else:
-        return render(request, 'main/letter.html', {'child': request.user.child, 'user_type': 'child'})
+        return render(request, 'main/letter.html', {'child': request.user.child})
 
 
 def login(request):
@@ -272,45 +280,44 @@ def send_request(request):
         else:
             return HttpResponseRedirect(request.path + '?success=0')
     else:
-        return render(request, 'main/send-request.html', {'child': request.user.child, 'user_type': 'child'})
+        return render(request, 'main/send-request.html', {'child': request.user.child})
 
 
 def change_volunteer(request):
     return render(request, 'main/change-volunteer.html', {
-        'volunteer_name': 'کریم بنزما',
-        'user_type': 'child'
+        'volunteer_name': 'کریم بنزما'
     })
 
 
 @user_passes_test(lambda u: hasattr(u, 'child'))
 def child_purchases(request):
     purchases = models.PurchaseForNeed.objects.filter(need__child=request.user.child)
-    return render(request, 'main/child/purchases.html', {'purchases': purchases, 'user_type': 'child'})
+    return render(request, 'main/child/purchases.html', {'purchases': purchases})
 
 
+@user_passes_test(lambda user: user.user_type() == 'volunteer')
 def volunteer_letter_verification(request):
-    letters = [
-        {
-            'id': letter_id,
-            'child': {
-                'first_name': 'انگولو',
-                'last_name': 'کانته'
-            },
-            'title': 'چطوری همیارم؟',
-            'content': 'همیار جان من فلانی هستم.\nحالت چطور است؟',
-            'date': '۲ آذر ۱۳۹۶'
-        } if letter_id % 2 == 1 else
-        {
-            'id': letter_id,
-            'child': {
-                'first_name': 'تیمو',
-                'last_name': 'باکایوکو'
-            },
-            'title': 'ناتاناییل؟',
-            'content': 'ناتانائیل،آرزو مکن که خدا را جز در همه جا بیابی.\nخب؟',
-            'date': '۲ آبان ۱۳۹۶'
-        } for letter_id in range(1, 10)]
+    letters = models.Letter.objects.filter(child__support__volunteer=request.user.volunteer, verified__isnull=True)
     return render(request, 'main/volunteer/letter-verification.html', {'letters': letters, 'user_type': 'volunteer'})
+
+
+@user_passes_test(lambda user: user.user_type() == 'volunteer')
+def accept_letter(request, letter_id):
+    letter = models.Letter.objects.filter(pk=letter_id).first()
+    if letter:
+        letter.verified = True
+        letter.save()
+        emails = list()
+        for sponsorship in models.Sponsorship.objects.filter(child=letter.child):
+            emails.append(sponsorship.sponsor.email)
+        mail.send_mail('نامه', '%s\n\n%s' % (letter.title, letter.content), 'childf.sut@gmail.com', emails)  # TODO email title
+    return HttpResponseRedirect(reverse('volunteer_letter_verification'))
+
+
+@user_passes_test(lambda user: user.user_type() == 'volunteer')
+def decline_letter(request, letter_id):
+    models.Letter.objects.filter(pk=letter_id).update(verified=False)
+    return HttpResponseRedirect(reverse('volunteer_letter_verification'))
 
 
 @user_passes_test(lambda u: hasattr(u, 'donor'))
@@ -320,7 +327,7 @@ def donor_purchases(request):
     for p in need_purchases:
         p.child_link = reverse('child_information', kwargs={'child_id': p.need.child.id})
     purchases = sorted(institute_purchases + need_purchases, key=lambda x: x.time, reverse=True)
-    return render(request, 'main/donor/purchases.html', {'purchases': purchases, 'user_type': 'donor'})
+    return render(request, 'main/donor/purchases.html', {'purchases': purchases})
 
 
 @user_passes_test(lambda u: hasattr(u, 'donor'))
@@ -351,7 +358,7 @@ def purchase(request):
             need = get_object_or_404(models.Need, pk=need_id)
         else:
             need = None
-        return render(request, 'main/purchase.html', {'need': need, 'user_type': 'donor'})
+        return render(request, 'main/purchase.html', {'need': need})
 
 
 def activities(request):
@@ -367,7 +374,7 @@ def activities(request):
                       {'date': '۲۳ آذر ۱۳۹۶', 'user': 'امین امینی (همیار)',
                        'description': 'تحت کفالت قرار دادن'}
                   ] * 2
-    return render(request, 'main/admin/activities.html', {'activities': activities, 'user_type': 'admin'})
+    return render(request, 'main/admin/activities.html', {'activities': activities})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -380,7 +387,7 @@ def admin_purchases(request):
     for p in purchases:
         p.donor_link = reverse('profile', kwargs={'user_id': p.payer.donor.id})
     purchases = sorted(purchases, key=lambda x: x.time, reverse=True)
-    return render(request, 'main/admin/purchases.html', {'purchases': purchases, 'user_type': 'admin'})
+    return render(request, 'main/admin/purchases.html', {'purchases': purchases})
 
 
 def approval(request):
@@ -396,50 +403,22 @@ def approval(request):
             return HttpResponse('Already Done', status='400')
     else:
         return render(request, 'main/admin/children-approval.html',
-                      {'children': models.Child.objects.filter(verified=None), 'user_type': 'admin'})
+                      {'children': models.Child.objects.filter(verified=None)})
 
 
 def admin_children(request):
-    return render(request, 'main/children.html',
-                  {'children': models.Child.objects.all(), 'show_all': True, 'user_type': 'admin'})
+    return volunteer(request)
 
 
+@user_passes_test(lambda user: user.is_superuser)
 def admin_unresolveds(request):
-    needs = [
-        {
-            'title': 'خرید فیفا ۹۹',
-            'description': 'خرید بازی فیفا ۹۹',
-            'cost': '۱۰۰۰',
-            'urgent': True,
-            'child': 'علی احمدی',
-        },
-        {
-            'title': 'خرید فیفا ۲۰۱۸',
-            'description': 'خرید بازی فیفا ۲۰۱۸',
-            'cost': '۱۵۰۰۰۰',
-            'urgent': False,
-            'child': 'علی احمدی',
-        }
-    ] * 3
-    return render(request, 'main/admin/unresolveds.html', {'needs': needs, 'user_type': 'admin'})
+    needs = models.Need.objects.filter(resolved=False)
+    return render(request, 'main/admin/unresolveds.html', {'needs': needs})
 
 
 def admin_volunteers(request):
-    volunteers = [
-        {
-            'name': 'علی رضایی',
-            'child_count': 4,
-        },
-        {
-            'name': 'محمد محمدی',
-            'child_count': 3,
-        },
-        {
-            'name': 'مهدی میرزایی',
-            'child_count': 2,
-        },
-    ]
-    return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers, 'user_type': 'admin'})
+    volunteers = models.Volunteer.objects.all().annotate(child_count=Count('support'))
+    return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers})
 
 
 def bank(request):

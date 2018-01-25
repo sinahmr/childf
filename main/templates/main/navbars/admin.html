@@ -1,8 +1,5 @@
 <ul class="navbar-nav ml-auto">
     <li class="nav-item">
-        <a class="nav-link" href="#">مدیر</a>
-    </li>
-    <li class="nav-item">
         <a class="nav-link" href="{% url 'admin_volunteers' %}">مددکاران</a>
     </li>
     <li class="nav-item dropdown">
@@ -24,7 +21,7 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownChilds">
             <a class="dropdown-item" href="{% url 'admin_children' %}">لیست نیازمندان</a>
             <a class="dropdown-item" href="{% url 'admin_approvals' %}">تایید نیازمندان جدید</a>
-            <a class="dropdown-item" href="#">نیازهای برطرف نشده</a>
+            <a class="dropdown-item" href="{% url 'admin_unresolveds' %}">نیازهای برطرف نشده</a>
         </div>
     </li>
     <li class="nav-item dropdown">

@@ -15,8 +15,8 @@
                                      alt="Card image cap">
                                 <div class="card-body">
                                     <h4 class="card-title">{{ child.name }}</h4>
-                                    <h6 class="card-subtitle mb-2 text-muted">تهران</h6>
-                                    <p class="card-text">به این کودک نیازمند کمک کنید. علی ۷ ساله از تهران</p>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ child.get_province_display }}</h6>
+                                    <p class="card-text">متولد {{ child.userinfo.year_of_birth }}</p>
                                     <a href="{% url 'child_information' child.id %}" class="btn btn-primary">مشخصات نیازمند</a>
                                     <br/><br/>
                                     <a href="javascript:removeChild({{ child.id }}, 'accept')" class="btn btn-success">تایید
@@ -27,7 +27,10 @@
                                 </div>
                             </div>
                         </div>
+                    {% empty %}
+                        <h4>هیچ نیازمند نیاز به تاییدی وجود ندارد.</h4>
                     {% endfor %}
+
                 </div>
             </div>
             <div class="col-md-1 d-none d-md-block">

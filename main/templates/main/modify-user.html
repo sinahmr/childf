@@ -15,6 +15,14 @@
                             {% elif success == '2' %}
                                 <div class="alert alert-success text-center" role="alert">تغییرات با موفقیت انجام شد.</div>
                             {% endif %}
+                            <h2>ثبت نام
+                            {% if user_class == 'child' %}
+                                نیازمند
+                            {% elif user_class == 'volunteer' %}
+                                مددکار
+                            {% elif user_class == 'donor' %}
+                                همیار
+                            {% endif %}</h2>
                             <div class="form-group">
                                 <label for="first_name">نام</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name"

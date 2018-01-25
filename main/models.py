@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from main.constants import LETTER_RECEIVER, GENDER, PROVINCES
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 
 class UserManager(BaseUserManager):
@@ -69,12 +70,9 @@ class User(AbstractUser):
             return self.volunteer
 
     def img_url(self):
-        img_urls = ['https://articles.extension.org//sites/default/files/toddler%20girl%20crying.jpg',
-                    'http://affordablechildcare.ie/wp-content/uploads/2017/05/Thumbs_up_5.png',
-                    'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
-                    'http://www.savethechildren.org/atf/cf/%7B9def2ebe-10ae-432c-9bd0-df91d2eba74a%7D/SYRIA_FEB17.JPG',
-                    'http://imgs.mastphotos.com/wp-content/uploads/2012/12/Sweet-Child-In-Blue-Dress.jpg']
-        return img_urls[self.pk % len(img_urls)]
+        if self.userinfo.image:
+            return self.userinfo.image.url
+        return static('main/images/default-avatar.png')
 
     class Meta:
         verbose_name = 'کاربر'
