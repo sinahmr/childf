@@ -10,31 +10,33 @@
 
                     <div class="row">
                         <div class="col-md-8 col-sm-12">
-                            {% if success %}
-                                 <div class="alert alert-success text-center" role="alert">ثبت‌نام با موفقیت انجام شد.</div>
+                            {% if success == '1' %}
+                                <div class="alert alert-success text-center" role="alert">ثبت‌نام با موفقیت انجام شد.</div>
+                            {% elif success == '2' %}
+                                <div class="alert alert-success text-center" role="alert">تغییرات با موفقیت انجام شد.</div>
                             {% endif %}
                             <div class="form-group">
                                 <label for="first_name">نام</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name"
-                                       {% if user %}value="{{ user.first_name }}" {% endif %} required>
+                                       {% if user %}value="{{ user.userinfo.first_name }}" {% endif %} required>
                             </div>
                             {% if errors and errors.first_name %}
                                 {% for error in errors.first_name %}
-                                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
-                                    {{ error.message }}
-                                </div>
+                                    <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                                        {{ error.message }}
+                                    </div>
                                 {% endfor %}
                             {% endif %}
                             <div class="form-group">
                                 <label for="last_name">نام خانوادگی</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name"
-                                       {% if user %}value="{{ user.last_name }}" {% endif %} required>
+                                       {% if user %}value="{{ user.userinfo.last_name }}" {% endif %} required>
                             </div>
                             {% if errors and errors.last_name %}
                                 {% for error in errors.last_name %}
-                                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
-                                    {{ error.message }}
-                                </div>
+                                    <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                                        {{ error.message }}
+                                    </div>
                                 {% endfor %}
                             {% endif %}
                             <div class="form-group">
@@ -44,9 +46,9 @@
                             </div>
                             {% if errors and errors.email %}
                                 {% for error in errors.email %}
-                                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
-                                    {{ error.message }}
-                                </div>
+                                    <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                                        {{ error.message }}
+                                    </div>
                                 {% endfor %}
                             {% endif %}
                             {% if not user %}
@@ -59,7 +61,7 @@
                                 <label for="gender">جنسیت</label>
                                 <select class="form-control" id="gender" name="gender">
                                     {% for code, gender in all_genders %}
-                                        {% if user and code == user.gender %}
+                                        {% if user and code == user.userinfo.gender %}
                                             <option value="{{ code }}" selected>{{ gender }}</option>
                                         {% else %}
                                             <option value="{{ code }}">{{ gender }}</option>
@@ -95,14 +97,14 @@
                             {% endif %}
                             <div class="form-group">
                                 <label for="year_of_birth">سال تولد</label>
-                                <input type="text" maxlength="200" class="form-control" id="year_of_birth" name="year_of_birth"
-                                       {% if user %}value="{{ user.year_of_birth }}" {% endif %} required>
+                                <input type="number" maxlength="200" class="form-control" id="year_of_birth" name="year_of_birth"
+                                       {% if user %}value="{{ user.userinfo.year_of_birth }}" {% endif %} required>
                             </div>
                             {% if errors and errors.year_of_birth %}
                                 {% for error in errors.year_of_birth %}
-                                <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
-                                    {{ error.message }}
-                                </div>
+                                    <div class="alert alert-danger" role="alert" id="change-volunteer-alert">
+                                        {{ error.message }}
+                                    </div>
                                 {% endfor %}
                             {% endif %}
                         </div>
@@ -158,9 +160,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% if user and user.needs %}
-                                    {% for need in user.needs %}
-                                        <div class="card" id="template-card">
+                                {% if user and user.need_set %}
+                                    {% for need in user.need_set.all %}
+                                        <div class="card" id="template-card" data-need-id="{{ need.id }}">
                                             <div class="card-header" role="tab">
                                                 <h5 class="mb-0">
                                                     <a class="collapsed" data-toggle="collapse"
@@ -181,7 +183,11 @@
                                             <div id="old-need-collapse{{ forloop.counter }}" class="collapse"
                                                  role="tabpanel"
                                                  data-parent="#accordion">
-                                                <div class="card-body">{{ need.description|linebreaks }}</div>
+                                                <div class="card-body">
+                                                    <p>{{ need.description|linebreaks }}</p>
+                                                    <div class="float-left cost" data-need-cost = "{{ need.cost }}">{{ need.cost }} تومان</div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     {% endfor %}
@@ -256,7 +262,7 @@
             card.find('a').html(title);
             var desc = $('#requirement-desc').val();
             var cost = $('#requirement-cost').val();
-            needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false})
+            needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id':-1});
             card.find('.card-body').html('<div class="desc" style="display: inline-block;">' + desc + '</div>' + '<div class="float-left cost">' + cost + ' تومان' + '</div>');
             card.appendTo('#accordion');
             number += 1;
@@ -292,11 +298,25 @@
         function createNeedsJson() {
             var tmp = 0;
             $('#accordion #template-card').each(function (index) {
-                if(!$(this).hasClass('d-none'))
-                    if(!$(this).find('.badge-danger').hasClass('d-none')) {
-                        needs.needs[tmp].urgent = true;
-                        tmp = tmp + 1;
+                if (!$(this).hasClass('d-none')) {
+                    var attr = $(this).attr('data-need-id');
+                    if (typeof attr !== typeof undefined && attr !== false) {
+                        var title = $(this).find('a').text();
+                        var desc = $(this).find('.card-body').find('p').text();
+                        var cost = $(this).find('.card-body').find('div').attr('data-need-cost');
+                        needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id':attr});
+                        var index2 = needs.needs.length - 1;
+                        if (!$(this).find('.badge-danger').hasClass('d-none')) {
+                            needs.needs[index2].urgent = true;
+                        }
                     }
+                    else {
+                        if (!$(this).find('.badge-danger').hasClass('d-none')) {
+                            needs.needs[tmp].urgent = true;
+                            tmp = tmp + 1;
+                        }
+                    }
+                }
             });
             $('#needs').val(JSON.stringify(needs));
             return true;
