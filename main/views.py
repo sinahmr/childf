@@ -111,7 +111,13 @@ def add_user(request, user_class):
             user.is_active = True
             user.save()
             authenticate(username=username, password=raw_password)
-            return redirect('home')
+            return render(request, 'main/modify-user.html', {
+                'user': None,
+                'all_provinces': PROVINCES,
+                'all_genders': GENDER,
+                'user_class': user_class,
+                'success': True,
+            })
         else:
             errors = json.loads(user_form.errors.as_json())
             errors.update(json.loads(user_info_form.errors.as_json()))
