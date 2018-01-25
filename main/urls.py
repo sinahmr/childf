@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
-    url(r'^volunteer/children$', views.volunteer, name='volunteer_children'),
+    url(r'^children$', views.show_children, name='show_children'),
     url(r'^child-information/(?P<child_id>\d+)/', views.child_information, name='child_information'),
     url(r'^(?P<user_class>\w+)/add/', views.add_user, name='add_user'),
     url(r'^(?P<user_class>\w+)/edit/', views.modify_user, name='edit_user'),
@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^admin/activities/', views.activities, name='admin_activities'),
     url(r'^admin/approval/', views.approval, name='admin_approvals'),
     url(r'^admin/purchases/', views.admin_purchases, name='admin_purchases'),
-    url(r'^admin/children/', views.admin_children, name='admin_children'),
     url(r'^admin/unresolveds/', views.admin_unresolveds, name='admin_unresolveds'),
     url(r'^admin/volunteers/', views.admin_volunteers, name='admin_volunteers'),
     url(r'^history/', TemplateView.as_view(template_name='main/static/history.html'), name='static_history'),
