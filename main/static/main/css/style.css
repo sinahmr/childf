@@ -33,3 +33,7 @@ body {
 .small-number-input {
     width: 40px;
 }
+
+.form-check-label{
+    padding-right: 1.25rem;
+}

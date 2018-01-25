@@ -6,7 +6,21 @@
             </div>
             <div class="col-md-10 col-sm-12 bg-light main-content">
                 <h2>مددکاران</h2>
-                <h5> نمایش مددکاران با کمتر از       <input type="number" class="small-number-input" placeholder="2" min="0"> نیازمند</h5>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="radio_show_all"
+                           value="option1" checked onchange="update_filter()">
+                    <label class="form-check-label" for="exampleRadios1">
+                        نمایش همه
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="radio_show_limit"
+                           value="option1" onchange="update_filter()">
+                    <label class="form-check-label" for="exampleRadios1">
+                        نمایش مددکاران با کمتر از <input type="number" id="support_limit" class="small-number-input" value="2"
+                                                         min="0" onmouseup="update_filter()" onchange="update_filter()"> نیازمند
+                    </label>
+                </div>
                 <table class="table">
                     <thead>
                     <tr>
@@ -17,7 +31,7 @@
                     </thead>
                     <tbody>
                     {% for volunteer in volunteers %}
-                        <tr>
+                        <tr class="volunteer_row" id="volunteer_row_{{ volunteer.id }}">
                             <td>{{ volunteer.name }}</td>
                             <td>
                                 <button type="button" class="btn btn-info" data-toggle="modal"
@@ -37,7 +51,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">نیازمندان تحت کفالت</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">نیازمندان تحت حمایت</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 </button>
                             </div>
@@ -76,13 +90,27 @@
         function show_supports(volunteer_id) {
             $('.modal-body').empty();
             if (supports[volunteer_id].length == 0) {
-                $('.modal-body').append('<span />').text('این مددکار نیازمندی را تحت کفالت ندارد.');
+                $('.modal-body').append('<span />').text('این مددکار نیازمندی را تحت حمایت ندارد.');
             }
             $.each(supports[volunteer_id], function (index, value) {
                 var url = '{% url 'child_information' '1111' %}'.replace(/1111/, value['id']);
                 $('.modal-body').append($('<a href="' + url + '" />').text(value['name']));
                 $('.modal-body').append($('<br />'));
             });
+        }
+
+        function update_filter() {
+            var limit_value = parseInt($('#support_limit').val());
+            if ($('#radio_show_limit').prop('checked') && !isNaN(limit_value)) {
+                $.each(supports, function (id, supports) {
+                    if (supports.length < limit_value)
+                        $('#volunteer_row_' + id).show();
+                    else
+                        $('#volunteer_row_' + id).hide();
+                });
+            }
+            else
+                $('.volunteer_row').show();
         }
     </script>
 {% endblock %}
