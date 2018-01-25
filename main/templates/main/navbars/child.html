@@ -1,7 +1,4 @@
 <ul class="navbar-nav ml-auto">
-    <li class="nav-item active">
-        <a class="nav-link" href="#">نیازمند<span class="sr-only"></span></a>
-    </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'child_letter' %}">ارسال نامه</a>
     </li>
@@ -13,5 +10,16 @@
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'child_purchases' %}">مشاهده‌ی وجوه پرداختی</a>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInfo" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            آشنایی با بنیاد کودک
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownInfo">
+            <a class="dropdown-item" href="{% url 'static_history' %}">تاریخچه</a>
+            <a class="dropdown-item" href="{% url 'static_vision' %}">اهداف و دیدگاه</a>
+            <a class="dropdown-item" href="{% url 'static_chart' %}">چارت سازمانی</a>
+        </div>
     </li>
 </ul>

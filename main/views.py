@@ -18,7 +18,7 @@ from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, Letter
 # check different pages which need filters on children
 
 def home(request):
-    return render(request, 'main/base.html', {})
+    return render(request, 'main/home.html', {})
 
 
 def volunteer(request):
