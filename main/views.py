@@ -150,9 +150,11 @@ def edit_user(request, user_id):
     if request.user.is_superuser:
         user = get_object_or_404(models.User, pk=user_id)
     else:
-        if str(request.user.id) != user_id and (request.user.user_type() != 'volunteer' or not models.Child.objects.exist(support__volunteer=request.user.cast(), id=user_id)):
+        if str(request.user.id) != user_id and (
+                request.user.user_type() != 'volunteer' or not models.Child.objects.filter(
+                support__volunteer=request.user.cast(), id=user_id).exists()):
             raise Http404
-        user = request.user
+        user = get_object_or_404(models.User, pk=user_id)
     user = user.cast()
     all_volunteers = []
     for vol in models.Volunteer.objects.all():
