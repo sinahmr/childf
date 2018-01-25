@@ -266,28 +266,6 @@ def child_purchases(request):
 @user_passes_test(lambda user: user.user_type() == 'volunteer')
 def volunteer_letter_verification(request):
     letters = models.Letter.objects.filter(child__support__volunteer=request.user.volunteer, verified__isnull=True)
-
-    # letters = [
-    #     {
-    #         'id': letter_id,
-    #         'child': {
-    #             'first_name': 'انگولو',
-    #             'last_name': 'کانته'
-    #         },
-    #         'title': 'چطوری همیارم؟',
-    #         'content': 'همیار جان من فلانی هستم.\nحالت چطور است؟',
-    #         'date': '۲ آذر ۱۳۹۶'
-    #     } if letter_id % 2 == 1 else
-    #     {
-    #         'id': letter_id,
-    #         'child': {
-    #             'first_name': 'تیمو',
-    #             'last_name': 'باکایوکو'
-    #         },
-    #         'title': 'ناتاناییل؟',
-    #         'content': 'ناتانائیل،آرزو مکن که خدا را جز در همه جا بیابی.\nخب؟',
-    #         'date': '۲ آبان ۱۳۹۶'
-    #     } for letter_id in range(1, 10)]
     return render(request, 'main/volunteer/letter-verification.html', {'letters': letters, 'user_type': 'volunteer'})
 
 
@@ -401,24 +379,10 @@ def admin_children(request):
                   {'children': models.Child.objects.all(), 'show_all': True, 'user_type': 'admin'})
 
 
+@user_passes_test(lambda user: user.is_superuser)
 def admin_unresolveds(request):
-    needs = [
-        {
-            'title': 'خرید فیفا ۹۹',
-            'description': 'خرید بازی فیفا ۹۹',
-            'cost': '۱۰۰۰',
-            'urgent': True,
-            'child': 'علی احمدی',
-        },
-        {
-            'title': 'خرید فیفا ۲۰۱۸',
-            'description': 'خرید بازی فیفا ۲۰۱۸',
-            'cost': '۱۵۰۰۰۰',
-            'urgent': False,
-            'child': 'علی احمدی',
-        }
-    ] * 3
-    return render(request, 'main/admin/unresolveds.html', {'needs': needs, 'user_type': 'admin'})
+    needs = models.Need.objects.filter(resolved=False)
+    return render(request, 'main/admin/unresolveds.html', {'needs': needs})
 
 
 def admin_volunteers(request):

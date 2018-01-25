@@ -23,9 +23,9 @@
                                     <span class="badge badge-danger">فوری</span>
                                 {% endif %}
                             </td>
-                            <td><a href="{% url 'child_information' %}">{{ need.child }}</a></td>
+                            <td><a href="{% url 'child_information' need.child.id %}">{{ need.child.name }}</a></td>
                             <td>{{ need.cost }} ریال</td>
-                            <td><a href="{% url 'donor_purchase' %}?need_id=4" class="btn btn-outline-info">پرداخت</a>
+                            <td><a href="{% url 'donor_purchase' %}?need_id={{ need.id }}" class="btn btn-outline-info">پرداخت</a>
                             </td>
                         </tr>
                     {% endfor %}
