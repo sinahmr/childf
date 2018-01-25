@@ -150,7 +150,7 @@
             var total = data[id].length;
             $.each(data[id], function (index, value) {
                 $('.modal-body').append($('<h4/>').addClass('card-title').text(value['payer']));
-                $('.modal-body').append($('<span/>').addClass('card-text').text(value['amount'] + ' هزار تومان'));
+                $('.modal-body').append($('<span/>').addClass('card-text').text(value['amount'] + ' تومان'));
                 $('.modal-body').append($('<span/>').addClass('card-subtitle').addClass('mb-2').addClass('text-muted').addClass('float-left').text(value['time']));
                 if (index != total - 1)
                     $('.modal-body').append($('<hr/>'));

@@ -9,9 +9,14 @@
                 <div class="card text-center">
                     <div class="card-header">درخواست برای تغییر مددکار</div>
                     <div class="card-body">
-                        <h4 class="card-title">مددکار شما «{{ volunteer_name }}» است. آیا علاقه‌مند هستید مددکار خود را تغییر دهید؟</h4>
+                        {% if volunteer %}
+                            <h4 class="card-title">مددکار شما «{{ volunteer.name }}» است. آیا علاقه‌مند هستید مددکار خود
+                                را تغییر دهید؟</h4>
                         <p class="card-text">درخواست شما برای مدیر سامانه ارسال می‌شود و ایشان در صورت صلاحدید، مددکار شما را تغییر خواهند داد.</p>
                         <a href="#" class="btn btn-primary" id="change-volunteer-button">ارسال درخواست تغییر مددکار</a>
+                        {% else %}
+                            شما مددکاری ندارید.
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -23,8 +28,13 @@
 
 {% block scripts %}
     <script type="text/javascript">
+        var data = {
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        };
         $('#change-volunteer-button').on('click', function (event) {
-            $('#change-volunteer-alert').removeClass('d-none').hide().fadeIn('slow');
+            jQuery.post("{% url 'change_volunteer' %}", data, function () {
+                $('#change-volunteer-alert').removeClass('d-none').hide().fadeIn('slow');
+            });
         });
     </script>
 {% endblock %}

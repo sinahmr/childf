@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 
 from main.constants import LETTER_RECEIVER
-from main.models import Child, Donor, Volunteer, UserInfo
+from main.models import Child, Donor, Volunteer, UserInfo, OngoingUserInfo
 
 
 class LetterForm(forms.Form):
@@ -24,7 +24,7 @@ class PurchaseForm(forms.Form):
 class ChildForm(ModelForm):
     class Meta:
         model = Child
-        exclude = ('date_joined', 'password' )
+        exclude = ('date_joined', 'password')
 
 
 class DonorForm(ModelForm):
@@ -42,4 +42,10 @@ class VolunteerForm(ModelForm):
 class UserInfoForm(ModelForm):
     class Meta:
         model = UserInfo
-        exclude = ('user', )
+        exclude = ('user',)
+
+
+class OngoingUserInfoForm(ModelForm):
+    class Meta:
+        model = OngoingUserInfo
+        exclude = ('user', 'submit_date')
