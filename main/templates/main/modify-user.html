@@ -10,6 +10,9 @@
 
                     <div class="row">
                         <div class="col-md-8 col-sm-12">
+                            {% if success %}
+                                 <div class="alert alert-success text-center" role="alert">ثبت‌نام با موفقیت انجام شد.</div>
+                            {% endif %}
                             <div class="form-group">
                                 <label for="first_name">نام</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name"
