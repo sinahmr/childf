@@ -263,29 +263,51 @@ def child_purchases(request):
     return render(request, 'main/child/purchases.html', {'purchases': purchases, 'user_type': 'child'})
 
 
+@user_passes_test(lambda user: user.user_type() == 'volunteer')
 def volunteer_letter_verification(request):
-    letters = [
-        {
-            'id': letter_id,
-            'child': {
-                'first_name': 'انگولو',
-                'last_name': 'کانته'
-            },
-            'title': 'چطوری همیارم؟',
-            'content': 'همیار جان من فلانی هستم.\nحالت چطور است؟',
-            'date': '۲ آذر ۱۳۹۶'
-        } if letter_id % 2 == 1 else
-        {
-            'id': letter_id,
-            'child': {
-                'first_name': 'تیمو',
-                'last_name': 'باکایوکو'
-            },
-            'title': 'ناتاناییل؟',
-            'content': 'ناتانائیل،آرزو مکن که خدا را جز در همه جا بیابی.\nخب؟',
-            'date': '۲ آبان ۱۳۹۶'
-        } for letter_id in range(1, 10)]
+    letters = models.Letter.objects.filter(child__support__volunteer=request.user.volunteer, verified__isnull=True)
+
+    # letters = [
+    #     {
+    #         'id': letter_id,
+    #         'child': {
+    #             'first_name': 'انگولو',
+    #             'last_name': 'کانته'
+    #         },
+    #         'title': 'چطوری همیارم؟',
+    #         'content': 'همیار جان من فلانی هستم.\nحالت چطور است؟',
+    #         'date': '۲ آذر ۱۳۹۶'
+    #     } if letter_id % 2 == 1 else
+    #     {
+    #         'id': letter_id,
+    #         'child': {
+    #             'first_name': 'تیمو',
+    #             'last_name': 'باکایوکو'
+    #         },
+    #         'title': 'ناتاناییل؟',
+    #         'content': 'ناتانائیل،آرزو مکن که خدا را جز در همه جا بیابی.\nخب؟',
+    #         'date': '۲ آبان ۱۳۹۶'
+    #     } for letter_id in range(1, 10)]
     return render(request, 'main/volunteer/letter-verification.html', {'letters': letters, 'user_type': 'volunteer'})
+
+
+@user_passes_test(lambda user: user.user_type() == 'volunteer')
+def accept_letter(request, letter_id):
+    letter = models.Letter.objects.filter(pk=letter_id).first()
+    if letter:
+        letter.verified = True
+        letter.save()
+        emails = list()
+        for sponsorship in models.Sponsorship.objects.filter(child=letter.child):
+            emails.append(sponsorship.sponsor.email)
+        mail.send_mail('نامه', '%s\n\n%s' % (letter.title, letter.content), 'childf.sut@gmail.com', emails)  # TODO email title
+    return HttpResponseRedirect(reverse('volunteer_letter_verification'))
+
+
+@user_passes_test(lambda user: user.user_type() == 'volunteer')
+def decline_letter(request, letter_id):
+    models.Letter.objects.filter(pk=letter_id).update(verified=False)
+    return HttpResponseRedirect(reverse('volunteer_letter_verification'))
 
 
 @user_passes_test(lambda u: hasattr(u, 'donor'))
