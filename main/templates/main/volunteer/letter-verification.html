@@ -7,7 +7,7 @@
             <div class="col-md-10 col-sm-12 bg-light main-content">
                 <h2>تایید نامه‌های در دست تایید</h2>
                 <br/>
-                {% if not letter %}
+                {% if not letters %}
                     <div class="alert alert-primary" role="alert">نامه‌ای در دست تایید ندارید.</div>
                 {% endif %}
                 {% for letter in letters %}
@@ -17,14 +17,16 @@
                             </div>
                             <div class="col-md-10 col-sm-12 bg-light">
                                 <div class="card">
-                                    <div class="card-header text-center">فرستنده: {{ letter.child.first_name }} {{ letter.child.last_name }}</div>
+                                    <div class="card-header text-center">فرستنده: {{ letter.child.name }}</div>
                                     <div class="card-body">
                                         <h5 class="card-title text-center">{{ letter.title }}</h5>
                                         <p class="card-text">{{ letter.content|linebreaks }}</p>
                                         <p>تاریخ: {{ letter.date }}</p>
                                         <div class="text-center">
-                                            <a href="javascript:removeLetter({{ letter.id }})" class="btn btn-success">تایید نامه</a>
-                                            <a href="javascript:removeLetter({{ letter.id }})" class="btn btn-danger">رد نامه</a>
+                                            <a href="javascript:submitLetter({{ letter.id }},'accept')"
+                                               class="btn btn-success">تایید نامه</a>
+                                            <a href="javascript:submitLetter({{ letter.id }},'decline')"
+                                               class="btn btn-danger">رد نامه</a>
                                         </div>
                                     </div>
                                 </div>
@@ -44,8 +46,8 @@
 {% endblock %}
 {% block scripts %}
     <script type="text/javascript">
-        function removeLetter(id) {
-            jQuery.get('volunteer/letter-verification/accept/' + id, function () {
+        function submitLetter(id, status) {
+            jQuery.get('/volunteer/letter-verification/' + status + '/' + id, function () {
                 $('#letter-' + id).fadeOut('slow');
             });
         }
