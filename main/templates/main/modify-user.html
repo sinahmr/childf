@@ -162,8 +162,8 @@
                         <div class="col-md-4 col-sm-12">
                             <div>
                                 <img id="img-preview" class="rounded img-fluid float-right"
-                                        {% if user and user.img_url %}
-                                     src="{{ user.img_url }}"
+                                        {% if userinfo and userinfo.image and userinfo.image.url %}
+                                     src="{{ userinfo.image.url }}"
                                         {% else %}
                                      src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
                                         {% endif %}>
