@@ -24,7 +24,7 @@ def home(request):
         show_buttons = False
     return render(request, 'main/home.html', {'show_buttons': show_buttons})
 
-
+@user_passes_test(lambda u: u.is_authenticated)
 def show_children(request):
     show_all = request.GET.get('show_all', '1') == '1'
     children = models.Child.objects.all()
@@ -61,6 +61,7 @@ def paginate(request, objects, limit):
     return objects
 
 
+@user_passes_test(lambda u: u.is_authenticated)
 def child_information(request, child_id):
     child = get_object_or_404(models.Child, pk=child_id)
     user = request.user.cast()
@@ -156,6 +157,7 @@ def add_user(request, user_class):
         })
 
 
+@user_passes_test(lambda u: u.is_authenticated)
 def edit_user(request, user_id):
     if request.user.is_superuser:
         user = get_object_or_404(models.User, pk=user_id)
@@ -389,7 +391,7 @@ def change_volunteer(request):
         send_mail(summary, body, [], cc_admins=False)
 
         # Log Activity
-        desc = 'علاقه به تغییر مددکار دارد' % request.user.name()
+        desc = 'علاقه به تغییر مددکار دارد'
         models.Activity.objects.create(user=request.user, description=desc)
 
         return HttpResponse('OK')
@@ -439,11 +441,14 @@ def accept_letter(request, letter_id):
 
 @user_passes_test(lambda user: user.user_type() == 'volunteer')
 def decline_letter(request, letter_id):
-    models.Letter.objects.filter(pk=letter_id).update(verified=False)
+    letter = models.Letter.objects.filter(pk=letter_id).first()
+    if letter:
+        letter.verified = False
+        letter.save()
 
-    # Log Activity
-    desc = 'نامه‌ی نیازمند %s به همیارانش را رد کرد' % letter.child.name()
-    models.Activity.objects.create(user=request.user, description=desc)
+        # Log Activity
+        desc = 'نامه‌ی نیازمند %s به همیارانش را رد کرد' % letter.child.name()
+        models.Activity.objects.create(user=request.user, description=desc)
 
     return HttpResponseRedirect(reverse('volunteer_letter_verification'))
 
