@@ -5,7 +5,6 @@ from django.contrib.auth import authenticate, login as django_login, logout as d
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.core import mail
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 from django.db.models import Count
@@ -17,6 +16,7 @@ from django.utils.http import int_to_base36, base36_to_int
 from main import models
 from main.constants import PROVINCES, GENDER
 from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, RequestForm, PurchaseForm, OngoingUserInfoForm
+
 
 def home(request):
     show_buttons = True
@@ -366,7 +366,7 @@ def send_request(request):
             content = form.cleaned_data['RequestContent']
 
             # Log Activity
-            desc = 'برای مددکارش درخواستی ارسال کرد' % request.user.name()
+            desc = 'برای مددکارش درخواستی ارسال کرد'
             models.Activity.objects.create(user=request.user, description=desc)
 
             support = models.Support.objects.filter(child=request.user.child).first()
@@ -498,9 +498,9 @@ def purchase(request):
 def activities(request):
     user_id = request.GET.get('user_id')
     if user_id:
-        acts = models.Activity.objects.filter(user_id=user_id)
+        acts = models.Activity.objects.filter(user_id=user_id).order_by('-date')
     else:
-        acts = models.Activity.objects.all()
+        acts = models.Activity.objects.all().order_by('-date')
     acts = paginate(request, acts, 10)
     return render(request, 'main/admin/activities.html', {'activities': acts})
 
