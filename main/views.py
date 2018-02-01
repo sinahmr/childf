@@ -161,7 +161,7 @@ def edit_user(request, user_id):
         user = get_object_or_404(models.User, pk=user_id)
     user = user.cast()
     if request.method == 'POST':
-        if request.user.user_type() == 'admin':
+        if request.user.user_type() == 'admin' or request.user.user_type() == 'donor' and request.user == user:
             user_form = None
             user_class = user.user_type()
             if user_class == 'admin' or user_class == 'donor':
@@ -498,3 +498,22 @@ def render_modify_user_template(request, user, success, errors, ):
         'errors': errors,
         'changed': changed,
     })
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def commit_info(request, action, user_id):
+    user = models.User.objects.get(id=user_id)
+    user_info = user.userinfo
+    if user.ongoinguserinfo_set and len(user.ongoinguserinfo_set.all()) > 0:
+        ongoing = user.ongoinguserinfo_set.all()[0]
+        if action == 'accept':
+            user_info.first_name = ongoing.first_name
+            user_info.last_name = ongoing.last_name
+            user_info.gender = ongoing.gender
+            user_info.year_of_birth = ongoing.year_of_birth
+            user_info.image = ongoing.image
+            user_info.save()
+            ongoing.delete()
+        elif action == 'reject':
+            ongoing.delete()
+    return HttpResponseRedirect(reverse('edit_user', kwargs={'user_id': user_id}))
