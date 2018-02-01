@@ -2,4 +2,5 @@ Django==1.11.7
 Werkzeug==0.14.1
 django_extensions==1.9.8
 pillow==4.3.0
+django-bootstrap-pagination==1.6.3
 django-jalali-date

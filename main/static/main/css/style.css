@@ -57,3 +57,43 @@ body {
 .carousel-control-next-icon {
     background-image : url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%21252900' viewBox='0 0 8 8'%3E%3Cpath d='M1.5 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
 }
+
+ul.pagination {
+    justify-content: center;
+}
+
+ul.pagination > li > * {
+    position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+
+ul.pagination > li > a {
+    color: #0056b3;
+    text-decoration: none;
+    background-color: #e9ecef;
+    border-color: #ddd;
+}
+
+ul.pagination > li:last-child > * {
+    margin-left: 0;
+    border-top-left-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+}
+
+ul.pagination > li:first-child > * {
+    border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+}
+
+ul.pagination > li.active > span {
+    z-index: 2;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}

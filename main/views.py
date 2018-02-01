@@ -4,6 +4,8 @@ import urllib
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core import mail
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.auth.views import password_reset
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
@@ -45,9 +47,23 @@ def show_children(request):
     if request.user.user_type() == 'admin' and request.GET.get('without_donor', '0') == '1':
         show_all = False
         children = models.Child.objects.filter(sponsorship=None)
+    children = paginate(request, children, 20)
     return render(request, 'main/children.html',
                   {'children': children, 'sponsored_children': sponsored_children,
                    'supported_children': supported_children, 'show_all': show_all})
+
+
+def paginate(request, objects, limit):
+    paginator = Paginator(objects, limit)
+    page = request.GET.get('page')
+    try:
+        objects = paginator.page(page)
+    except PageNotAnInteger:
+        objects = paginator.page(1)  # If page is not an integer, deliver first page.
+    except EmptyPage:
+        objects = paginator.page(
+            paginator.num_pages)  # If page is out of range (e.g. 9999), deliver last page of results.
+    return objects
 
 
 def child_information(request, child_id):
@@ -118,7 +134,7 @@ def add_user(request, user_class):
             user_info.save()
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
-                new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
+                new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'], resolved=need['resolved'])
                 new_need.child = user
                 new_need.save()
             username = user_form.cleaned_data.get('email')
@@ -193,11 +209,12 @@ def edit_user(request, user_id):
                 needs_json = json.loads(request.POST['needs'])
                 for need in needs_json['needs']:
                     if need['id'] == -1:
-                        new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
+                        new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'], resolved=need['resolved'])
                         new_need.child = user
                     else:
                         new_need = models.Need.objects.get(id=int(need['id']))
                         new_need.urgent = need['urgent']
+                        new_need.resolved = need['resolved']
                     new_need.save()
                 new_user_info.save()
                 if user_class == 'child':
@@ -230,11 +247,12 @@ def edit_user(request, user_id):
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
                 if need['id'] == -1:
-                    new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
+                    new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'], resolved=need['resolved'])
                     new_need.child = user
                 else:
                     new_need = models.Need.objects.get(id=int(need['id']))
                     new_need.urgent = need['urgent']
+                    new_need.resolved = need['resolved']
                 new_need.save()
             return render_modify_user_template(request, user, '2', None)
     else:
@@ -476,6 +494,7 @@ def activities(request):
     for act in acts:
         if act.user:
             act.user_link = reverse('profile', kwargs={'user_id': act.user.id})
+    acts = paginate(request, acts, 10)
     return render(request, 'main/admin/activities.html', {'activities': acts})
 
 
@@ -489,6 +508,7 @@ def admin_purchases(request):
     for p in purchases:
         p.donor_link = reverse('profile', kwargs={'user_id': p.payer.donor.id})
     purchases = sorted(purchases, key=lambda x: x.time, reverse=True)
+    purchases = paginate(request, purchases, 10)
     return render(request, 'main/admin/purchases.html', {'purchases': purchases})
 
 
@@ -555,7 +575,6 @@ def render_modify_user_template(request, user, success, errors, ):
     all_volunteers = []
     for vol in models.Volunteer.objects.all():
         all_volunteers.append({'id': vol.id, 'first_name': vol.userinfo.first_name, 'last_name': vol.userinfo.last_name})
-    print(user.ongoinguserinfo_set.all())
     changed = False
     if user:
         if user.ongoinguserinfo_set.all() and len(user.ongoinguserinfo_set.all()) > 0:

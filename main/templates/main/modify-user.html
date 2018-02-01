@@ -233,7 +233,7 @@
                                                     <h5 class="mb-0">
                                                         <a class="collapsed" data-toggle="collapse"
                                                            href="#old-need-collapse{{ forloop.counter }}"
-                                                           aria-expanded="false">{{ need.title }}</a>
+                                                           aria-expanded="false" id="header" {% if need.resolved %}style="text-decoration: line-through;"{% endif %}>{{ need.title }}</a>
                                                         <span class="badge badge-danger {% if not need.urgent %}d-none{% endif %}">فوری</span>
                                                         <button type="button" onclick="make_urgent(this);"
                                                                 class="btn btn-danger btn-sm m-1 float-left urgent {% if need.urgent %}d-none{% endif %}">
@@ -243,6 +243,20 @@
                                                                 class="btn btn-outline-danger btn-sm m-1 float-left urgent-remove {% if not need.urgent %}d-none{% endif %}">
                                                             حذف فوری
                                                         </button>
+                                                        {% if user %}
+                                                            <a href="javascript:void(0);" class="btn btn-success btn-sm float-left  resolved {% if need.resolved %}d-none{% endif %}"
+                                                               onclick="make_resolved(this);" style="margin-top: 4px;">
+                                                                <i class="fas fa-check" style="font-size: small"></i>
+                                                                <span>رفع نیاز</span>
+                                                            </a>
+                                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm float-left resolved-remove {% if not need.resolved %}d-none{% endif %}"
+                                                               onclick="remove_resolved(this);" style="margin-top: 4px;">
+                                                                <i class="fas fa-times" style="font-size: small"></i>
+                                                                <span>بازگشت نیاز</span>
+                                                            </a>
+                                                        {% endif %}
+
+
                                                     </h5>
                                                 </div>
 
@@ -312,6 +326,7 @@
 {% endblock %}
 
 {% block scripts %}
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
     <script type="text/javascript">
         var number = 1;
         var needs = {'needs': []};
@@ -351,10 +366,23 @@
             $(event).parent().find('.urgent').addClass('d-none');
         }
 
+
         function remove_urgent(event) {
             $(event).parent().find('.badge').addClass('d-none');
             $(event).parent().find('.urgent-remove').addClass('d-none');
             $(event).parent().find('.urgent').removeClass('d-none');
+        }
+
+        function make_resolved(event) {
+            $(event).parent().find('#header').css({'text-decoration': 'line-through'});
+            $(event).parent().find('.resolved').addClass('d-none');
+            $(event).parent().find('.resolved-remove').removeClass('d-none');
+        }
+
+        function remove_resolved(event) {
+            $(event).parent().find('#header').css({'text-decoration': 'none'});
+            $(event).parent().find('.resolved').removeClass('d-none');
+            $(event).parent().find('.resolved-remove').addClass('d-none');
         }
 
         function readURL(input) {
@@ -377,13 +405,19 @@
                         var title = $(this).find('a').text();
                         var desc = $(this).find('.card-body').find('p').text();
                         var cost = $(this).find('.card-body').find('div').attr('data-need-cost');
-                        needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id': attr});
+                        needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id': attr, 'resolved': false});
                         var index2 = needs.needs.length - 1;
                         if (!$(this).find('.badge-danger').hasClass('d-none')) {
                             needs.needs[index2].urgent = true;
                         }
+                        if ($(this).find('#header').css('text-decoration') == 'line-through') {
+                            needs.needs[index2].resolved = true;
+                        }
                     }
                     else {
+                        if ($(this).find('#header').css('text-decoration') == 'line-through') {
+                            needs.needs[tmp].resolved = true;
+                        }
                         if (!$(this).find('.badge-danger').hasClass('d-none')) {
                             needs.needs[tmp].urgent = true;
                             tmp = tmp + 1;
