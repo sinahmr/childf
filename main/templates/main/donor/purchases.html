@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load bootstrap_pagination %}
+{% load jalali_tags %}
 {% block content %}
     <div class="container-fluid content">
         <div class="row">
@@ -19,7 +20,7 @@
                     <tbody>
                     {% for purchase in purchases %}
                         <tr>
-                            <td>{{ purchase.time }}</td>
+                            <td>{{ purchase.time|to_jalali }}</td>
                             {% if purchase.need %}
                                 <td><a href="{{ purchase.child_link }}">{{ purchase.need.child.name }}</a></td>
                                 <td>{{ purchase.need.title }}</td>

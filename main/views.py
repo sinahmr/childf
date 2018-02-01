@@ -131,7 +131,7 @@ def add_user(request, user_class):
             user_info.save()
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
-                new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
+                new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'], resolved=need['resolved'])
                 new_need.child = user
                 new_need.save()
             username = user_form.cleaned_data.get('email')
@@ -202,11 +202,12 @@ def edit_user(request, user_id):
                 needs_json = json.loads(request.POST['needs'])
                 for need in needs_json['needs']:
                     if need['id'] == -1:
-                        new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
+                        new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'], resolved=need['resolved'])
                         new_need.child = user
                     else:
                         new_need = models.Need.objects.get(id=int(need['id']))
                         new_need.urgent = need['urgent']
+                        new_need.resolved = need['resolved']
                     new_need.save()
                 new_user_info.save()
                 if user_class == 'child':
@@ -239,11 +240,12 @@ def edit_user(request, user_id):
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
                 if need['id'] == -1:
-                    new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'])
+                    new_need = models.Need(title=need['title'], description=need['description'], cost=need['cost'], urgent=need['urgent'], resolved=need['resolved'])
                     new_need.child = user
                 else:
                     new_need = models.Need.objects.get(id=int(need['id']))
                     new_need.urgent = need['urgent']
+                    new_need.resolved = need['resolved']
                 new_need.save()
             return render_modify_user_template(request, user, '2', None)
     else:
@@ -564,7 +566,6 @@ def render_modify_user_template(request, user, success, errors, ):
     all_volunteers = []
     for vol in models.Volunteer.objects.all():
         all_volunteers.append({'id': vol.id, 'first_name': vol.userinfo.first_name, 'last_name': vol.userinfo.last_name})
-    print(user.ongoinguserinfo_set.all())
     changed = False
     if user:
         if user.ongoinguserinfo_set.all() and len(user.ongoinguserinfo_set.all()) > 0:

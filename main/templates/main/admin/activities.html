@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load bootstrap_pagination %}
+{% load jalali_tags %}
 {% block content %}
     <div class="container-fluid content">
         <div class="row">
@@ -18,7 +19,7 @@
                     <tbody>
                     {% for activity in activities %}
                         <tr>
-                            <td>{{ activity.date }}</td>
+                            <td>{{ activity.date|to_jalali }}</td>
                             <td><a href="{{ activity.user_link }}">{{ activity.user.name }} ({{ activity.user.persian_user_type }})</a></td>
                             <td>{{ activity.description }}</td>
                         </tr>
