@@ -24,7 +24,7 @@
                                 {% endif %}
                             </td>
                             <td><a href="{% url 'child_information' need.child.id %}">{{ need.child.name }}</a></td>
-                            <td>{{ need.cost }} ریال</td>
+                            <td>{{ need.cost }} تومان</td>
                             <td><a href="{% url 'donor_purchase' %}?need_id={{ need.id }}" class="btn btn-outline-info">پرداخت</a>
                             </td>
                         </tr>
