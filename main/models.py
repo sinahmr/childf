@@ -60,6 +60,18 @@ class User(AbstractUser):
             return 'volunteer'
         return 'anonymous'
 
+    def persian_user_type(self):
+        user_type = self.user_type()
+        if user_type == 'admin':
+            return 'مدیر'
+        if user_type == 'child':
+            return 'نیازمند'
+        if user_type == 'donor':
+            return 'همیار'
+        if user_type == 'volunteer':
+            return 'مددکار'
+        return 'بازدیدکننده'
+
     def cast(self):
         if self.user_type() == 'admin':
             return self.donor

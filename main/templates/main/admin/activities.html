@@ -18,7 +18,7 @@
                     {% for activity in activities %}
                         <tr>
                             <td>{{ activity.date }}</td>
-                            <td><a href="#{{ activity.user_link }}">{{ activity.user }}</a></td>
+                            <td><a href="{{ activity.user_link }}">{{ activity.user.name }} ({{ activity.user.persian_user_type }})</a></td>
                             <td>{{ activity.description }}</td>
                         </tr>
                     {% endfor %}
