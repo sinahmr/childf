@@ -75,6 +75,7 @@
                 <div id="accordion" role="tablist">
 
                     {% for need in child.need_set.all %}
+                        {% if not need.resolved %}
                         <div class="card">
                             <div class="card-header" role="tab" id="heading{{ need.id }}">
                                 <h5 class="mb-0">
@@ -103,6 +104,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -132,6 +134,7 @@
     <script type="text/javascript">
         var data = {
             {% for need in child.need_set.all %}
+                {% if not need.resolved %}
                 '{{ need.id }}': [
                     {% for purchase in need.purchaseforneed_set.all %}
                         {'payer': '{{purchase.payer.name}}', 'amount': '{{purchase.amount}}', 'time': '{{ purchase.time|to_jalali }}'}
@@ -140,6 +143,7 @@
                         {% endif %}
                     {% endfor %}
                 ],
+                {% endif %}
             {% endfor %}
         };
 
