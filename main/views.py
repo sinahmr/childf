@@ -24,6 +24,7 @@ def home(request):
         show_buttons = False
     return render(request, 'main/home.html', {'show_buttons': show_buttons})
 
+
 @user_passes_test(lambda u: u.is_authenticated)
 def show_children(request):
     show_all = request.GET.get('show_all', '1') == '1'
@@ -34,7 +35,8 @@ def show_children(request):
         sponsored_children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
     if isinstance(request.user.cast(), models.Volunteer):
         supported_children = models.Child.objects.filter(support__volunteer=request.user.cast())
-    if show_all == False:
+        children = models.Child.objects.filter(support=None)  # volunteers can't see supported children
+    if not show_all:
         if isinstance(request.user.cast(), models.Donor):
             children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
         if isinstance(request.user.cast(), models.Volunteer):
@@ -69,6 +71,8 @@ def child_information(request, child_id):
                                                                                            sponsor=user).exists()
     has_support = isinstance(user, models.Volunteer) and models.Support.objects.filter(child=child,
                                                                                        volunteer=user).exists()
+    if isinstance(user, models.Volunteer) and not has_support and models.Support.objects.filter(child=child).exists():
+        raise Http404("Child already supported")
     if request.method == 'POST':
         if request.POST['action'] == 'sponsorship':
             if not has_sponsorship:
