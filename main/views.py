@@ -391,7 +391,7 @@ def change_volunteer(request):
         send_mail(summary, body, [], cc_admins=False)
 
         # Log Activity
-        desc = 'علاقه به تغییر مددکار دارد' % request.user.name()
+        desc = 'علاقه به تغییر مددکار دارد'
         models.Activity.objects.create(user=request.user, description=desc)
 
         return HttpResponse('OK')
