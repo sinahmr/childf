@@ -132,6 +132,7 @@
     <script type="text/javascript">
         var data = {
             {% for need in child.need_set.all %}
+                {% if not need.resolved %}
                 '{{ need.id }}': [
                     {% for purchase in need.purchaseforneed_set.all %}
                         {'payer': '{{purchase.payer.name}}', 'amount': '{{purchase.amount}}', 'time': '{{ purchase.time|to_jalali }}'}
@@ -140,6 +141,7 @@
                         {% endif %}
                     {% endfor %}
                 ],
+                {% endif %}
             {% endfor %}
         };
 
