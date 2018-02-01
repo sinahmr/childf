@@ -21,11 +21,16 @@
                         <tr>
                             <td>{{ activity.date|to_jalali }}</td>
                             {% if activity.user %}
-                                <td><a href="{{ activity.user_link }}">{{ activity.user.name }} ({{ activity.user.persian_user_type }})</a></td>
+                                <td><a href="{% url 'profile' activity.user.id %}">{{ activity.user.name }}
+                                    ({{ activity.user.persian_user_type }})</a></td>
                             {% else %}
                                 <td>بازدیدکننده</td>
                             {% endif %}
                             <td>{{ activity.description }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">هیچ فعالیتی وجود ندارد</td>
                         </tr>
                     {% endfor %}
                     </tbody>

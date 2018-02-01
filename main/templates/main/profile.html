@@ -40,6 +40,10 @@
                                 </table>
 
                                 <a href="{% url 'edit_user' user.id %}" class="btn btn-primary">ویرایش مشخصات</a>
+                                {% if user_type == 'admin' %}
+                                    <a href="{% url 'admin_activities' %}?user_id={{ user.id }}"
+                                       class="btn btn-primary">گزارش فعالیت‌ها</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

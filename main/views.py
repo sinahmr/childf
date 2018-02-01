@@ -488,11 +488,13 @@ def purchase(request):
         return render(request, 'main/purchase.html', {'need': need})
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def activities(request):
-    acts = models.Activity.objects.all()
-    for act in acts:
-        if act.user:
-            act.user_link = reverse('profile', kwargs={'user_id': act.user.id})
+    user_id = request.GET.get('user_id')
+    if user_id:
+        acts = models.Activity.objects.filter(user_id=user_id)
+    else:
+        acts = models.Activity.objects.all()
     acts = paginate(request, acts, 10)
     return render(request, 'main/admin/activities.html', {'activities': acts})
 
