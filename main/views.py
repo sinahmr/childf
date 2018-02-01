@@ -75,22 +75,29 @@ def child_information(request, child_id):
     if isinstance(user, models.Volunteer) and not has_support and models.Support.objects.filter(child=child).exists():
         raise Http404("Child already supported")
     if request.method == 'POST':
+        activity_desc = ''
         if request.POST['action'] == 'sponsorship':
             if not has_sponsorship:
                 sponsorship = models.Sponsorship(child=child, sponsor=user)
                 sponsorship.save()
                 has_sponsorship = True
+                activity_desc = 'نیازمند %s را تحت کفالت قرار داد' % child.name()
             else:
                 models.Sponsorship.objects.get(child=child, sponsor=user).delete()
                 has_sponsorship = False
+                activity_desc = 'نیازمند %s را از کفالت خود خارج کرد' % child.name()
         if request.POST['action'] == 'support':
             if not has_support:
                 support = models.Support(child=child, volunteer=user)
                 support.save()
                 has_support = True
+                activity_desc = 'نیازمند %s را تحت حمایت قرار داد' % child.name()
             else:
                 models.Support.objects.get(child=child, volunteer=user).delete()
                 has_support = False
+                activity_desc = 'نیازمند %s را از حمایت خود خارج کرد' % child.name()
+        # Log Activity
+        models.Activity.objects.create(user=user, description=activity_desc)
     return render(request, 'main/child-information.html',
                   {'child': child,
                    'has_sponsorship': has_sponsorship,
