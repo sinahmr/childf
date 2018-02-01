@@ -4,18 +4,21 @@ import urllib
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.mail import EmailMessage
-from django.template.loader import get_template
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, Http404, redirect, get_object_or_404, HttpResponseRedirect
+from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.http import int_to_base36, base36_to_int
+from django.db.models import Q
+
 
 from main import models
 from main.constants import PROVINCES, GENDER
-from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, RequestForm, PurchaseForm, OngoingUserInfoForm
+from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, RequestForm, PurchaseForm, \
+    OngoingUserInfoForm
 
 
 def home(request):
@@ -36,7 +39,8 @@ def show_children(request):
         sponsored_children = all_children.filter(sponsorship__sponsor=request.user.cast())
     if isinstance(request.user.cast(), models.Volunteer):
         supported_children = all_children.filter(support__volunteer=request.user.cast())
-        children = all_children.filter(support=None)  # volunteers can't see supported children
+        children = all_children.filter(
+            Q(support=None) | Q(support__volunteer=request.user.cast()))  # volunteers can't see supported children
     if not show_all:
         if isinstance(request.user.cast(), models.Donor):
             children = all_children.filter(sponsorship__sponsor=request.user.cast())
