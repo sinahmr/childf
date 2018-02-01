@@ -3,11 +3,14 @@ import urllib
 
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth.views import password_reset
 from django.core import mail
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, Http404, redirect, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse
+from django.utils.http import int_to_base36, base36_to_int
 
 from main import models
 from main.constants import PROVINCES, GENDER
@@ -277,9 +280,46 @@ def login(request):
             django_login(request, user)
             return redirect('home')
         except:
-            return render(request, 'main/login.html', {'error': 'نام کاربری یا رمز عبور نادرست است.'})
+            return render(request, 'main/login.html', {'error': 'آدرس ایمیل یا رمز عبور نادرست است.'})
     else:
         return render(request, 'main/login.html', {})
+
+
+def forget(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = models.User.objects.get(email=email)
+        except:
+            return render(request, 'main/forget.html', {'error': 'ایمیل شما معتبر نمی‌باشد'})
+        generator = PasswordResetTokenGenerator()
+        token = generator.make_token(user)
+        uidb36 = int_to_base36(user.pk)
+        mail.send_mail('فراموشی رمز عبور',
+                       request.build_absolute_uri(reverse('reset_password', kwargs={'uidb36': uidb36, 'token': token})),
+                       'childf.sut@gmail.com',
+                       [email])  # TODO Prettify
+        return render(request, 'main/forget.html', {'success': 'ایمیل تایید فراموشی به شما ارسال شد'})
+    else:
+        return render(request, 'main/forget.html', {})
+
+
+def reset_password(request, uidb36, token):
+    generator = PasswordResetTokenGenerator()
+    user_pk = base36_to_int(uidb36)
+    try:
+        user = models.User.objects.get(pk=user_pk)
+    except models.User.DoesNotExist:
+        user = None
+    if generator.check_token(user, token):
+        random_password = models.User.objects.make_random_password()
+        user.set_password(random_password)
+        user.save()
+        mail.send_mail('فراموشی رمز عبور', 'password : %s' % random_password, 'childf.sut@gmail.com',
+                       [user.email])  # TODO Prettify
+        return render(request, 'main/forget.html', {'success': 'رمز عبور جدید شما به شما ایمیل شد'})
+    else:
+        return render(request, 'main/forget.html', {'error': 'کد فراموشی شما معتبر نمی‌باشد'})
 
 
 def logout(request):
