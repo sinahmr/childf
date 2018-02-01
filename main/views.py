@@ -636,14 +636,13 @@ def commit_info(request, action, user_id):
         desc = '%s درخواست %s برای تغییر اطلاعات' % ('تایید' if action == 'accept' else 'رد', user.name())
         models.Activity.objects.create(user=request.user, description=desc)
 
-        summary = 'درخواست شما %s شد' % 'تایید' if action == 'accept' else 'رد'
-        body = 'شما درخواستی برای تغییر مشخصات خود ارسال نموده بودید. مدیران زحمت‌کش بنیاد کودک درخواست شما را بررسی کرده و مفتخر اند نتیجه را به اطلاع شما سرور گرامی برسانند.<br>درخواست حضرت‌عالی %s شد.'  % 'تایید' if action == 'accept' else 'رد'
+        summary = 'درخواست شما %s شد' % ('تایید' if action == 'accept' else 'رد')
+        body = 'شما درخواستی برای تغییر مشخصات خود ارسال نموده بودید. مدیران زحمت‌کش بنیاد کودک درخواست شما را بررسی کرده و مفتخر اند نتیجه را به اطلاع شما سرور گرامی برسانند.<br>درخواست حضرت‌عالی %s شد.'  % ('تایید' if action == 'accept' else 'رد')
         send_mail(summary, body, [user.email], cc_admins=False)
     return HttpResponseRedirect(reverse('edit_user', kwargs={'user_id': user_id}))
 
 
 def send_mail(summary, content, to, cc_admins=False):
-    # to = ['sina.hajimiri@gmail.com', 'salari.m1375@gmail.com', 'amin.moghaddamv@gmail.com']
     cc = list()
     if not to:
         to = models.User.objects.filter(is_superuser=True).values_list('email', flat=True)
