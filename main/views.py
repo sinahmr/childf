@@ -18,10 +18,6 @@ from main import models
 from main.constants import PROVINCES, GENDER
 from main.forms import ChildForm, DonorForm, VolunteerForm, UserInfoForm, LetterForm, RequestForm, PurchaseForm, OngoingUserInfoForm
 
-
-# create users for different roles
-# check different pages which need filters on children
-
 def home(request):
     show_buttons = True
     if request.user.is_authenticated():
@@ -89,23 +85,6 @@ def child_information(request, child_id):
             else:
                 models.Support.objects.get(child=child, volunteer=user).delete()
                 has_support = False
-    child2 = {
-        'first_name': 'علی',
-        'last_name': 'احمدی',
-        'img_url': 'https://www.understood.org/~/media/f7ffcd3d00904b758f2e77e250d529dc.jpg',
-        'province': 'تهران',
-        'accomplishments': 'کسب رتبه‌ی اول',
-        'need_set': {'all': [{'id': 1,
-                              'title': 'نیاز اول',
-                              'description': 'کمک هزینه‌ی تحصیلی',
-                              'cost': '۱۰۰',
-                              'urgent': 'True',
-                              'PurchaseForNeed_set': [{'id': 1,
-                                                       'payer': 'حسن بیاتی',
-                                                       'amount': '۲۰۰',
-                                                       'time': '۲۰ فروردین ۱۹۹۶'}]
-                              }]}
-    }
     return render(request, 'main/child-information.html',
                   {'child': child,
                    'has_sponsorship': has_sponsorship,
@@ -188,7 +167,7 @@ def edit_user(request, user_id):
         user = get_object_or_404(models.User, pk=user_id)
     user = user.cast()
     if request.method == 'POST':
-        if request.user.user_type() == 'admin' or request.user.user_type() == 'donor' and request.user == user:
+        if request.user.user_type() == 'admin' or request.user.user_type() == 'donor' and request.user.cast() == user:
             user_form = None
             user_class = user.user_type()
             if user_class == 'admin' or user_class == 'donor':
@@ -409,6 +388,7 @@ def change_volunteer(request):
 @user_passes_test(lambda u: hasattr(u, 'child'))
 def child_purchases(request):
     purchases = models.PurchaseForNeed.objects.filter(need__child=request.user.child)
+    purchases = paginate(request, purchases, 10)
     return render(request, 'main/child/purchases.html', {'purchases': purchases})
 
 
@@ -457,6 +437,7 @@ def donor_purchases(request):
     for p in need_purchases:
         p.child_link = reverse('child_information', kwargs={'child_id': p.need.child.id})
     purchases = sorted(institute_purchases + need_purchases, key=lambda x: x.time, reverse=True)
+    purchases = paginate(request, purchases, 10)
     return render(request, 'main/donor/purchases.html', {'purchases': purchases})
 
 
@@ -495,11 +476,13 @@ def purchase(request):
         return render(request, 'main/purchase.html', {'need': need})
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def activities(request):
-    acts = models.Activity.objects.all()
-    for act in acts:
-        if act.user:
-            act.user_link = reverse('profile', kwargs={'user_id': act.user.id})
+    user_id = request.GET.get('user_id')
+    if user_id:
+        acts = models.Activity.objects.filter(user_id=user_id)
+    else:
+        acts = models.Activity.objects.all()
     acts = paginate(request, acts, 10)
     return render(request, 'main/admin/activities.html', {'activities': acts})
 
@@ -546,6 +529,7 @@ def admin_unresolveds(request):
     return render(request, 'main/admin/unresolveds.html', {'needs': needs})
 
 
+@user_passes_test(lambda user: user.is_superuser)
 def admin_volunteers(request):
     volunteers = models.Volunteer.objects.all().annotate(child_count=Count('support'))
     return render(request, 'main/admin/volunteers.html', {'volunteers': volunteers})
