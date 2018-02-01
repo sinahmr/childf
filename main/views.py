@@ -202,6 +202,11 @@ def edit_user(request, user_id):
                         models.Support.objects.filter(child=new_user).delete()
                     if request.POST['volunteer'] != '-1' and not models.Support.objects.filter(child=new_user).exists():
                             models.Support.objects.create(child=new_user, volunteer=models.Volunteer.objects.get(id=request.POST['volunteer']))
+
+                # Log Activity
+                desc = 'کاربر %s (%s) تغییر کرد' % (new_user.name(), new_user.persian_user_type())
+                models.Activity.objects.create(user=request.user, description=desc)
+
                 return render_modify_user_template(request, user, '2', None)
             else:
                 errors = json.loads(user_form.errors.as_json())
@@ -216,6 +221,11 @@ def edit_user(request, user_id):
                     new_user_info.image = request.FILES['image']
                 models.OngoingUserInfo.objects.filter(user=user).delete()
                 new_user_info.save()
+
+                # Log Activity
+                desc = 'کاربر %s (%s) در دست تغییر قرار گرفت' % (user.name(), user.persian_user_type())
+                models.Activity.objects.create(user=request.user, description=desc)
+
                 return render_modify_user_template(request, user, '2', None)
             else:
                 errors = json.loads(user_info_form.errors.as_json())
