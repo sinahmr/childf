@@ -226,11 +226,13 @@ def edit_user(request, user_id):
                 desc = 'کاربر %s (%s) در دست تغییر قرار گرفت' % (user.name(), user.persian_user_type())
                 models.Activity.objects.create(user=request.user, description=desc)
 
+                summary = 'درخواست تغییر مشخصات'
+                body = 'کاربر %s درخواستی برای تغییر مشخصات خود ارسال کرده است. برای بررسی روی لینک زیر کلیک کنید.<br><a href="%s">بررسی</a>' % (user.name(), request.build_absolute_uri(reverse('profile', kwargs={'user_id': user.id})))
+                send_mail(summary, body, [], cc_admins=False)
                 return render_modify_user_template(request, user, '2', None)
             else:
                 errors = json.loads(user_info_form.errors.as_json())
                 return render_modify_user_template(request, user, None, errors)
-            # TODO email to admin cause edit user info
         elif request.user.user_type() == 'volunteer':
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
@@ -364,7 +366,7 @@ def send_request(request):
             models.Activity.objects.create(user=request.user, description=desc)
 
             support = models.Support.objects.filter(child=request.user.child).first()
-            email = support.volunteer.email if support else 'devnull@example.com'
+            email = support.volunteer.email if support else 'novolunteer@example.com'
             summary = 'درخواستی از %s' % request.user.name()
             body = 'عنوان: %s <br>متن: %s' % (title, content)
             send_mail(summary, body, [email], cc_admins=True)
@@ -613,15 +615,23 @@ def commit_info(request, action, user_id):
             ongoing.delete()
         elif action == 'reject':
             ongoing.delete()
+
+        summary = 'درخواست شما %s شد' % 'تایید' if action == 'accept' else 'رد'
+        body = 'شما درخواستی برای تغییر مشخصات خود ارسال نموده بودید. مدیران زحمت‌کش بنیاد کودک درخواست شما را بررسی کرده و مفتخر اند نتیجه را به اطلاع شما سرور گرامی برسانند.<br>درخواست حضرت‌عالی %s شد.'  % 'تایید' if action == 'accept' else 'رد'
+        send_mail(summary, body, [user.email], cc_admins=False)
     return HttpResponseRedirect(reverse('edit_user', kwargs={'user_id': user_id}))
 
 
 def send_mail(summary, content, to, cc_admins=False):
     # to = ['sina.hajimiri@gmail.com', 'salari.m1375@gmail.com', 'amin.moghaddamv@gmail.com']
-    if cc_admins:
-        cc = models.User.objects.filter(is_superuser=True).values_list('email', flat=True)
+    cc = list()
+    if not to:
+        to = models.User.objects.filter(is_superuser=True).values_list('email', flat=True)
     else:
-        cc = []
+        if cc_admins:
+            cc = models.User.objects.filter(is_superuser=True).values_list('email', flat=True)
+        else:
+            cc = []
     context = {
         'summary': summary,
         'content': content

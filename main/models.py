@@ -155,7 +155,7 @@ class Donor(User):
 
 class Support(models.Model):
     child = models.ForeignKey(Child, on_delete=models.CASCADE, unique=True)
-    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE)  # TODO many-to-many?
+    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'حمایت'
