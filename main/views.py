@@ -5,7 +5,8 @@ from django.contrib.auth import authenticate, login as django_login, logout as d
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.views import password_reset
-from django.core import mail
+from django.core.mail import EmailMessage
+from django.template.loader import get_template
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, Http404, redirect, get_object_or_404, HttpResponseRedirect
@@ -129,7 +130,11 @@ def add_user(request, user_class):
 
             # Log Activity
             desc = 'کاربر %s (%s) اضافه شد' % (user.name(), user.persian_user_type())
-            models.Activity.objects.create(user=request.user, description=desc)
+            if request.user.is_authenticated():
+                activity_user = request.user
+            else:
+                activity_user = None
+            models.Activity.objects.create(user=activity_user, description=desc)
 
             return render(request, 'main/modify-user.html', {
                 'user': None,
@@ -360,6 +365,7 @@ def send_request(request):
         return render(request, 'main/send-request.html', {'child': request.user.child})
 
 
+@user_passes_test(lambda u: hasattr(u, 'child'))
 def change_volunteer(request):
     if request.method == 'POST':
         # TODO: Send email!
@@ -468,7 +474,8 @@ def purchase(request):
 def activities(request):
     acts = models.Activity.objects.all()
     for act in acts:
-        act.user_link = reverse('profile', kwargs={'user_id': act.user.id})
+        if act.user:
+            act.user_link = reverse('profile', kwargs={'user_id': act.user.id})
     return render(request, 'main/admin/activities.html', {'activities': acts})
 
 
@@ -588,3 +595,16 @@ def commit_info(request, action, user_id):
         elif action == 'reject':
             ongoing.delete()
     return HttpResponseRedirect(reverse('edit_user', kwargs={'user_id': user_id}))
+
+
+def send_mail(subject, content, to, cc=None):
+    # to = ['sina.hajimiri@gmail.com', 'salari.m1375@gmail.com', 'amin.moghaddamv@gmail.com']
+    context = {
+        'subject': subject,
+        'content': content
+    }
+
+    message = get_template('main/email/email.html').render(context)
+    msg = EmailMessage('بنیاد کودک (%s)' % subject, message, to=to, cc=cc, from_email='childf.sut@gmail.com')
+    msg.content_subtype = 'html'
+    msg.send()

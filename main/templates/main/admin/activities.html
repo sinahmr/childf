@@ -11,7 +11,7 @@
                     <thead>
                     <tr>
                         <th scope="col">تاریخ</th>
-                        <th scope="col">کاربر</th>
+                        <th scope="col">کنشگر</th>
                         <th scope="col">توضیح فعالیت</th>
                     </tr>
                     </thead>
@@ -19,7 +19,11 @@
                     {% for activity in activities %}
                         <tr>
                             <td>{{ activity.date|to_jalali }}</td>
-                            <td><a href="{{ activity.user_link }}">{{ activity.user.name }} ({{ activity.user.persian_user_type }})</a></td>
+                            {% if activity.user %}
+                                <td><a href="{{ activity.user_link }}">{{ activity.user.name }} ({{ activity.user.persian_user_type }})</a></td>
+                            {% else %}
+                                <td>بازدیدکننده</td>
+                            {% endif %}
                             <td>{{ activity.description }}</td>
                         </tr>
                     {% endfor %}

@@ -221,7 +221,7 @@ class PurchaseForNeed(Purchase):
 
 
 class Activity(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     description = models.TextField(blank=False, null=False)
     date = models.DateTimeField(auto_now_add=True)
 
