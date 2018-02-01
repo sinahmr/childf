@@ -498,9 +498,9 @@ def purchase(request):
 def activities(request):
     user_id = request.GET.get('user_id')
     if user_id:
-        acts = models.Activity.objects.filter(user_id=user_id)
+        acts = models.Activity.objects.filter(user_id=user_id).order_by('-date')
     else:
-        acts = models.Activity.objects.all()
+        acts = models.Activity.objects.all().order_by('-date')
     acts = paginate(request, acts, 10)
     return render(request, 'main/admin/activities.html', {'activities': acts})
 
