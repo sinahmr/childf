@@ -25,23 +25,26 @@ def home(request):
     return render(request, 'main/home.html', {'show_buttons': show_buttons})
 
 
+@user_passes_test(lambda u: u.is_authenticated)
 def show_children(request):
     show_all = request.GET.get('show_all', '1') == '1'
-    children = models.Child.objects.all()
+    all_children = models.Child.objects.filter(verified=True)
+    children = all_children
     sponsored_children = []
     supported_children = []
     if isinstance(request.user.cast(), models.Donor):
-        sponsored_children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
+        sponsored_children = all_children.filter(sponsorship__sponsor=request.user.cast())
     if isinstance(request.user.cast(), models.Volunteer):
-        supported_children = models.Child.objects.filter(support__volunteer=request.user.cast())
-    if show_all == False:
+        supported_children = all_children.filter(support__volunteer=request.user.cast())
+        children = all_children.filter(support=None)  # volunteers can't see supported children
+    if not show_all:
         if isinstance(request.user.cast(), models.Donor):
-            children = models.Child.objects.filter(sponsorship__sponsor=request.user.cast())
+            children = all_children.filter(sponsorship__sponsor=request.user.cast())
         if isinstance(request.user.cast(), models.Volunteer):
-            children = models.Child.objects.filter(support__volunteer=request.user.cast())
+            children = all_children.filter(support__volunteer=request.user.cast())
     if request.user.user_type() == 'admin' and request.GET.get('without_donor', '0') == '1':
         show_all = False
-        children = models.Child.objects.filter(sponsorship=None)
+        children = all_children.filter(sponsorship=None)
     children = paginate(request, children, 20)
     return render(request, 'main/children.html',
                   {'children': children, 'sponsored_children': sponsored_children,
@@ -61,6 +64,7 @@ def paginate(request, objects, limit):
     return objects
 
 
+@user_passes_test(lambda u: u.is_authenticated)
 def child_information(request, child_id):
     child = get_object_or_404(models.Child, pk=child_id)
     user = request.user.cast()
@@ -68,6 +72,8 @@ def child_information(request, child_id):
                                                                                            sponsor=user).exists()
     has_support = isinstance(user, models.Volunteer) and models.Support.objects.filter(child=child,
                                                                                        volunteer=user).exists()
+    if isinstance(user, models.Volunteer) and not has_support and models.Support.objects.filter(child=child).exists():
+        raise Http404("Child already supported")
     if request.method == 'POST':
         if request.POST['action'] == 'sponsorship':
             if not has_sponsorship:
@@ -156,6 +162,7 @@ def add_user(request, user_class):
         })
 
 
+@user_passes_test(lambda u: u.is_authenticated)
 def edit_user(request, user_id):
     if request.user.is_superuser:
         user = get_object_or_404(models.User, pk=user_id)

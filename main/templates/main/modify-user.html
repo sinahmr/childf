@@ -233,7 +233,10 @@
                                                     <h5 class="mb-0">
                                                         <a class="collapsed" data-toggle="collapse"
                                                            href="#old-need-collapse{{ forloop.counter }}"
-                                                           aria-expanded="false" id="header" {% if need.resolved %}style="text-decoration: line-through;"{% endif %}>{{ need.title }}</a>
+                                                           aria-expanded="false" id="header" {% if need.resolved %}style="text-decoration: line-through;"{% endif %}
+                                                                   data-resolved={% if need.resolved %}"1"{% else %}"0"{% endif %}>
+                                                            {{ need.title }}
+                                                        </a>
                                                         <span class="badge badge-danger {% if not need.urgent %}d-none{% endif %}">فوری</span>
                                                         <button type="button" onclick="make_urgent(this);"
                                                                 class="btn btn-danger btn-sm m-1 float-left urgent {% if need.urgent %}d-none{% endif %}">
@@ -375,12 +378,14 @@
 
         function make_resolved(event) {
             $(event).parent().find('#header').css({'text-decoration': 'line-through'});
+            $(event).parent().find('#header').attr('data-resolved', '1')
             $(event).parent().find('.resolved').addClass('d-none');
             $(event).parent().find('.resolved-remove').removeClass('d-none');
         }
 
         function remove_resolved(event) {
             $(event).parent().find('#header').css({'text-decoration': 'none'});
+            $(event).parent().find('#header').attr('data-resolved', '0')
             $(event).parent().find('.resolved').removeClass('d-none');
             $(event).parent().find('.resolved-remove').addClass('d-none');
         }
@@ -410,12 +415,12 @@
                         if (!$(this).find('.badge-danger').hasClass('d-none')) {
                             needs.needs[index2].urgent = true;
                         }
-                        if ($(this).find('#header').css('text-decoration') == 'line-through') {
+                        if ($(this).find('#header').attr('data-resolved') == '1') {
                             needs.needs[index2].resolved = true;
                         }
                     }
                     else {
-                        if ($(this).find('#header').css('text-decoration') == 'line-through') {
+                        if ($(this).find('#header').attr('data-resolved') == '1') {
                             needs.needs[tmp].resolved = true;
                         }
                         if (!$(this).find('.badge-danger').hasClass('d-none')) {
