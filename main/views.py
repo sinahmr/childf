@@ -192,31 +192,13 @@ def edit_user(request, user_id):
                         models.Support.objects.filter(child=new_user).delete()
                     elif models.Support.objects.filter(child=new_user).exists() and models.Support.objects.filter(child=new_user)[0].id != request.POST['volunteer']:
                         models.Support.objects.filter(child=new_user).delete()
-                        if not models.Support.objects.filter(child=new_user).exists():
+                    if request.POST['volunteer'] != '-1' and not models.Support.objects.filter(child=new_user).exists():
                             models.Support.objects.create(child=new_user, volunteer=models.Volunteer.objects.get(id=request.POST['volunteer']))
                 return render_modify_user_template(request, user, '2', None)
-                #     render(request, 'main/modify-user.html', {
-                #     'user': user,
-                #     'all_provinces': PROVINCES,
-                #     'all_genders': GENDER,
-                #     'user_class': user.user_type(),
-                #     'success': '2',
-                #     'user_requested': request.user.user_type(),
-                #     'all_volunteers': all_volunteers,
-                # })
             else:
                 errors = json.loads(user_form.errors.as_json())
                 errors.update(json.loads(user_info_form.errors.as_json()))
                 return render_modify_user_template(request, user, None, errors)
-                #     render(request, 'main/modify-user.html', {
-                #     'user': user,
-                #     'all_provinces': PROVINCES,
-                #     'all_genders': GENDER,
-                #     'user_class': user_class,
-                #     'errors': errors,
-                #     'user_requested': request.user.user_type(),
-                #     'all_volunteers': all_volunteers,
-                # })
         elif request.user.user_type() == 'child' or request.user.user_type() == 'volunteer' and user.user_type() == 'volunteer':
             user_info_form = OngoingUserInfoForm(request.POST)
             if user_info_form.is_valid():
@@ -224,29 +206,13 @@ def edit_user(request, user_id):
                 new_user_info.user = user
                 if request.FILES and request.FILES['image']:
                     new_user_info.image = request.FILES['image']
+                models.OngoingUserInfo.objects.filter(user=user).delete()
                 new_user_info.save()
                 return render_modify_user_template(request, user, '2', None)
-                #     render(request, 'main/modify-user.html', {
-                #     'user': user,
-                #     'all_provinces': PROVINCES,
-                #     'all_genders': GENDER,
-                #     'user_class': user.user_type(),
-                #     'success': '2',
-                #     'user_requested': request.user.user_type(),
-                #     'all_volunteers': all_volunteers,
-                # })
             else:
                 errors = json.loads(user_info_form.errors.as_json())
                 return render_modify_user_template(request, user, None, errors)
-                #     render(request, 'main/modify-user.html', {
-                #     'user': user,
-                #     'all_provinces': PROVINCES,
-                #     'all_genders': GENDER,
-                #     'user_class': user.user_type(),
-                #     'errors': errors,
-                #     'user_requested': request.user.user_type(),
-                #     'all_volunteers': all_volunteers,
-                # })
+            # TODO email to admin cause edit user info
         elif request.user.user_type() == 'volunteer':
             needs_json = json.loads(request.POST['needs'])
             for need in needs_json['needs']:
@@ -258,25 +224,8 @@ def edit_user(request, user_id):
                     new_need.urgent = need['urgent']
                 new_need.save()
             return render_modify_user_template(request, user, '2', None)
-            #     render(request, 'main/modify-user.html', {
-            #     'user': user,
-            #     'all_provinces': PROVINCES,
-            #     'all_genders': GENDER,
-            #     'user_class': user.user_type(),
-            #     'success': '2',
-            #     'user_requested': request.user.user_type(),
-            #     'all_volunteers': all_volunteers,
-            # })
     else:
         return render_modify_user_template(request, user, None, None)
-        #     render(request, 'main/modify-user.html', {
-        #     'user': user,
-        #     'all_provinces': PROVINCES,
-        #     'all_genders': GENDER,
-        #     'user_class': user.user_type(),
-        #     'user_requested': request.user.user_type(),
-        #     'all_volunteers': all_volunteers,
-        # })
 
 
 @user_passes_test(lambda user: user.user_type() == 'child')
@@ -526,9 +475,19 @@ def is_authorized_for_add_user(user, user_class):
 def render_modify_user_template(request, user, success, errors, ):
     all_volunteers = []
     for vol in models.Volunteer.objects.all():
-        all_volunteers.append({'id':vol.id, 'first_name':vol.userinfo.first_name, 'last_name':vol.userinfo.last_name})
+        all_volunteers.append({'id': vol.id, 'first_name': vol.userinfo.first_name, 'last_name': vol.userinfo.last_name})
+    print(user.ongoinguserinfo_set.all())
+    changed = False
+    if user:
+        if user.ongoinguserinfo_set.all() and len(user.ongoinguserinfo_set.all()) > 0:
+            userinfo = user.ongoinguserinfo_set.all()[0]
+            changed = True
+        else:
+            userinfo = user.userinfo
+            changed = False
     return render(request, 'main/modify-user.html', {
         'user': user,
+        'userinfo': userinfo,
         'all_provinces': PROVINCES,
         'all_genders': GENDER,
         'user_class': user.user_type(),
@@ -536,4 +495,5 @@ def render_modify_user_template(request, user, success, errors, ):
         'all_volunteers': all_volunteers,
         'success': success,
         'errors': errors,
+        'changed': changed,
     })
