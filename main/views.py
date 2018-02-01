@@ -188,7 +188,7 @@ def edit_user(request, user_id):
         user = get_object_or_404(models.User, pk=user_id)
     user = user.cast()
     if request.method == 'POST':
-        if request.user.user_type() == 'admin' or request.user.user_type() == 'donor' and request.user == user:
+        if request.user.user_type() == 'admin' or request.user.user_type() == 'donor' and request.user.cast() == user:
             user_form = None
             user_class = user.user_type()
             if user_class == 'admin' or user_class == 'donor':
