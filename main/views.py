@@ -441,11 +441,14 @@ def accept_letter(request, letter_id):
 
 @user_passes_test(lambda user: user.user_type() == 'volunteer')
 def decline_letter(request, letter_id):
-    models.Letter.objects.filter(pk=letter_id).update(verified=False)
+    letter = models.Letter.objects.filter(pk=letter_id).first()
+    if letter:
+        letter.verified = False
+        letter.save()
 
-    # Log Activity
-    desc = 'نامه‌ی نیازمند %s به همیارانش را رد کرد' % letter.child.name()
-    models.Activity.objects.create(user=request.user, description=desc)
+        # Log Activity
+        desc = 'نامه‌ی نیازمند %s به همیارانش را رد کرد' % letter.child.name()
+        models.Activity.objects.create(user=request.user, description=desc)
 
     return HttpResponseRedirect(reverse('volunteer_letter_verification'))
 
