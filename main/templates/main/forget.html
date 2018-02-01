@@ -10,6 +10,11 @@
                         {{ error }}
                     </div>
                 {% endif %}
+                {% if success %}
+                    <div class="alert alert-success" role="alert" id="change-volunteer-alert" style="max-width: 300px; text-align: center; margin: 5px auto;">
+                        {{ success }}
+                    </div>
+                {% endif %}
                 <div class="card card-container" style="padding-left: 20px;padding-right: 20px;width: 300px; margin: 0 auto;">
                     <img id="profile-img" class="profile-img-card" src="http://www.childf.ir/Portals/0/child-foundation-Logo_01.png?ver=1395-09-27-131108-357" style="width: 100%; padding-top: 10px;"/>
                     <p id="profile-name" class="profile-name-card"></p>
@@ -17,12 +22,10 @@
                         {% csrf_token %}
                         <span id="reauth-email" class="reauth-email"></span>
                         <input type="email" id="inputEmail" name="email" class="form-control" placeholder="آدرس ایمیل" style="margin-bottom: 10px;" required autofocus>
-                        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="رمز عبور" style="margin-bottom: 10px;" required>
-                        <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" style="margin-bottom: 10px;">ورود</button>
+                        <button id="submit-button" class="btn btn-lg btn-primary btn-block btn-signin" type="submit"
+                                style="margin-bottom: 10px;">ارسال رمز عبور جدید
+                        </button>
                     </form>
-                    <a href="{% url 'forget' %}" class="forgot-password" style="margin-bottom: 10px;">
-                        رمز عبور خود را فراموش کرده‌ام!
-                    </a>
                 </div>
             </div>
             <div class="col-md-1 hidden-sm">
