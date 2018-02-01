@@ -384,7 +384,9 @@ def send_request(request):
 @user_passes_test(lambda u: hasattr(u, 'child'))
 def change_volunteer(request):
     if request.method == 'POST':
-        # TODO: Send email!
+        summary = 'درخواست تغییر مددکار از %s' % request.user.name()
+        body = 'نیازمند %s درخواست تغییر مددکار خود را دارد. برای تغییر مددکار ایشان روی لینک زیر کلیک نمایید.<br><a href="%s">کلیک کنید</a>' % (request.user.name(), request.build_absolute_uri(reverse('profile', kwargs={'user_id': request.user.id})))
+        send_mail(summary, body, [], cc_admins=False)
 
         # Log Activity
         desc = 'علاقه به تغییر مددکار دارد' % request.user.name()
