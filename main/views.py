@@ -4,9 +4,8 @@ import urllib
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core import mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.contrib.auth.views import password_reset
+from django.core import mail
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 from django.db.models import Count
