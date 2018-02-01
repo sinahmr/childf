@@ -22,7 +22,11 @@
                              alt="Card image cap">
                     </div>
                     <div class="col-md-8 col-sm-12">
-                        <h4 class="card-title">{{ child.name }}</h4>
+                        <h4 class="card-title">{{ child.name }}
+                            {% if user_type == 'admin' or user_type == 'volunteer' and has_support %}
+                                <a href="{% url 'edit_user' child.id %}" class="btn btn-primary" style="margin-right: 20px">ویرایش</a>
+                            {% endif %}
+                        </h4>
                         <h6 class="card-subtitle mb-2 text-muted">{{ child.get_province_display }}</h6>
                         <br/>
                         <h4>موفقیت‌ها:</h4>
@@ -66,12 +70,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <h4 style="margin: 10px">
-                    نیازها:
-                    {% if user_type == 'admin' or user_type == 'volunteer' and has_support %}
-                        <a href="{% url 'edit_user' child.id %}" style="font-size: 10pt;">(ویرایش)</a>
-                    {% endif %}
-                </h4>
+                <h4 style="margin: 10px">نیازها:</h4>
                 <div id="accordion" role="tablist">
 
                     {% for need in child.need_set.all %}
