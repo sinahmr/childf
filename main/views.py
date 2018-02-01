@@ -4,8 +4,8 @@ import urllib
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.contrib.auth.views import password_reset
 from django.core import mail
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import render, Http404, redirect, get_object_or_404, HttpResponseRedirect
@@ -44,9 +44,23 @@ def show_children(request):
     if request.user.user_type() == 'admin' and request.GET.get('without_donor', '0') == '1':
         show_all = False
         children = models.Child.objects.filter(sponsorship=None)
+    children = paginate(request, children, 20)
     return render(request, 'main/children.html',
                   {'children': children, 'sponsored_children': sponsored_children,
                    'supported_children': supported_children, 'show_all': show_all})
+
+
+def paginate(request, objects, limit):
+    paginator = Paginator(objects, limit)
+    page = request.GET.get('page')
+    try:
+        objects = paginator.page(page)
+    except PageNotAnInteger:
+        objects = paginator.page(1)  # If page is not an integer, deliver first page.
+    except EmptyPage:
+        objects = paginator.page(
+            paginator.num_pages)  # If page is out of range (e.g. 9999), deliver last page of results.
+    return objects
 
 
 def child_information(request, child_id):
@@ -469,6 +483,7 @@ def activities(request):
     acts = models.Activity.objects.all()
     for act in acts:
         act.user_link = reverse('profile', kwargs={'user_id': act.user.id})
+    acts = paginate(request, acts, 10)
     return render(request, 'main/admin/activities.html', {'activities': acts})
 
 
@@ -482,6 +497,7 @@ def admin_purchases(request):
     for p in purchases:
         p.donor_link = reverse('profile', kwargs={'user_id': p.payer.donor.id})
     purchases = sorted(purchases, key=lambda x: x.time, reverse=True)
+    purchases = paginate(request, purchases, 10)
     return render(request, 'main/admin/purchases.html', {'purchases': purchases})
 
 

@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+{% load bootstrap_pagination %}
 {% block content %}
     <div class="container-fluid content">
         <div class="row">
@@ -31,19 +32,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
-                <nav class="navigation">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">بعدی</a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">۳</a></li>
-                        <li class="page-item"><a class="page-link" href="#">۲</a></li>
-                        <li class="page-item"><a class="page-link" href="#">۱</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">قبلی</a>
-                        </li>
-                    </ul>
-                </nav>
+                {% bootstrap_paginate purchases range=4 last_label='آخر' first_label='اول' show_prev_next="false" show_first_last="true" %}
             </div>
             <div class="col-md-1 d-none d-md-block">
             </div>
