@@ -311,10 +311,12 @@ def forget(request):
         generator = PasswordResetTokenGenerator()
         token = generator.make_token(user)
         uidb36 = int_to_base36(user.pk)
-        mail.send_mail('فراموشی رمز عبور',
-                       request.build_absolute_uri(reverse('reset_password', kwargs={'uidb36': uidb36, 'token': token})),
-                       'childf.sut@gmail.com',
-                       [email])  # TODO Prettify
+        uri = request.build_absolute_uri(reverse('reset_password', kwargs={'uidb36': uidb36, 'token': token}))
+        send_mail(summary='فراموشی رمز عبور', content='''
+                برای دریافت رمز عبور جدید روی <a href="%s">این لینک </a> کلیک کنید.
+                </br>
+                در صورتی که شما درخواست فراموشی رمز عبور نداده‌اید می‌توانید این ایمیل را نادیده بگیرید.''' % uri,
+                  to=[email])
         return render(request, 'main/forget.html', {'success': 'ایمیل تایید فراموشی به شما ارسال شد'})
     else:
         return render(request, 'main/forget.html', {})
@@ -331,8 +333,10 @@ def reset_password(request, uidb36, token):
         random_password = models.User.objects.make_random_password()
         user.set_password(random_password)
         user.save()
-        mail.send_mail('فراموشی رمز عبور', 'password : %s' % random_password, 'childf.sut@gmail.com',
-                       [user.email])  # TODO Prettify
+        send_mail(summary='رمز عبور جدید', content='''
+                        رمز عبور شما با موفقیت تغییر پیدا کرد. رمز عبور جدید شما
+                        <pre>%s</pre>''' % random_password,
+                  to=[user.email])
         return render(request, 'main/forget.html', {'success': 'رمز عبور جدید شما به شما ایمیل شد'})
     else:
         return render(request, 'main/forget.html', {'error': 'کد فراموشی شما معتبر نمی‌باشد'})
