@@ -34,7 +34,7 @@
                                 <input type="text" class="form-control" id="first_name" name="first_name"
                                        {% if user %}value="{{ user.userinfo.first_name }}" {% endif %} required
                                         {% if user %}
-                                            {% if user_requested == ' volunteer' %}
+                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
                                        disabled
                                             {% endif %}
                                         {% endif %}>
@@ -51,7 +51,7 @@
                                 <input type="text" class="form-control" id="last_name" name="last_name"
                                        {% if user %}value="{{ user.userinfo.last_name }}" {% endif %} required
                                         {% if user %}
-                                            {% if user_requested == ' volunteer' %}
+                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
                                        disabled
                                             {% endif %}
                                         {% endif %}
@@ -69,7 +69,7 @@
                                 <input type="email" maxlength="200" class="form-control" id="email" name="email"
                                        {% if user %}value="{{ user.email }}" {% endif %} required
                                         {% if user %}
-                                            {% if user_requested == 'child' or user_requested == ' volunteer' %}
+                                            {% if user_requested == 'child' or user_requested == 'volunteer' %}
                                        disabled
                                             {% endif %}
                                         {% endif %}>
@@ -91,7 +91,7 @@
                                 <label for="gender">جنسیت</label>
                                 <select class="form-control" id="gender" name="gender"
                                         {% if user %}
-                                            {% if user_requested == ' volunteer' %}
+                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
                                         disabled
                                             {% endif %}
                                         {% endif %}>
@@ -109,7 +109,7 @@
                                     <label for="province">استان</label>
                                     <select class="form-control" id="Province" name="province"
                                             {% if user %}
-                                                {% if user_requested == 'child' or user_requested == ' volunteer' %}
+                                                {% if user_requested == 'child' or user_requested == 'volunteer' %}
                                             disabled
                                                 {% endif %}
                                             {% endif %}>
@@ -141,7 +141,7 @@
                                 <input type="number" maxlength="200" class="form-control" id="year_of_birth" name="year_of_birth"
                                        {% if user %}value="{{ user.userinfo.year_of_birth }}" {% endif %} required
                                         {% if user %}
-                                            {% if user_requested == ' volunteer' %}
+                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
                                        disabled
                                             {% endif %}
                                         {% endif %}>
@@ -165,7 +165,7 @@
                                 <label class="btn btn-outline-info btn-file btn-sm m-1">
                                     آپلود <input type="file" style="display: none;" onchange="readURL(this);" name="image"
                                         {% if user %}
-                                            {% if user_requested == ' volunteer' %}
+                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
                                                  disabled
                                             {% endif %}
                                         {% endif %}>
@@ -179,7 +179,7 @@
                             <textarea rows="4" class="form-control" name="accomplishments"
                                       id="accomplishments"
                                     {% if user %}
-                                        {% if user_requested == 'child' or user_requested == ' volunteer' %}
+                                        {% if user_requested == 'child' or user_requested == 'volunteer' %}
                                       disabled
                                         {% endif %}
                                     {% endif %}> {% if user %}{{ user.accomplishments }}{% endif %}</textarea>
@@ -285,6 +285,7 @@
                                 </div>
                             </div>
                         </div>
+                    {% endif %}
                     {% endif %}
                     <br/>
                     <input type="hidden" maxlength="200" class="form-control" id="needs" name="needs" value="">

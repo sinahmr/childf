@@ -68,7 +68,7 @@
                 </div>
                 <h4 style="margin: 10px">
                     نیازها:
-                    {% if user_type == 'volunteer' and has_support %}
+                    {% if user_type == 'admin' or user_type == 'volunteer' and has_support %}
                         <a href="{% url 'edit_user' child.id %}" style="font-size: 10pt;">(ویرایش)</a>
                     {% endif %}
                 </h4>
