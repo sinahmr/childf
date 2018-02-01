@@ -7,6 +7,8 @@
         <div class="col-md-10 col-sm-12 bg-light letter">
             {% if request.GET.success == '0' %}
                 <div class="alert alert-danger text-center" role="alert" id="change-volunteer-alert">نامه ارسال نشد. لطفاً عنوان و متن را وارد کنید.</div>
+            {% elif request.GET.success == '-1' %}
+                <div class="alert alert-danger text-center" role="alert" id="change-volunteer-alert">شما مددکاری ندارید.</div>
             {% elif request.GET.success == '1' %}
                 <div class="alert alert-success text-center" role="alert" id="change-volunteer-alert">نامه‌ی شما با موفقیت ارسال شد.</div>
             {% endif %}

@@ -280,10 +280,13 @@ def letter(request):
             models.Activity.objects.create(user=request.user, description=desc)
 
             if receiver == 'V':
-                emails = list()
-                for support in models.Support.objects.filter(child=request.user.child):
-                    emails.append(support.volunteer.email)
-                mail.send_mail('نامه', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)  # TODO email title, CSS admin
+                support = models.Support.objects.filter(child=request.user.child).first()
+                if support:
+                    summary = 'نامه از %s به %s' % (request.user.name(), support.volunteer.name())
+                    body = 'عنوان: %s <br>متن: %s' % (title, content)
+                    send_mail(summary, body, [support.volunteer.email], cc_admins=False)
+                else:
+                    return HttpResponseRedirect(request.path + '?success=-1')
             return HttpResponseRedirect(request.path + '?success=1')
         else:
             return HttpResponseRedirect(request.path + '?success=0')
@@ -371,10 +374,11 @@ def send_request(request):
             desc = 'برای مددکارش درخواستی ارسال کرد' % request.user.name()
             models.Activity.objects.create(user=request.user, description=desc)
 
-            emails = list()
-            for support in models.Support.objects.filter(child=request.user.child):
-                emails.append(support.volunteer.email)
-            mail.send_mail('درخواست', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)  # TODO email title, CC admin
+            support = models.Support.objects.filter(child=request.user.child).first()
+            email = support.volunteer.email if support else 'devnull@example.com'
+            summary = 'درخواستی از %s' % request.user.name()
+            body = 'عنوان: %s <br>متن: %s' % (title, content)
+            send_mail(summary, body, [email], cc_admins=True)
             return HttpResponseRedirect(request.path + '?success=1')
         else:
             return HttpResponseRedirect(request.path + '?success=0')
@@ -428,7 +432,10 @@ def accept_letter(request, letter_id):
         emails = list()
         for sponsorship in models.Sponsorship.objects.filter(child=letter.child):
             emails.append(sponsorship.sponsor.email)
-        mail.send_mail('نامه', '%s\n\n%s' % (letter.title, letter.content), 'childf.sut@gmail.com', emails)  # TODO email title
+        if emails:
+            summary = 'نامه‌ای از %s به همیارانش' % letter.child.name()
+            body = 'عنوان: %s <br>متن: %s' % (letter.title, letter.content)
+            send_mail(summary, body, emails, cc_admins=False)
     return HttpResponseRedirect(reverse('volunteer_letter_verification'))
 
 
@@ -615,14 +622,18 @@ def commit_info(request, action, user_id):
     return HttpResponseRedirect(reverse('edit_user', kwargs={'user_id': user_id}))
 
 
-def send_mail(subject, content, to, cc=None):
+def send_mail(summary, content, to, cc_admins=False):
     # to = ['sina.hajimiri@gmail.com', 'salari.m1375@gmail.com', 'amin.moghaddamv@gmail.com']
+    if cc_admins:
+        cc = models.User.objects.filter(is_superuser=True).values_list('email', flat=True)
+    else:
+        cc = []
     context = {
-        'subject': subject,
+        'summary': summary,
         'content': content
     }
 
     message = get_template('main/email/email.html').render(context)
-    msg = EmailMessage('بنیاد کودک (%s)' % subject, message, to=to, cc=cc, from_email='childf.sut@gmail.com')
+    msg = EmailMessage('بنیاد کودک (%s)' % summary, message, to=to, cc=cc, from_email='childf.sut@gmail.com')
     msg.content_subtype = 'html'
     msg.send()
