@@ -24,7 +24,7 @@ def home(request):
         show_buttons = False
     return render(request, 'main/home.html', {'show_buttons': show_buttons})
 
-
+@user_passes_test(lambda u: u.is_authenticated)
 def show_children(request):
     show_all = request.GET.get('show_all', '1') == '1'
     children = models.Child.objects.all()
@@ -61,6 +61,7 @@ def paginate(request, objects, limit):
     return objects
 
 
+@user_passes_test(lambda u: u.is_authenticated)
 def child_information(request, child_id):
     child = get_object_or_404(models.Child, pk=child_id)
     user = request.user.cast()
@@ -156,6 +157,7 @@ def add_user(request, user_class):
         })
 
 
+@user_passes_test(lambda u: u.is_authenticated)
 def edit_user(request, user_id):
     if request.user.is_superuser:
         user = get_object_or_404(models.User, pk=user_id)
