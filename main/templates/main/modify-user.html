@@ -344,7 +344,7 @@
             card.find('a').html(title);
             var desc = $('#requirement-desc').val();
             var cost = $('#requirement-cost').val();
-            needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id': -1});
+            needs.needs.push({'title': title, 'description': desc, 'cost': cost, 'urgent': false, 'id': -1, 'resolved':false});
             card.find('.card-body').html('<div class="desc" style="display: inline-block;">' + desc + '</div>' + '<div class="float-left cost">' + cost + ' تومان' + '</div>');
             card.appendTo('#accordion');
             number += 1;
