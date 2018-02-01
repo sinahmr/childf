@@ -24,7 +24,6 @@ def home(request):
     return render(request, 'main/home.html', {'show_buttons': show_buttons})
 
 
-
 def show_children(request):
     show_all = request.GET.get('show_all', '1') == '1'
     children = models.Child.objects.all()
@@ -124,6 +123,11 @@ def add_user(request, user_class):
             user.is_active = True
             user.save()
             authenticate(username=username, password=raw_password)
+
+            # Log Activity
+            desc = 'کاربر %s (%s) اضافه شد' % (user.name(), user.persian_user_type())
+            models.Activity.objects.create(user=request.user, description=desc)
+
             return render(request, 'main/modify-user.html', {
                 'user': None,
                 'all_provinces': PROVINCES,
@@ -244,11 +248,17 @@ def letter(request):
                 'verified': True if receiver == 'V' else None,
                 'child': request.user.child
             })
+
+            # Log Activity
+            dest = 'مددکار' if receiver == 'V' else 'همیاران'
+            desc = 'نامه‌ای به %sش ارسال کرد' % dest
+            models.Activity.objects.create(user=request.user, description=desc)
+
             if receiver == 'V':
                 emails = list()
                 for support in models.Support.objects.filter(child=request.user.child):
                     emails.append(support.volunteer.email)
-                mail.send_mail('نامه', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)  # TODO email title
+                mail.send_mail('نامه', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)  # TODO email title, CSS admin
             return HttpResponseRedirect(request.path + '?success=1')
         else:
             return HttpResponseRedirect(request.path + '?success=0')
@@ -294,10 +304,15 @@ def send_request(request):
         if form.is_valid():
             title = form.cleaned_data['RequestTitle']
             content = form.cleaned_data['RequestContent']
+
+            # Log Activity
+            desc = 'برای مددکارش درخواستی ارسال کرد' % request.user.name()
+            models.Activity.objects.create(user=request.user, description=desc)
+
             emails = list()
             for support in models.Support.objects.filter(child=request.user.child):
                 emails.append(support.volunteer.email)
-            mail.send_mail('درخواست', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)  # TODO email title
+            mail.send_mail('درخواست', '%s\n\n%s' % (title, content), 'childf.sut@gmail.com', emails)  # TODO email title, CC admin
             return HttpResponseRedirect(request.path + '?success=1')
         else:
             return HttpResponseRedirect(request.path + '?success=0')
@@ -308,6 +323,11 @@ def send_request(request):
 def change_volunteer(request):
     if request.method == 'POST':
         # TODO: Send email!
+
+        # Log Activity
+        desc = 'علاقه به تغییر مددکار دارد' % request.user.name()
+        models.Activity.objects.create(user=request.user, description=desc)
+
         return HttpResponse('OK')
     volunteer = request.user.cast().support_set.all()
     if len(volunteer):
@@ -337,6 +357,11 @@ def accept_letter(request, letter_id):
     if letter:
         letter.verified = True
         letter.save()
+
+        # Log Activity
+        desc = 'نامه‌ی نیازمند %s به همیارانش را تایید کرد' % letter.child.name()
+        models.Activity.objects.create(user=request.user, description=desc)
+
         emails = list()
         for sponsorship in models.Sponsorship.objects.filter(child=letter.child):
             emails.append(sponsorship.sponsor.email)
@@ -347,6 +372,11 @@ def accept_letter(request, letter_id):
 @user_passes_test(lambda user: user.user_type() == 'volunteer')
 def decline_letter(request, letter_id):
     models.Letter.objects.filter(pk=letter_id).update(verified=False)
+
+    # Log Activity
+    desc = 'نامه‌ی نیازمند %s به همیارانش را رد کرد' % letter.child.name()
+    models.Activity.objects.create(user=request.user, description=desc)
+
     return HttpResponseRedirect(reverse('volunteer_letter_verification'))
 
 
@@ -375,8 +405,12 @@ def purchase(request):
             if need_id:
                 need = get_object_or_404(models.Need, pk=need_id)
                 models.PurchaseForNeed.objects.create(**kwargs, need=need)
+                desc = 'مبلغ %d تومان برای نیاز %s از نیازمند %s پرداخت کرد' % (amount, need.title, need.child.name())
             else:
                 models.PurchaseForInstitute.objects.create(**kwargs)
+                desc = 'مبلغ %d تومان برای کمک به موسسه پرداخت کرد' % amount
+            # Log Activity
+            models.Activity.objects.create(user=request.user, description=desc)
             return HttpResponseRedirect(reverse('bank') + '?redirect_url=%s' % urllib.parse.quote_plus(
                 reverse('donor_purchase') + '?%s' % ('need_id=' + str(need_id) if need_id else '')) + '&amount=%s' % amount)
         else:
@@ -392,19 +426,10 @@ def purchase(request):
 
 
 def activities(request):
-    activities = [
-                     {'date': '۲۴ آذر ۱۳۹۶', 'user': 'علی حسینی (مددکار)',
-                      'description': 'اضافه کردن نیازمند: امین رضازاده'},
-                     {'date': '۲۴ آذر ۱۳۹۶', 'user': 'حسین علی زاده (مددکار)',
-                      'description': 'اضافه کردن نیازمند: رضا امین‌زاده'}
-                 ] * 3
-    activities += [
-                      {'date': '۲۳ آذر ۱۳۹۶', 'user': 'قلی قلی‌زاده (همیار)',
-                       'description': 'پراخت نیاز'},
-                      {'date': '۲۳ آذر ۱۳۹۶', 'user': 'امین امینی (همیار)',
-                       'description': 'تحت کفالت قرار دادن'}
-                  ] * 2
-    return render(request, 'main/admin/activities.html', {'activities': activities})
+    acts = models.Activity.objects.all()
+    for act in acts:
+        act.user_link = reverse('profile', kwargs={'user_id': act.user.id})
+    return render(request, 'main/admin/activities.html', {'activities': acts})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -420,6 +445,7 @@ def admin_purchases(request):
     return render(request, 'main/admin/purchases.html', {'purchases': purchases})
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def approval(request):
     if request.method == 'POST':
         verdict = request.POST.get('verdict')
@@ -428,6 +454,11 @@ def approval(request):
         if child.verified is None:
             child.verified = True if verdict == 'accept' else False
             child.save()
+
+            # Log Activity
+            desc = 'نیازمند %s %s شد' % (child.name(), 'تایید' if child.verified else 'رد')
+            models.Activity.objects.create(user=request.user, description=desc)
+
             return HttpResponse('OK')
         else:
             return HttpResponse('Already Done', status='400')
