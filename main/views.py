@@ -620,6 +620,10 @@ def commit_info(request, action, user_id):
         elif action == 'reject':
             ongoing.delete()
 
+        # Log Activity
+        desc = '%s درخواست %s برای تغییر اطلاعات' % ('تایید' if action == 'accept' else 'رد', user.name())
+        models.Activity.objects.create(user=request.user, description=desc)
+
         summary = 'درخواست شما %s شد' % 'تایید' if action == 'accept' else 'رد'
         body = 'شما درخواستی برای تغییر مشخصات خود ارسال نموده بودید. مدیران زحمت‌کش بنیاد کودک درخواست شما را بررسی کرده و مفتخر اند نتیجه را به اطلاع شما سرور گرامی برسانند.<br>درخواست حضرت‌عالی %s شد.'  % 'تایید' if action == 'accept' else 'رد'
         send_mail(summary, body, [user.email], cc_admins=False)
