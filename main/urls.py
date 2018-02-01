@@ -35,4 +35,5 @@ urlpatterns = [
         name='static_sponsorship'),
     url(r'^faq/', TemplateView.as_view(template_name='main/static/faq.html'), name='static_faq'),
     url(r'^bank/', views.bank, name='bank'),
+    url(r'^commit-info/(?P<action>\w+)/(?P<user_id>\d+)/', views.commit_info, name='commit_info'),
 ]

@@ -14,8 +14,11 @@
                                 <div class="alert alert-success text-center" role="alert">ثبت‌نام با موفقیت انجام شد.</div>
                             {% elif success == '2' and not changed %}
                                 <div class="alert alert-success text-center" role="alert">تغییرات با موفقیت انجام شد.</div>
-                            {% elif changed %}
+                            {% elif changed and user_requested != 'admin' %}
                                 <div class="alert alert-success text-center" role="alert">تغییرات در دست بررسی است.</div>
+                            {% elif changed %}
+                                <a href="{% url 'commit_info' 'accept' user.id %}" class="btn btn-success" style="margin-bottom: 10px">تأیید تغییرات</a>
+                                <a href="{% url 'commit_info' 'reject' user.id %}" class="btn btn-danger" style="margin-bottom: 10px">رد تغییرات</a>
                             {% endif %}
 
                             <h2>
