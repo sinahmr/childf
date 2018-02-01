@@ -637,7 +637,8 @@ def commit_info(request, action, user_id):
             user_info.last_name = ongoing.last_name
             user_info.gender = ongoing.gender
             user_info.year_of_birth = ongoing.year_of_birth
-            user_info.image = ongoing.image
+            if ongoing.image:
+                user_info.image = ongoing.image
             user_info.save()
             ongoing.delete()
         elif action == 'reject':
