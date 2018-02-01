@@ -5,6 +5,8 @@
         <h3>عنوان: {{ subject }}</h3>
     </div>
     <div id="body">
+        {% autoescape off %}
         {{ content }}
+        {% endautoescape %}
     </div>
 </body>
