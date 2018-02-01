@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'u2*-^7$_%&&yz(7n@2ppxfazlip5kfy%#vnq!+b#16_uw^5=oppox+4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']  # TODO
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'childf.herokuapp.com']
 
 # Application definition
 
@@ -83,7 +84,17 @@ DATABASES = {
     }
 }
 
-import dj_database_url
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': 'secretpassword',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
 
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
