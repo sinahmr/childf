@@ -12,8 +12,10 @@
                         <div class="col-md-8 col-sm-12">
                             {% if success == '1' %}
                                 <div class="alert alert-success text-center" role="alert">ثبت‌نام با موفقیت انجام شد.</div>
-                            {% elif success == '2' %}
+                            {% elif success == '2' and not changed %}
                                 <div class="alert alert-success text-center" role="alert">تغییرات با موفقیت انجام شد.</div>
+                            {% elif changed %}
+                                <div class="alert alert-success text-center" role="alert">تغییرات در دست بررسی است.</div>
                             {% endif %}
 
                             <h2>
@@ -32,9 +34,9 @@
                             <div class="form-group">
                                 <label for="first_name">نام</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name"
-                                       {% if user %}value="{{ user.userinfo.first_name }}" {% endif %} required
+                                       {% if user %}value="{{ userinfo.first_name }}" {% endif %} required
                                         {% if user %}
-                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
+                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer' %}
                                        disabled
                                             {% endif %}
                                         {% endif %}>
@@ -49,9 +51,9 @@
                             <div class="form-group">
                                 <label for="last_name">نام خانوادگی</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name"
-                                       {% if user %}value="{{ user.userinfo.last_name }}" {% endif %} required
+                                       {% if user %}value="{{ userinfo.last_name }}" {% endif %} required
                                         {% if user %}
-                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
+                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer' %}
                                        disabled
                                             {% endif %}
                                         {% endif %}
@@ -91,12 +93,12 @@
                                 <label for="gender">جنسیت</label>
                                 <select class="form-control" id="gender" name="gender"
                                         {% if user %}
-                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
+                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer' %}
                                         disabled
                                             {% endif %}
                                         {% endif %}>
                                     {% for code, gender in all_genders %}
-                                        {% if user and code == user.userinfo.gender %}
+                                        {% if user and code == userinfo.gender %}
                                             <option value="{{ code }}" selected>{{ gender }}</option>
                                         {% else %}
                                             <option value="{{ code }}">{{ gender }}</option>
@@ -129,7 +131,7 @@
                                             <option value="-1">بدون مددکار</option>
                                             {% for vol in all_volunteers %}
                                                 <option value="{{ vol.id }}"
-                                                {% if user.find_volunteer.id == vol.id %}selected{% endif %}>
+                                                        {% if user.find_volunteer.id == vol.id %}selected{% endif %}>
                                                     {{ vol.first_name }} {{ vol.last_name }}</option>
                                             {% endfor %}
                                         </select>
@@ -139,9 +141,9 @@
                             <div class="form-group">
                                 <label for="year_of_birth">سال تولد</label>
                                 <input type="number" maxlength="200" class="form-control" id="year_of_birth" name="year_of_birth"
-                                       {% if user %}value="{{ user.userinfo.year_of_birth }}" {% endif %} required
+                                       {% if user %}value="{{ userinfo.year_of_birth }}" {% endif %} required
                                         {% if user %}
-                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
+                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer' %}
                                        disabled
                                             {% endif %}
                                         {% endif %}>
@@ -162,14 +164,18 @@
                                         {% else %}
                                      src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
                                         {% endif %}>
-                                <label class="btn btn-outline-info btn-file btn-sm m-1">
-                                    آپلود <input type="file" style="display: none;" onchange="readURL(this);" name="image"
-                                        {% if user %}
-                                            {% if user_requested == 'volunteer' and user.user_type != 'volunteer'%}
-                                                 disabled
-                                            {% endif %}
-                                        {% endif %}>
-                                </label>
+
+                                {% if user %}
+                                    {% if user_requested != 'volunteer' or user.user_type == 'volunteer' %}
+                                        <label class="btn btn-outline-info btn-file btn-sm m-1">
+                                            آپلود <input type="file" style="display: none;" onchange="readURL(this);" name="image">
+                                        </label>
+                                    {% endif %}
+                                {% else %}
+                                    <label class="btn btn-outline-info btn-file btn-sm m-1">
+                                        آپلود <input type="file" style="display: none;" onchange="readURL(this);" name="image">
+                                    </label>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -179,7 +185,7 @@
                             <textarea rows="4" class="form-control" name="accomplishments"
                                       id="accomplishments"
                                     {% if user %}
-                                        {% if user_requested == 'child' or user_requested == 'volunteer' %}
+                                        {% if user_requested == 'child' %}
                                       disabled
                                         {% endif %}
                                     {% endif %}> {% if user %}{{ user.accomplishments }}{% endif %}</textarea>
@@ -245,47 +251,47 @@
                                                         <div class="float-left cost" data-need-cost="{{ need.cost }}">{{ need.cost }} تومان</div>
                                                     </div>
 
+                                                </div>
                                             </div>
-                                        </div>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
-                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">اضافه کردن نیازمندی</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <label for="recipient-name" class="col-form-label">عنوان</label>
-                                                <input type="text" class="form-control" id="requirement-title">
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">اضافه کردن نیازمندی</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                </button>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="message-text" class="col-form-label">شرح
-                                                    نیازمندی</label>
-                                                <textarea class="form-control" id="requirement-desc"></textarea>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="recipient-name" class="col-form-label">عنوان</label>
+                                                    <input type="text" class="form-control" id="requirement-title">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="message-text" class="col-form-label">شرح
+                                                        نیازمندی</label>
+                                                    <textarea class="form-control" id="requirement-desc"></textarea>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="message-text" class="col-form-label">هزینه</label>
+                                                    <input type="number" class="form-control" id="requirement-cost">
+                                                </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="message-text" class="col-form-label">هزینه</label>
-                                                <input type="number" class="form-control" id="requirement-cost">
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">بی‌خیال
+                                                </button>
+                                                <button id='submit-requirement' type="button" class="btn btn-primary">
+                                                    اضافه‌کردن
+                                                </button>
                                             </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">بی‌خیال
-                                            </button>
-                                            <button id='submit-requirement' type="button" class="btn btn-primary">
-                                                اضافه‌کردن
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
+                        {% endif %}
                     {% endif %}
                     <br/>
                     <input type="hidden" maxlength="200" class="form-control" id="needs" name="needs" value="">
